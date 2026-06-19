@@ -1,0 +1,32 @@
+# 作者：阿洋
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.env
+
+# Node
+node_modules/
+.pnpm-store/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak

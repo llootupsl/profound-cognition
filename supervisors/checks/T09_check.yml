@@ -1,0 +1,68 @@
+# 作者：阿洋
+task_id: "T09"
+task_file: "T09_cog_reason.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "推理路径数是否为 7 条，与 path_config.paths 一致？每条路径的 analysis_layer 是否互不重复（对照 path_config.layers_used 一一验证）？路径间是否有实质性分化（含独立meta_assumption+完整reasoning_chain+置信度）？路径间有共识/分歧矩阵？"
+    severity: CRITICAL
+  - id: D03
+    description: "M9 主线竞争择优：是否已执行五维加权评分（证据强度25%+解释力25%+反证容忍度20%+新颖性15%+可扩展性15%）？主线得分是否 ≥ 60 分？主线与第二名分差是否 ≥ 5 分？评分是否有具体理由？若任一不满足，FAIL → 退回 Step A"
+    severity: CRITICAL
+  - id: D04_M9
+    description: "M9_competition_executed == true：M9 主线竞争择优是否已执行（4 阶段：筛选 3-5 条最强路径→独立展开→五维对抗性评分→排名）？是否仅停留在声明层面而无实际评分数据？"
+    severity: CRITICAL
+  - id: D05_M9
+    description: "M9_mainline_ratio ≥ 0.60：主线（Rank 1 路径）在最终综合叙事中的占比是否 ≥ 60%？若主线占比 < 60%，说明路径区分度不足或存在平均分配倾向，FAIL"
+    severity: CRITICAL
+  - id: D06_M9
+    description: "M9_score_detail == true：五维评分每个维度的每项评分是否附有具体理由（基于实际证据和论证质量，非主观偏好）？若出现'综合判断''整体评估'等模糊表述替代具体理由，FAIL"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+  - id: I03
+    description: "pruning_report 的三个子字段（noise_variables_eliminated / root_variables_expanded / paths_redistributed）是否都存在"
+    severity: MAJOR
+  - id: I04
+    description: "pruning_report 中 noise_variables_eliminated + root_variables_expanded 之和是否等于模式指定的总变量数"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL

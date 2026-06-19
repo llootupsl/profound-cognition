@@ -1,0 +1,55 @@
+# 作者：阿洋
+node: T_meta13_14_tragic_vital
+desc: "元维度13-14：悲剧智慧+知识活化检查"
+critical_path: true
+checks:
+  - id: TM13-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "元维度13（悲剧智慧）是否产出 ≥ 3个方面"
+    validate: "output.dim_13_tragic_wisdom.aspects ≥ 3"
+  - id: TM13-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "元维度14（知识活化）是否产出 ≥ 3个方面"
+    validate: "output.dim_14_knowledge_vitalization.aspects ≥ 3"
+  - id: TM13-C03
+    type: quality
+    severity: HIGH
+    desc: "悲剧智慧是否识别 ≥ 3个不可调和矛盾"
+    validate: "dim_13_tragic_wisdom 含 ≥ 3个 '不可调和矛盾' 或 'irreconcilable tensions'"
+  - id: TM13-C04
+    type: quality
+    severity: HIGH
+    desc: "悲剧智慧是否含悲剧性选择框架（如价值冲突矩阵）"
+    validate: "dim_13_tragic_wisdom 含 '价值冲突' 或 'tragic choice' 分析框架"
+  - id: TM13-C05
+    type: quality
+    severity: HIGH
+    desc: "知识活化是否含知识→行动转化路径"
+    validate: "dim_14_knowledge_vitalization 含 ≥ 2条 '知识→行动' 转化路径"
+  - id: TM13-C06
+    type: quality
+    severity: HIGH
+    desc: "知识活化是否含叙事化/故事化策略"
+    validate: "dim_14_knowledge_vitalization 含 '叙事化' 或 'narrative strategy' 要素"
+  - id: TM13-C07
+    type: consistency
+    severity: MEDIUM
+    desc: "悲剧智慧是否与T25/dim_14悲剧性智慧一致"
+    validate: "dim_13_tragic_wisdom 与 T25/dim_14 中 '悲剧性智慧' 内容不矛盾"
+  - id: TM13-C08
+    type: quality
+    severity: MEDIUM
+    desc: "知识活化是否含受众适配策略"
+    validate: "dim_14_knowledge_vitalization 含 ≥ 2种受众类型的适配策略"
+  - id: TM13-C09
+    type: quality
+    severity: LOW
+    desc: "悲剧智慧是否避免虚无主义（含建设性维度）"
+    validate: "dim_13_tragic_wisdom 含 '建设性' 或 'constructive' 方向"
+  - id: TM13-C10
+    type: quality
+    severity: LOW
+    desc: "知识活化是否含传播媒介策略"
+    validate: "dim_14_knowledge_vitalization 含 ≥ 3种传播媒介建议"

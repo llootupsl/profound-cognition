@@ -1,0 +1,86 @@
+作者：阿洋
+dowhy>=0.11
+econml>=0.15
+causalnex>=0.12
+gcastle>=1.0
+pgmpy>=0.1.24
+tigramite>=5.2
+pyro-ppl>=1.9
+pymc>=5.10
+mesa>=2.1
+ema_workbench>=2.4
+SALib>=1.5
+owlready2>=0.46
+rdflib>=7.0
+pykeen>=1.10
+pymcdm>=0.1
+ahpy>=0.1
+bertopic>=0.16
+scispaCy>=0.5
+pdfplumber>=0.10
+pandas_datareader>=0.10
+networkx>=3.2
+scikit-learn>=1.4
+numpy>=1.26
+scipy>=1.12
+lightgbm>=4.2
+torch>=2.2
+
+# === 补充依赖 ===
+# 数据处理与可视化
+pandas>=2.0
+plotly>=5.18
+matplotlib>=3.8
+
+# 配置与验证
+pyyaml>=6.0
+pydantic>=2.5
+
+# HTTP 与 Web 抓取
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=5.0
+
+# 模板渲染
+jinja2>=3.1
+
+# 图像处理
+pillow>=10.0
+
+# CLI 与终端
+click>=8.1
+rich>=13.7
+tqdm>=4.66
+
+# 日志
+loguru>=0.7
+
+# === Phase 7 科学层依赖 ===
+# 图数据库
+neo4j>=5.20
+
+# LLM API 客户端
+openai>=1.30
+anthropic>=0.25
+google-generativeai>=0.6
+
+# 异步 HTTP
+aiohttp>=3.9
+httpx>=0.27
+
+# 文档转换
+pypandoc>=1.13
+arxiv>=2.1
+
+# 环境管理
+python-dotenv>=1.0
+
+# 重试与容错
+tenacity>=8.2
+
+# JSON Schema 验证
+jsonschema>=4.21
+
+# 科学计算补充
+sympy>=1.12
+statsmodels>=0.14

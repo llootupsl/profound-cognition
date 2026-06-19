@@ -1,0 +1,45 @@
+# 作者：阿洋
+node: TM07_ontology_export
+desc: "本体导出检查"
+critical_path: false
+checks:
+  - id: TM07-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "本体是否含实体/关系/属性三级结构"
+    validate: "output.ontology 含 entities, relations, attributes 三字段"
+  - id: TM07-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "实体数量是否 ≥ 20个"
+    validate: "output.ontology.entities ≥ 20"
+  - id: TM07-C03
+    type: completeness
+    severity: HIGH
+    desc: "关系类型是否 ≥ 5种（如causes/influences/part_of/depends_on/contradicts）"
+    validate: "output.ontology.relations 中关系类型种类 ≥ 5"
+  - id: TM07-C04
+    type: consistency
+    severity: HIGH
+    desc: "本体实体是否与T24维度分析一致"
+    validate: "entities 中 ≥ 10个可追溯到T24/dim_*的对应概念"
+  - id: TM07-C05
+    type: quality
+    severity: HIGH
+    desc: "导出格式是否为标准本体格式（OWL/RDF/JSON-LD）"
+    validate: "output.export_format ∈ {OWL, RDF, JSON-LD, Turtle}"
+  - id: TM07-C06
+    type: completeness
+    severity: MEDIUM
+    desc: "每实体是否含定义和来源"
+    validate: "≥ 80%的 entities 含 definition 和 source 字段"
+  - id: TM07-C07
+    type: quality
+    severity: MEDIUM
+    desc: "本体是否含层级结构（subclass/is-a关系）"
+    validate: "ontology 含 hierarchy 或 subclass 关系"
+  - id: TM07-C08
+    type: quality
+    severity: LOW
+    desc: "本体是否可序列化验证（无循环依赖/孤立实体）"
+    validate: "ontology 无孤立实体（无relation连接的entity ≤ 2个）"

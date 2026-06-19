@@ -1,0 +1,50 @@
+# 作者：阿洋
+# T01b Voice Calibration Supervisor Check
+task_id: T01b
+task_name: voice_calibration
+checks:
+  - id: T01b-CRIT-001
+    level: CRITICAL
+    name: persona_card_fields_complete
+    rule: persona_card 必须包含 A_core_identity, B_communication_style, C_expertise_domains, D_value_stance, E_signature_phrases, F_emotional_baseline, G_audience_distance, H_narrative_preference, I_emotional_expressions, J_self_deprecation_style 全部 10 个字段
+    validation: all([f in persona_card for f in 'ABCDEFGHIJ'])
+  - id: T01b-CRIT-002
+    level: CRITICAL
+    name: expertise_domains_non_empty
+    rule: C_expertise_domains 必须为数组且长度 >= 1
+    validation: isinstance(persona_card.C, list) and len(persona_card.C) >= 1
+  - id: T01b-CRIT-003
+    level: CRITICAL
+    name: signature_phrases_non_empty
+    rule: E_signature_phrases 必须为数组且长度 >= 2
+    validation: isinstance(persona_card.E, list) and len(persona_card.E) >= 2
+  - id: T01b-CRIT-004
+    level: CRITICAL
+    name: enum_values_valid
+    rule: 所有字段值必须在规定的枚举范围内
+    validation: all([persona_card[f] in ENUM_RANGES[f] for f in 'ABCDEFGHIJ'])
+  - id: T01b-CRIT-005
+    level: CRITICAL
+    name: voice_profile_derived_complete
+    rule: voice_profile_derived 必须包含 tone_guidelines, forbidden_patterns, structural_preference, emotional_rhythm 且均非空
+    validation: all([persona_card.voice_profile_derived[k] for k in ['tone_guidelines', 'forbidden_patterns', 'structural_preference', 'emotional_rhythm']])
+  - id: T01b-CRIT-006
+    level: CRITICAL
+    name: tone_guidelines_length
+    rule: tone_guidelines 长度 >= 3
+    validation: len(persona_card.voice_profile_derived.tone_guidelines) >= 3
+  - id: T01b-CRIT-007
+    level: CRITICAL
+    name: forbidden_patterns_length
+    rule: forbidden_patterns 长度 >= 2
+    validation: len(persona_card.voice_profile_derived.forbidden_patterns) >= 2
+  - id: T01b-CRIT-008
+    level: CRITICAL
+    name: source_explicit_or_inferred
+    rule: 每个字段的 source 必须为 explicit 或 inferred
+    validation: all([persona_card[f].source in ['explicit', 'inferred'] for f in 'ABCDEFGHIJ'])
+  - id: T01b-CRIT-009
+    level: CRITICAL
+    name: evidence_non_empty
+    rule: 每个字段的 evidence 必须非空
+    validation: all([len(persona_card[f].evidence) > 0 for f in 'ABCDEFGHIJ'])

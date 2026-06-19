@@ -1,0 +1,98 @@
+# 作者：阿洋
+# T20c_course_render Supervisor Check
+check_id: T20c_course_render_check
+target_node: T20c_course_render
+description: "课程材料渲染质量检查"
+
+checks:
+  - name: output_type_confirmation
+    description: "output_type_confirmed 是否为 course_material"
+    check:
+      - field: output_type_confirmed
+        condition: "eq"
+        value: "course_material"
+        on_fail: "output_type 不匹配，退回 T20c 确认路由"
+
+  - name: learning_level_set
+    description: "学习层级是否已确定"
+    check:
+      - field: learning_level
+        condition: "in"
+        value: ["beginner", "intermediate", "advanced"]
+        on_fail: "学习层级未确定，退回 T20c 判定"
+
+  - name: pre_render_actions
+    description: "5 项预渲染动作是否全部完成"
+    check:
+      - field: pre_render_actions.scores_stripped
+        condition: "eq"
+        value: true
+        on_fail: "评分未剥离，退回 T20c 执行 pre_render"
+      - field: pre_render_actions.verdicts_stripped
+        condition: "eq"
+        value: true
+        on_fail: "裁决未剥离，退回 T20c 执行 pre_render"
+      - field: pre_render_actions.internal_notes_removed
+        condition: "eq"
+        value: true
+        on_fail: "内部标记未移除，退回 T20c 执行 pre_render"
+      - field: pre_render_actions.confidence_annotations_applied
+        condition: "eq"
+        value: true
+        on_fail: "置信度标注未附加，退回 T20c 执行 pre_render"
+      - field: pre_render_actions.teaching_narrative_applied
+        condition: "eq"
+        value: true
+        on_fail: "教学叙事未应用，退回 T20c 执行 pre_render"
+
+  - name: five_stage_coverage
+    description: "5 阶段学习旅程是否全部覆盖"
+    check:
+      - field: learning_journey_map.stage_1_knowledge_entry
+        condition: "ne"
+        value: ""
+        on_fail: "阶段一（知识入门）缺失，退回 T20c 补全"
+      - field: learning_journey_map.stage_2_method_mastery
+        condition: "ne"
+        value: ""
+        on_fail: "阶段二（方法掌握）缺失，退回 T20c 补全"
+      - field: learning_journey_map.stage_3_deep_analysis
+        condition: "ne"
+        value: ""
+        on_fail: "阶段三（深度分析）缺失，退回 T20c 补全"
+      - field: learning_journey_map.stage_4_deepened_understanding
+        condition: "ne"
+        value: ""
+        on_fail: "阶段四（深化理解）缺失，退回 T20c 补全"
+      - field: learning_journey_map.stage_5_integrated_review
+        condition: "ne"
+        value: ""
+        on_fail: "阶段五（综合回顾）缺失，退回 T20c 补全"
+
+  - name: M10_graduation
+    description: "L8 逼退函数全部满足"
+    check:
+      - field: M10_knowledge_points_per_week
+        condition: "gte"
+        value: 5
+        on_fail: "每周知识点不足 5 个"
+      - field: M10_cases_per_lesson
+        condition: "gte"
+        value: 3
+        on_fail: "每课案例不足 3 个"
+      - field: M14_paragraph_pass_rate
+        condition: "eq"
+        value: 1.0
+        on_fail: "存在未通过 M14 闸门的段落，退回 T20c 修改"
+
+  - name: exhaust_retry_check
+    description: "穷尽重试检查：所有渲染路径是否已穷尽尝试（引用 exhaust-retry-protocol.md）"
+    check:
+      - field: exhaust_retry_all_paths_attempted
+        condition: "eq"
+        value: true
+        on_fail: "未穷尽尝试所有渲染路径，退回 T20c 继续重试"
+      - field: exhaust_retry_quality_improving
+        condition: "eq"
+        value: true
+        on_fail: "重试产出质量未持续改进，退回 T20c 调整策略后继续重试"

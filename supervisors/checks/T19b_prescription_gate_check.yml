@@ -1,0 +1,73 @@
+# 作者：阿洋
+task_id: "T19b_prescription_gate"
+task_file: "tasks/T19b_prescription_gate.md"
+
+structural_checks:
+  - id: T19bG-S01
+    description: "prescription_gate_result 字段存在且值为 pass 或 fail"
+    severity: CRITICAL
+  - id: T19bG-S02
+    description: "valid_prescriptions 中每条处方包含 action / timeline / success_criteria / confidence / evidence_chain / level 六个必填字段"
+    severity: CRITICAL
+  - id: T19bG-S03
+    description: "gate_summary 字段存在且包含 total_evaluated / valid_count / downgraded_count / rejected_count 四个计数"
+    severity: CRITICAL
+  - id: T19bG-S04
+    description: "无处方时输出包含 no_prescription_needed 标记及理由（prescription_gate_result 为 pass）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: T19bG-D01
+    description: "每条 valid_prescription 的 action 字段为具体可执行动词短语，非模糊表述（如'考虑''评估'等弱动词开头不合格）"
+    severity: CRITICAL
+  - id: T19bG-D02
+    description: "每条 valid_prescription 的 timeline 字段为可量化时间范围，不含'尽快''适时''条件成熟时'等模糊表述"
+    severity: CRITICAL
+  - id: T19bG-D03
+    description: "每条 valid_prescription 的 success_criteria 字段为可度量验证条件，非主观判断标准"
+    severity: CRITICAL
+  - id: T19bG-D04
+    description: "evidence_chain 中每项 source_ref 可追溯至 NRSF-Full 中的 §ref 标记"
+    severity: CRITICAL
+  - id: T19bG-D05
+    description: "confidence 值在 [0, 1] 范围内且与 evidence_chain 论证强度一致"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: T19bG-I01
+    description: "confidence < 0.6 的处方不在 valid_prescriptions 中（应出现在 downgraded_prescriptions）"
+    severity: CRITICAL
+  - id: T19bG-I02
+    description: "互斥处方对已显式处理（至少一方被拒绝或标注待重试），无未处理的矛盾处方共存于 valid_prescriptions"
+    severity: CRITICAL
+  - id: T19bG-I03
+    description: "gate_summary 中各计数值与实际处方列表长度一致（valid_count == len(valid_prescriptions) 等）"
+    severity: CRITICAL
+  - id: T19bG-I04
+    description: "prescription_gate_result 为 fail 时，rejected_prescriptions 非空"
+    severity: CRITICAL
+  - id: T19bG-I05
+    description: "downgraded_prescriptions 中每条包含 downgrade_reason 且值为枚举值之一（low_confidence / mutual_exclusion / evidence_insufficient）"
+    severity: CRITICAL
+
+constitution_checks:
+  - id: T19bG-C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量 < 3（action/timeline/success_criteria 字段中）"
+    severity: CRITICAL
+  - id: T19bG-C02
+    constitution_ref: "P2"
+    description: "必填字段无缺失"
+    severity: CRITICAL
+  - id: T19bG-C03
+    constitution_ref: "P3"
+    description: "数据有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: T19bG-C04
+    constitution_ref: "P4"
+    description: "重试历史持续改进（每次重试产出质量优于前次）"
+    severity: CRITICAL
+  - id: T19bG-C05
+    constitution_ref: "P5"
+    description: "未对已修正项重复判定 FAIL"
+    severity: CRITICAL

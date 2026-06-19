@@ -1,0 +1,55 @@
+# 作者：阿洋
+node: T26_insight_quality
+desc: "跨维度洞察质量深度检查"
+critical_path: false
+checks:
+  - id: T26I-C01
+    type: quality
+    severity: CRITICAL
+    desc: "跨维度洞察是否含因果机制（非仅相关性）"
+    validate: "≥ 4个 cross_insight 的 insight 字段含因果机制描述（'导致''触发''驱动'等）"
+  - id: T26I-C02
+    type: quality
+    severity: CRITICAL
+    desc: "洞察是否为涌现属性（非单维度可推）"
+    validate: "每个 insight 表达的内容无法从单一维度内容直接推导"
+  - id: T26I-C03
+    type: quality
+    severity: HIGH
+    desc: "evidence引用是否精确到具体§ref位置（非仅§T24章节级）"
+    validate: "≥ 50%的 evidence 引用精确到 aspect 级别（如 §T24/dim_5/aspect_2）"
+  - id: T26I-C04
+    type: quality
+    severity: HIGH
+    desc: "跨维度洞察是否含矛盾性与张力识别"
+    validate: "≥ 2个 insight 识别维度间矛盾或张力（如 '技术推动×伦理约束'）"
+  - id: T26I-C05
+    type: quality
+    severity: HIGH
+    desc: "3维度及以上组合洞察是否存在"
+    validate: "至少1个 insight 的 dimensions 包含 ≥ 3个维度"
+  - id: T26I-C06
+    type: quality
+    severity: HIGH
+    desc: "洞察方向性是否明确（非中性模糊陈述）"
+    validate: "每个 insight 含明确方向性判断（非 '可能有关' 类模糊表述）"
+  - id: T26I-C07
+    type: quality
+    severity: MEDIUM
+    desc: "洞察等级标注是否合理（P0/P1/P2）"
+    validate: "P0洞察占比 10%-30% AND P2洞察占比 20%-40%"
+  - id: T26I-C08
+    type: quality
+    severity: MEDIUM
+    desc: "是否存在跨层洞察（宏观×微观维度组合）"
+    validate: "≥ 1个 insight 含 '宏观-微观' 层级的维度组合"
+  - id: T26I-C09
+    type: quality
+    severity: LOW
+    desc: "洞察可操作性（是否含行动启示）"
+    validate: "≥ 3个 insight 的 insight 字段含行动启示或决策建议"
+  - id: T26I-C10
+    type: quality
+    severity: LOW
+    desc: "洞察新颖性自评（是否含'已知'vs'新发现'标注）"
+    validate: "≥ 50%的 insight 含新颖性标注（'已知' / '新发现' / '反共识'）"

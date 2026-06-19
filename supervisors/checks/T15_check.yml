@@ -1,0 +1,73 @@
+# 作者：阿洋
+task_id: "T15"
+task_file: "T15_domain_analysis.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+  - id: S03
+    description: "domain_coverage 对象是否存在于输出中（含 prioritized_domains, additionally_activated_domains, skipped_domains, cross_domain_insights 四个子字段）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "是否激活了推荐的领域引擎？每个引擎有核心分析框架+关键变量+领域争议+关联点？有跨领域交叉验证？"
+    severity: CRITICAL
+  - id: D03
+    description: "domain_coverage 完整度检查：additionally_activated_domains + skipped_domains 总数是否等于 35 − len(prioritized_domains)？每个额外激活/跳过的引擎是否有 relevance_score 和 rationale/reason？cross_domain_insights 是否非空？"
+    severity: CRITICAL
+  - id: D04
+    description: "Phase 2 全覆盖扫描：是否对全部35个领域引擎完成了相关性评估？是否每个引擎都有三维度评分（关键词重叠度、方法匹配度、指标适用性）？"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+  - id: I03
+    description: "domain_coverage 计数一致性：len(activated_engines) == len(prioritized_domains) + len(additionally_activated_domains)"
+    severity: CRITICAL
+  - id: I04
+    description: "token 数是否未超 2500"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失（含 domain_coverage 四个子字段）"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+  - id: C06
+    constitution_ref: "P2"
+    description: "domain_coverage.additionally_activated_domains 中每个条目是否含有 relevance_score 和 activation_rationale"
+    severity: CRITICAL
+  - id: C07
+    constitution_ref: "P2"
+    description: "domain_coverage.skipped_domains 中每个条目是否含有 relevance_score 和 skip_reason"
+    severity: CRITICAL

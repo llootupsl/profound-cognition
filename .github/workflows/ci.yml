@@ -1,0 +1,28 @@
+# 作者：阿洋
+name: CI
+on: [push, pull_request]
+jobs:
+  integrity-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run reference integrity check
+        run: python scripts/reference-integrity.py
+  exhaust-consistency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run EXHAUST consistency check
+        run: python scripts/exhaust-consistency-check.py
+  tasks-integrity-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tasks/ directory health check
+        run: python scripts/tasks-integrity-check.py
+  encoding-compatibility-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run cross-platform encoding compatibility check
+        run: python scripts/encoding-compatibility-check.py

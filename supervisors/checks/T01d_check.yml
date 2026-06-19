@@ -1,0 +1,12 @@
+# 作者：阿洋
+check_id: "T01d"
+description: "人设故事解析质检"
+checks:
+  - id: "D01"
+    rule: "identity 已从故事中抽取"
+  - id: "D02"
+    rule: "personal_stories 数组非空"
+  - id: "D03"
+    rule: "HKR 三项均已打分"
+  - id: "D04"
+    rule: "故事清晰度已评定"

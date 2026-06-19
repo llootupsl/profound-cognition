@@ -1,0 +1,45 @@
+# 作者：阿洋
+node: TM05_meta_reflect
+desc: "元反思检查"
+critical_path: true
+checks:
+  - id: TM05-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "元反思是否含3层结构（方法反思/假设反思/立场反思）"
+    validate: "output 含 method_reflection, assumption_reflection, stance_reflection 三字段"
+  - id: TM05-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "方法反思是否覆盖全流程（T01至T28）"
+    validate: "method_reflection 覆盖 ≥ 10个上游节点"
+  - id: TM05-C03
+    type: quality
+    severity: HIGH
+    desc: "假设反思是否识别 ≥ 5个关键假设"
+    validate: "assumption_reflection 含 ≥ 5个假设且每个含 validity_assessment"
+  - id: TM05-C04
+    type: quality
+    severity: HIGH
+    desc: "立场反思是否识别认知偏见"
+    validate: "stance_reflection 含 ≥ 3个认知偏见识别（如确认偏误/锚定效应/可用性启发）"
+  - id: TM05-C05
+    type: quality
+    severity: HIGH
+    desc: "元反思是否产生改进建议"
+    validate: "output 含 improvement_recommendations ≥ 3条"
+  - id: TM05-C06
+    type: quality
+    severity: MEDIUM
+    desc: "知识论立场是否显式声明（如批判实在论/建构论/实用主义）"
+    validate: "stance_reflection 含 epistemological_position 声明"
+  - id: TM05-C07
+    type: quality
+    severity: MEDIUM
+    desc: "反思深度是否触及二阶反思（对反思的反思）"
+    validate: "output 含 second_order_reflection 字段"
+  - id: TM05-C08
+    type: consistency
+    severity: LOW
+    desc: "改进建议是否可追溯至具体节点"
+    validate: "每条 improvement_recommendation 含 target_node 字段"

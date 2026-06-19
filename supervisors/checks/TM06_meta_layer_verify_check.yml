@@ -1,0 +1,45 @@
+# 作者：阿洋
+node: TM06_metalayer_verify
+desc: "元层验证检查"
+critical_path: true
+checks:
+  - id: TM06-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "元层验证是否覆盖5层（数据层/方法层/解释层/价值层/行动层）"
+    validate: "output.verification_layers 含 data_layer, method_layer, interpretation_layer, value_layer, action_layer"
+  - id: TM06-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "每层是否含验证标准和验证结果"
+    validate: "每层含 criteria 和 result ∈ {PASS, FAIL, PARTIAL}"
+  - id: TM06-C03
+    type: quality
+    severity: HIGH
+    desc: "数据层验证是否检查源可靠性（≥ 80%源为高可信）"
+    validate: "data_layer 含 source_reliability 评估且 high_credibility_rate ≥ 0.80"
+  - id: TM06-C04
+    type: quality
+    severity: HIGH
+    desc: "方法层验证是否检查方法适当性"
+    validate: "method_layer 含 method_appropriateness 评估"
+  - id: TM06-C05
+    type: quality
+    severity: HIGH
+    desc: "解释层验证是否检查多元解释可能性"
+    validate: "interpretation_layer 含 alternative_interpretations ≥ 2"
+  - id: TM06-C06
+    type: quality
+    severity: HIGH
+    desc: "价值层验证是否检查价值预设透明度"
+    validate: "value_layer 含 value_assumptions 列表且 ≥ 3条"
+  - id: TM06-C07
+    type: quality
+    severity: MEDIUM
+    desc: "行动层验证是否检查建议可行性"
+    validate: "action_layer 含 feasibility_assessment 且含资源/时间/能力维度"
+  - id: TM06-C08
+    type: completeness
+    severity: LOW
+    desc: "验证总报告是否含PASS/FAIL比率"
+    validate: "output 含 overall_verdict 且含 pass_rate 数值"

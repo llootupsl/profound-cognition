@@ -1,0 +1,96 @@
+# 作者：阿洋
+task_id: "T13"
+task_file: "T13_cog_synthesize.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+  - id: S03
+    description: "depth_satisfaction 对象是否存在于输出中（含 score, unsolved_tensions, trigger_second_pass, scoring_rationale）"
+    severity: CRITICAL
+  - id: S04
+    description: "emergent_insights 对象是否存在于输出中（含 Q1_beyond_visible, Q2_deeper_mechanism, Q3_meta_pattern）"
+    severity: CRITICAL
+  - id: S05
+    description: "depth_signal 对象是否存在于输出中（含 triggered, triggered_signals 数组）"
+    severity: CRITICAL
+  - id: S06
+    description: "depth_signal.triggered_signals 中每条是否含 phase / source / description / severity / recommended_focus 五个必需字段"
+    severity: CRITICAL
+  - id: S07
+    description: "depth_signal.triggered_signals 中每条 phase 是否为 manual 或 passthrough（二选一）"
+    severity: CRITICAL
+  - id: S08
+    description: "synthesis_meta 对象是否存在于输出中（含 depth_signal_triggered, triggered_signal_types, deep_recursive_focus, signal_priority, signal_root_analysis_complete, requires_deep_recursion 六个必需字段）"
+    severity: CRITICAL
+  - id: S09
+    description: "synthesis_meta.depth_signal_triggered 是否与 depth_signal.triggered 一致"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "CL1-CL6跃迁记录完整？每层含跃迁前+跃迁类型+跃迁后+驱动力？收敛清单7项逐项结果？核心结论≥3个且各有置信度？"
+    severity: CRITICAL
+  - id: D03
+    description: "emergent_insights 非空检查：Q1_beyond_visible, Q2_deeper_mechanism, Q3_meta_pattern 是否均非空且非占位符（如'无'、'N/A'、空字符串）"
+    severity: CRITICAL
+  - id: D04
+    description: "depth_satisfaction 完整性检查：score 是否在 0.0-1.0 范围内？unsolved_tensions 若有条目则每项含 tension/severity/related_paths？trigger_second_pass 是否为 boolean？scoring_rationale 是否非空且 ≥ 50 字符？"
+    severity: CRITICAL
+  - id: D05
+    description: "depth_signal 完整性检查：triggered 是否为 boolean？triggered_signals 数组中每条是否含 phase（manual|passthrough）/ source / description / severity（critical|significant）/ recommended_focus？若 triggered == true，triggered_signals 不可为空数组"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+  - id: C06
+    constitution_ref: "P2"
+    description: "emergent_insights.Q1-Q3 是否非空且含实质性内容（非占位符）"
+    severity: CRITICAL
+  - id: C07
+    constitution_ref: "P2"
+    description: "depth_satisfaction 四项是否全部存在且 score 在 [0.0, 1.0] 区间内"
+    severity: CRITICAL
+  - id: C08
+    constitution_ref: "P2"
+    description: "depth_signal.triggered 必须为 boolean，triggered_signals 必须为数组，若 triggered==true 则数组非空且每条含 recommended_focus"
+    severity: CRITICAL
+  - id: C09
+    constitution_ref: "P2"
+    description: "synthesis_meta 六字段（depth_signal_triggered, triggered_signal_types, deep_recursive_focus, signal_priority, signal_root_analysis_complete, requires_deep_recursion）必须全部存在，depth_signal_triggered 与 depth_signal.triggered 必须一致，requires_deep_recursion==true 时 deep_recursive_focus 必须非空"
+    severity: CRITICAL

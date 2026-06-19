@@ -1,0 +1,37 @@
+# 作者：阿洋
+# Supervisor Check: T15b 跨域共振矩阵
+
+check_id: T15b
+task_file: tasks/T15b_cross_domain_matrix.md
+severity: MEDIUM
+
+checks:
+  - id: T15b-M1
+    description: "激活引擎数是否足以构建矩阵"
+    rule: "count(activated_engines) >= 3"
+    fail_action: "视为 COMPLETED（SKIPPED==COMPLETED 规则）— 引擎数不足（<3），T15b 跳过但视为已完成"
+
+  - id: T15b-M2
+    description: "共鸣矩阵条目数量是否满足最低要求"
+    rule: "count(resonance_matrix) >= total_pairs * 0.5"
+    fail_action: "返回不足原因，要求补充跨域分析"
+
+  - id: T15b-M3
+    description: "是否存在 TENSION 或 CASCADE 类型"
+    rule: "at least one TENSION_MARKED or CASCADE_CHAIN in resonance_matrix OR void_patterns contains NO_TENSION_FOUND"
+    fail_action: "要求补充冲突或因果链分析"
+
+  - id: T15b-M4
+    description: "CONV_STRONG/COMP_SYNTHESIS 条目的 synthesized_insight 是否完整"
+    rule: "ALL(CONV_STRONG and COMP_SYNTHESIS entries have non-empty synthesized_insight)"
+    fail_action: "标记缺失 synthesized_insight 的条目，要求补充"
+
+  - id: T15b-M5
+    description: "resonance_type 枚举值是否合法"
+    rule: "ALL(resonance_type IN [CONV_STRONG, COMP_SYNTHESIS, TENSION_MARKED, CASCADE_CHAIN, VOID_DETECTED])"
+    fail_action: "标记非法值，要求更正"
+
+  - id: T15b-M6
+    description: "cognition_gain_score 是否有效"
+    rule: "cognition_gain_score > 0"
+    fail_action: "要求重新评估跨域认知增益"

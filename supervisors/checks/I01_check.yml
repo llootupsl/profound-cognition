@@ -1,0 +1,46 @@
+# 作者：阿洋
+check_id: "I01"
+task_name: "迭代深化"
+protocol_ref: "iterative-deepening-protocol.md"
+
+must_pass:
+  - id: "I01-001"
+    check: "迭代深化已持续至所有P0缺口闭合或标注为不可闭合（质量驱动，无轮数上限）"
+    condition: "gaps_identified 中 severity=P0 的条目 status 均为 closed 或 unclosable"
+    severity: "blocking"
+
+  - id: "I01-002"
+    check: "所有 P0 缺口已闭合或标注为不可闭合"
+    condition: "gaps_identified 中 severity=P0 的条目 status 均为 closed 或 unclosable"
+    severity: "blocking"
+
+  - id: "I01-003"
+    check: "所有 P1 缺口已闭合或标注为不可闭合"
+    condition: "gaps_identified 中 severity=P1 的条目 status 均为 closed 或 unclosable"
+    severity: "blocking"
+
+  - id: "I01-004"
+    check: "每轮补研结果已追加到 NRSF-Full"
+    condition: "NRSF-Full 中存在 §I01-R{N} 子节，N 与 i01_rounds_completed 一致"
+    severity: "blocking"
+
+  - id: "I01-005"
+    check: "NRSF-Summary 已更新"
+    condition: "NRSF-Summary 中未闭合论证链与 i01_gap_analysis 一致"
+    severity: "blocking"
+
+  - id: "I01-006"
+    check: "T13 综合叙事已更新"
+    condition: "T13 综合叙事包含 I01 补研发现的融入"
+    severity: "blocking"
+
+warnings:
+  - id: "I01-W001"
+    check: "不可闭合缺口已标注原因"
+    condition: "所有 status=unclosable 的缺口均有原因标注"
+    severity: "warning"
+
+  - id: "I01-W002"
+    check: "补研搜索量达标"
+    condition: "每轮补研搜索次数 >= 15"
+    severity: "warning"

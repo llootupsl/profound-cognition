@@ -1,0 +1,51 @@
+# 作者：阿洋
+# 执行顺序一致性检查：T22→T19→T28→T17（链路本身无环，此为执行指引）
+node: T28_gate_final_depth
+desc: "最终Gate质量门控深度检查"
+critical_path: true
+checks:
+  - id: T28G-C01
+    type: quality
+    severity: CRITICAL
+    desc: "8项检查（含覆盖率/一致性/字数/引用/渲染/伪深度扫描/Lean4验证/子维度覆盖）全部执行并通过"
+    validate: "output.checks 含 8 项 AND 8 项全部 status='PASS'"
+  - id: T28G-C02
+    type: quality
+    severity: CRITICAL
+    desc: "博弈安全评级是否执行GT-HarmBench对齐检查"
+    validate: "check_results 中含 '博弈安全评级' 项 AND 评级结果 ∈ {SAFE, CAUTION, RISK, DANGER}"
+  - id: T28G-C03
+    type: quality
+    severity: HIGH
+    desc: "子维度覆盖深度（dim_1至dim_14每个至少3 aspect有实质内容）"
+    validate: "每个维度 ≥ 3个aspect的complete=true 且 字数 ≥ 150"
+  - id: T28G-C04
+    type: quality
+    severity: HIGH
+    desc: "跨维度引用完整性（§ref在T23/T24/T25间互链检查）"
+    validate: "T23/T24/T25之间的§ref交叉引用数 ≥ 10"
+  - id: T28G-C05
+    type: quality
+    severity: HIGH
+    desc: "字数阈值严格检查（≥ 100000 字，由 T20a 渲染扩展确保达标）"
+    validate: "output.total_words ≥ 100000"
+  - id: T28G-C06
+    type: quality
+    severity: MEDIUM
+    desc: "失败重试处理日志完整性"
+    validate: "status='FAIL'时 output.failures 中每项含 failure_reason, failed_check, retry_path 三字段"
+  - id: T28G-C07
+    type: quality
+    severity: MEDIUM
+    desc: "引用域名多样性（≥ 15个独立来源域名）"
+    validate: "reference_integrity 检查中来源域名总数 ≥ 15"
+  - id: T28G-C08
+    type: quality
+    severity: MEDIUM
+    desc: "渲染准备检查含3层验证（结构/内容/可视化）"
+    validate: "render_readiness 检查覆盖 '结构完整性' '内容一致性' '可视化资源就绪' 三层"
+  - id: T28G-C09
+    type: quality
+    severity: CRITICAL
+    desc: "Lean 4 形式化命题验证（M12）：至少3条关键因果命题完成形式化验证，无已知反例"
+    validate: "lean4_verification 中命题数 ≥ 3 AND 所有命题 status ∈ {PASS, PASS_WITH_WARNINGS}"

@@ -1,0 +1,45 @@
+# 作者：阿洋
+node: TM02_causal_verify
+desc: "因果验证检查"
+critical_path: true
+checks:
+  - id: TM02-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "因果链路图是否含 ≥ 5个节点和 ≥ 4条有向边"
+    validate: "output.causal_graph.nodes ≥ 5 AND edges ≥ 4"
+  - id: TM02-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "因果推断方法论是否声明（如DAG/SCM/Pearl框架）"
+    validate: "output.methodology 非空且含因果推断框架声明"
+  - id: TM02-C03
+    type: consistency
+    severity: HIGH
+    desc: "因果链路是否与T26跨维度洞察一致"
+    validate: "output.causal_graph 中的因果链与T26 cross_insights 中识别的关联一致"
+  - id: TM02-C04
+    type: quality
+    severity: HIGH
+    desc: "混杂因子识别是否完整"
+    validate: "output.confounders 含 ≥ 3个混杂因子且每个含 confounding_path 描述"
+  - id: TM02-C05
+    type: quality
+    severity: HIGH
+    desc: "因果方向性检验是否正确"
+    validate: "≥ 2条因果边含 direction_test 结果（如Granger/干预实验逻辑）"
+  - id: TM02-C06
+    type: quality
+    severity: MEDIUM
+    desc: "反事实推理是否 ≥ 2个场景"
+    validate: "output.counterfactuals ≥ 2"
+  - id: TM02-C07
+    type: quality
+    severity: MEDIUM
+    desc: "因果强度量化（每条边含效应大小估计）"
+    validate: "≥ 50%的 causal_graph edges 含 effect_size 字段"
+  - id: TM02-C08
+    type: completeness
+    severity: LOW
+    desc: "因果不确定性标注"
+    validate: "≥ 3条因果边含 uncertainty 评估（如 '置信度: 80%'）"

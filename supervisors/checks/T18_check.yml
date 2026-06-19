@@ -1,0 +1,62 @@
+# 作者：阿洋
+task_id: "T18"
+task_file: "T18_quality_bias.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "是否扫描了5类偏见（确认偏误/幸存者偏差/框架效应/锚定效应/可得性启发）？风格清单是否完整？"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+
+fairness_checks:
+  - id: F01
+    description: "输出公平性 4 项检测是否全部执行（stereotype_detection / group_stigmatization / discriminatory_expression / single_perspective）"
+    severity: CRITICAL
+    check_method: "schema_validation"
+  - id: F02
+    description: "overall_fairness_risk 是否与各 fairness 检测项 severity 分布一致"
+    severity: CRITICAL
+  - id: F03
+    description: "fairness_scan 中 detected=true 的项是否有明确的 evidence 列表"
+    severity: CRITICAL

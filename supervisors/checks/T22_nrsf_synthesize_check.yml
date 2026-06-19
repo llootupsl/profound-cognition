@@ -1,0 +1,56 @@
+# 作者：阿洋
+# 执行顺序一致性检查：T22→T19→T28→T17（链路本身无环，此为执行指引）
+node: T22_nrsf_quality
+desc: "NRSF叙事综合质量深度检查"
+critical_path: true
+checks:
+  - id: T22N-C01
+    type: quality
+    severity: CRITICAL
+    desc: "NRSF三部分叙事逻辑连贯性"
+    validate: "part_one→part_two→part_three 逻辑链条无断裂，每部分结尾含过渡句或§ref桥接"
+  - id: T22N-C02
+    type: quality
+    severity: CRITICAL
+    desc: "NRSF综合叙事是否避免机械拼接"
+    validate: "输出非纯摘录拼接，存在独立综合归纳段落 ≥ 3"
+  - id: T22N-C03
+    type: quality
+    severity: HIGH
+    desc: "叙事深度是否达到学术级（非科普级）"
+    validate: "专业术语密度 ≥ 15/千字 AND 无过度简化标志词（如'简单来说'超过1次）"
+  - id: T22N-C04
+    type: quality
+    severity: HIGH
+    desc: "跨章节认知跃迁是否自然（§ref引用上下文完整）"
+    validate: "每个§ref出现处前后 ≥ 50字提供足够上下文，无孤立引用"
+  - id: T22N-C05
+    type: quality
+    severity: HIGH
+    desc: "NRSF叙事是否保留关键不确定性"
+    validate: "输出中明确标注 ≥ 3处不确定性或开放问题"
+  - id: T22N-C06
+    type: quality
+    severity: HIGH
+    desc: "叙事中立性检查（无价值判断倾斜）"
+    validate: "全文极值副词（'必然''绝对''毫无疑问'）出现 ≤ 3次"
+  - id: T22N-C07
+    type: quality
+    severity: MEDIUM
+    desc: "叙事节奏控制（各部分比例均衡）"
+    validate: "part_one字数占比 20%-30% AND part_two占比 40%-50% AND part_three占比 20%-30%"
+  - id: T22N-C08
+    type: quality
+    severity: MEDIUM
+    desc: "元叙事标记是否清晰（显式告知读者综合来源）"
+    validate: "输出开头或结尾含 '综合§T01至§T16' 或类似来源声明"
+  - id: T22N-C09
+    type: quality
+    severity: LOW
+    desc: "可读性指标（段落长度适中）"
+    validate: "平均段落字数 100-300 字 AND 无单段超过 500 字"
+  - id: T22N-C10
+    type: quality
+    severity: LOW
+    desc: "NRSF-Full追加内容是否与正文一致"
+    validate: "nrsf_refs_consumed 中每项在正文中有对应实质性引用"

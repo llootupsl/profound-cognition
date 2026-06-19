@@ -1,0 +1,60 @@
+# 作者：阿洋
+node: T_gate_delta_scientific
+desc: "Gate-δ 科学层验证门控"
+critical_path: true
+checks:
+  - id: TGD-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "科学层7项检查是否全部执行"
+    validate: "output.checks 含 7 项检查且全部执行完毕"
+  - id: TGD-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "PASS/FAIL/WARN决策是否明确"
+    validate: "output.decision ∈ {PASS, FAIL, WARN}"
+  - id: TGD-C03
+    type: quality
+    severity: HIGH
+    desc: "系统动力学模型（TM01）是否通过验证"
+    validate: "TM01仿真结果与T25情景推演一致且无系统崩溃"
+  - id: TGD-C04
+    type: quality
+    severity: HIGH
+    desc: "因果链路（TM02）是否无循环论证"
+    validate: "causal_graph 无自循环（self-loop）且无逻辑跳跃"
+  - id: TGD-C05
+    type: quality
+    severity: HIGH
+    desc: "多智能体对抗（TM03）是否产生实质性进展"
+    validate: "TM03收敛性评估为 'converged' 或 'partial_convergence'"
+  - id: TGD-C06
+    type: quality
+    severity: HIGH
+    desc: "情景规划（TM04）是否与T25不矛盾"
+    validate: "TM04情景不直接推翻T25/dim_13的任何核心情景"
+  - id: TGD-C07
+    type: quality
+    severity: HIGH
+    desc: "元反思（TM05）是否产生 ≥ 3条可执行改进"
+    validate: "TM05 improvement_recommendations 中 ≥ 3条含具体执行步骤"
+  - id: TGD-C08
+    type: quality
+    severity: HIGH
+    desc: "元层验证（TM06）总体通过率是否 ≥ 80%"
+    validate: "TM06 overall_verdict.pass_rate ≥ 0.80"
+  - id: TGD-C09
+    type: completeness
+    severity: MEDIUM
+    desc: "本体导出（TM07）是否可被标准工具解析"
+    validate: "TM07 export_format 为标准格式且结构可解析"
+  - id: TGD-C10
+    type: quality
+    severity: MEDIUM
+    desc: "失败时退回路径是否正确"
+    validate: "decision='FAIL'时 return_target ∈ {TM01, TM02, TM03, TM04, TM05, TM06, TM07}"
+  - id: TGD-C11
+    type: quality
+    severity: LOW
+    desc: "科学层结论是否与全息框架（T23-T25）互洽"
+    validate: "output 含 '与全息框架一致性声明'"

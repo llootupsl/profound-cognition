@@ -1,0 +1,55 @@
+# 作者：阿洋
+node: T25_meta_dim_part3_depth
+desc: "全息框架第三部分-2维度深度质量检查"
+critical_path: true
+checks:
+  - id: T25M-C01
+    type: quality
+    severity: CRITICAL
+    desc: "情景推演是否含黑天鹅与灰犀牛情景"
+    validate: "dim_13.scenarios 中至少1个 '黑天鹅'（低概率高影响）和至少1个 '灰犀牛'（高概率高影响）情景"
+  - id: T25M-C02
+    type: quality
+    severity: CRITICAL
+    desc: "决策路径是否含无悔策略与对冲策略"
+    validate: "dim_13.decision_nodes 中至少1个 '无悔策略' 和至少1个 '对冲策略' 标注"
+  - id: T25M-C03
+    type: quality
+    severity: HIGH
+    desc: "风险识别是否含二阶风险"
+    validate: "dim_13.risks 中至少2个 '二阶风险'（应对措施引发的次生风险）"
+  - id: T25M-C04
+    type: quality
+    severity: HIGH
+    desc: "反直觉认识是否经得起直觉挑战"
+    validate: "dim_14中每个 '反直觉认识' 含 '直觉反应' 和 '为什么直觉错误' 两个子字段"
+  - id: T25M-C05
+    type: quality
+    severity: HIGH
+    desc: "第二阶效应是否含正反馈/负反馈循环分析"
+    validate: "dim_14.second_order_effects 中至少1个 '正反馈循环' 和至少1个 '负反馈循环' 识别"
+  - id: T25M-C06
+    type: quality
+    severity: HIGH
+    desc: "悲剧性智慧是否避免廉价安慰"
+    validate: "dim_14中 '悲剧性智慧' 不含 '最终会好的' '总有办法' 等廉价安慰句式"
+  - id: T25M-C07
+    type: quality
+    severity: MEDIUM
+    desc: "情景概率校准（主观概率是否自评置信度）"
+    validate: "每个scenario的key_uncertainty字段含置信度自评（如 '置信度: 70%'）"
+  - id: T25M-C08
+    type: quality
+    severity: MEDIUM
+    desc: "开放问题是否递进式排列（从操作级到哲学级）"
+    validate: "dim_14.open_questions 按操作级→战略级→哲学级递进排列"
+  - id: T25M-C09
+    type: quality
+    severity: LOW
+    desc: "风险对冲策略是否可操作（含具体行动建议）"
+    validate: "dim_13中 '风险对冲' 含 ≥ 3条具体可操作建议（有动词短语）"
+  - id: T25M-C10
+    type: quality
+    severity: LOW
+    desc: "决策节点是否含时序安排（不含优于含）"
+    validate: "dim_13.decision_nodes 中至少一个决策节点含时间窗口建议"

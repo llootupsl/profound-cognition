@@ -1,0 +1,833 @@
+{
+  "author": "阿洋",
+  "skill_name": "profound-cognition",
+  "version": "5.1.0",
+  "demo_prompt": "穷尽分析中国新能源汽车产业的竞争格局与供应链韧性",
+  "generated_at": "2026-06-17T07:40:52.825937",
+  "topology": {
+    "dag_nodes_total": 57,
+    "normal_nodes": 52,
+    "gate_nodes": 5,
+    "hard_gates": 6,
+    "edges": 82,
+    "phases": 5,
+    "phase_distribution": {
+      "P1": 15,
+      "P2": 9,
+      "P3": 8,
+      "P4": 6,
+      "P7": 19
+    }
+  },
+  "gates": [
+    {
+      "name": "Gate-α",
+      "node": "T07",
+      "check": "研究底座九层覆盖完整性"
+    },
+    {
+      "name": "Gate-β",
+      "node": "T14",
+      "check": "认知深度与收敛性"
+    },
+    {
+      "name": "Gate-γ",
+      "node": "T16",
+      "check": "领域适配与知识注入"
+    },
+    {
+      "name": "Gate-终",
+      "node": "T28",
+      "check": "全息框架14维完整性终审"
+    },
+    {
+      "name": "Gate-δ",
+      "node": "T_gate_delta",
+      "check": "哲学三元组与元维度门控"
+    }
+  ],
+  "hard_gates": [
+    {
+      "name": "G1",
+      "check": "字数下限校验（≥10万字）"
+    },
+    {
+      "name": "G2",
+      "check": "14维覆盖完整性校验"
+    },
+    {
+      "name": "G3",
+      "check": "科学层7模块落地校验"
+    },
+    {
+      "name": "G4",
+      "check": "哲学三元组存在性校验"
+    },
+    {
+      "name": "G5",
+      "check": "引用与事实可溯源校验"
+    },
+    {
+      "name": "G6",
+      "check": "EXHAUST穷尽性终审校验"
+    }
+  ],
+  "parallel_points": [
+    {
+      "nodes": [
+        "T10",
+        "T11",
+        "T12"
+      ],
+      "desc": "三路对抗验证（逻辑攻击/证据攻击/范围攻击）"
+    },
+    {
+      "nodes": [
+        "T17",
+        "T18"
+      ],
+      "desc": "事实核查与偏见检测"
+    },
+    {
+      "nodes": [
+        "T_philosophical_core",
+        "T_meta_dim_9_10",
+        "T_meta_dim_11_12",
+        "T_meta_dim_13_14",
+        "TM01"
+      ],
+      "desc": "Gate-终后并行启动（哲学核心+元维度+科学层M1）"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "T_env_probe",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "运行环境与模型能力探测",
+      "type": "node"
+    },
+    {
+      "id": "T00a",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "时间锚定",
+      "type": "node"
+    },
+    {
+      "id": "T01",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "输入分流",
+      "type": "node"
+    },
+    {
+      "id": "T01b",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "写作声音校准",
+      "type": "node"
+    },
+    {
+      "id": "T01c",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "输入情绪基调提取",
+      "type": "node"
+    },
+    {
+      "id": "T01d",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "人设故事解析",
+      "type": "node"
+    },
+    {
+      "id": "T00",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "研究大纲+母假设路由",
+      "type": "node"
+    },
+    {
+      "id": "T02",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "L1+L2研究底座",
+      "type": "node"
+    },
+    {
+      "id": "T03",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "L3结构变量",
+      "type": "node"
+    },
+    {
+      "id": "T03b",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "横纵交叉矩阵分析",
+      "type": "node"
+    },
+    {
+      "id": "T04",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "L4+L5比较叙事",
+      "type": "node"
+    },
+    {
+      "id": "T05",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "L6+L7证据利益",
+      "type": "node"
+    },
+    {
+      "id": "T06",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "L8+L9反事实边界",
+      "type": "node"
+    },
+    {
+      "id": "T07",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "Gate-α 研究底座门控",
+      "type": "gate"
+    },
+    {
+      "id": "T07b",
+      "phase": "P1",
+      "phase_name": "Phase 1：研究底座层（15节点）",
+      "description": "纵横交汇分析",
+      "type": "node"
+    },
+    {
+      "id": "T08",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "认知解构",
+      "type": "node"
+    },
+    {
+      "id": "T09",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "多路径推理（7条+分支剪枝）",
+      "type": "node"
+    },
+    {
+      "id": "T10",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "魔鬼代言人-逻辑攻击",
+      "type": "node"
+    },
+    {
+      "id": "T11",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "魔鬼代言人-证据攻击",
+      "type": "node"
+    },
+    {
+      "id": "T12",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "魔鬼代言人-范围攻击",
+      "type": "node"
+    },
+    {
+      "id": "T12b",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "三路对抗交叉融合",
+      "type": "node"
+    },
+    {
+      "id": "T13",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "认知综合+深度信号扫描+3轮递归",
+      "type": "node"
+    },
+    {
+      "id": "I01",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "迭代深化补研循环",
+      "type": "node"
+    },
+    {
+      "id": "T14",
+      "phase": "P2",
+      "phase_name": "Phase 2：认知流水线层（9节点）",
+      "description": "Gate-β 认知流水线门控",
+      "type": "gate"
+    },
+    {
+      "id": "T15",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "领域引擎分析",
+      "type": "node"
+    },
+    {
+      "id": "T15b",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "跨域共振矩阵",
+      "type": "node"
+    },
+    {
+      "id": "T16",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "Gate-γ 领域分析门控",
+      "type": "gate"
+    },
+    {
+      "id": "T13b",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "二次综合修正",
+      "type": "node"
+    },
+    {
+      "id": "T17",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "CoVe级联事实核查",
+      "type": "node"
+    },
+    {
+      "id": "T18",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "偏见检测+风格检查",
+      "type": "node"
+    },
+    {
+      "id": "T19",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "交付守卫",
+      "type": "node"
+    },
+    {
+      "id": "T19b",
+      "phase": "P3",
+      "phase_name": "Phase 3：领域分析与质量保障层（8节点）",
+      "description": "处方门控",
+      "type": "node"
+    },
+    {
+      "id": "T20a",
+      "phase": "P4",
+      "phase_name": "Phase 4：输出渲染与交付层（6节点）",
+      "description": "深度研究报告渲染",
+      "type": "node"
+    },
+    {
+      "id": "T20b",
+      "phase": "P4",
+      "phase_name": "Phase 4：输出渲染与交付层（6节点）",
+      "description": "公众号文章渲染",
+      "type": "node"
+    },
+    {
+      "id": "T20c",
+      "phase": "P4",
+      "phase_name": "Phase 4：输出渲染与交付层（6节点）",
+      "description": "课程材料渲染",
+      "type": "node"
+    },
+    {
+      "id": "T20_output_guard",
+      "phase": "P4",
+      "phase_name": "Phase 4：输出渲染与交付层（6节点）",
+      "description": "输出卫士",
+      "type": "node"
+    },
+    {
+      "id": "T20d_cross_media_review",
+      "phase": "P4",
+      "phase_name": "Phase 4：输出渲染与交付层（6节点）",
+      "description": "跨媒介审查",
+      "type": "node"
+    },
+    {
+      "id": "T21",
+      "phase": "P4",
+      "phase_name": "Phase 4：输出渲染与交付层（6节点）",
+      "description": "知识回收",
+      "type": "node"
+    },
+    {
+      "id": "T22",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "NRSF叙事综合（全息框架3部分）",
+      "type": "node"
+    },
+    {
+      "id": "T23",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "全息框架第一部分-问题认知与定义（4维度）",
+      "type": "node"
+    },
+    {
+      "id": "T24",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "全息框架第二部分-全维全域分析（8维度）",
+      "type": "node"
+    },
+    {
+      "id": "T25",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "全息框架第三部分-极限决策推理（2维度）",
+      "type": "node"
+    },
+    {
+      "id": "T26",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "跨维度洞察抽取（14维交叉）",
+      "type": "node"
+    },
+    {
+      "id": "T27",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "14维度关系可视化（3种图表）",
+      "type": "node"
+    },
+    {
+      "id": "T28",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "Gate-终 最终质量门控",
+      "type": "gate"
+    },
+    {
+      "id": "T_philosophical_core",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "哲学三元组审查（本体论/认识论/价值论）",
+      "type": "node"
+    },
+    {
+      "id": "T_meta_dim_9_10",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "元维度9-10：无知之学+认知神经心理学",
+      "type": "node"
+    },
+    {
+      "id": "T_meta_dim_11_12",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "元维度11-12：二阶方法论+深度时间思维",
+      "type": "node"
+    },
+    {
+      "id": "T_meta_dim_13_14",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "元维度13-14：悲剧性智慧+知识生命体化",
+      "type": "node"
+    },
+    {
+      "id": "TM01",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "系统动力学仿真与反馈回路建模",
+      "type": "node"
+    },
+    {
+      "id": "TM02",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "因果验证与反事实推断",
+      "type": "node"
+    },
+    {
+      "id": "TM03",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "多智能体对抗性综合",
+      "type": "node"
+    },
+    {
+      "id": "TM04",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "情景规划与不确定性景观",
+      "type": "node"
+    },
+    {
+      "id": "TM05",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "元认知反思与认知边界",
+      "type": "node"
+    },
+    {
+      "id": "TM06",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "14维+元维度扩展验证",
+      "type": "node"
+    },
+    {
+      "id": "TM07",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "知识图谱本体导出",
+      "type": "node"
+    },
+    {
+      "id": "T_gate_delta",
+      "phase": "P7",
+      "phase_name": "Phase 7：元维度引擎+科学层（19节点）",
+      "description": "Gate-δ 科学层门控",
+      "type": "gate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "T_env_probe",
+      "target": "T00a"
+    },
+    {
+      "source": "T_env_probe",
+      "target": "T01"
+    },
+    {
+      "source": "T01",
+      "target": "T01b"
+    },
+    {
+      "source": "T01b",
+      "target": "T01d"
+    },
+    {
+      "source": "T01b",
+      "target": "T00"
+    },
+    {
+      "source": "T00a",
+      "target": "T00"
+    },
+    {
+      "source": "T00",
+      "target": "T01c"
+    },
+    {
+      "source": "T00",
+      "target": "T02"
+    },
+    {
+      "source": "T02",
+      "target": "T03"
+    },
+    {
+      "source": "T03",
+      "target": "T03b"
+    },
+    {
+      "source": "T03b",
+      "target": "T04"
+    },
+    {
+      "source": "T02",
+      "target": "T04"
+    },
+    {
+      "source": "T04",
+      "target": "T05"
+    },
+    {
+      "source": "T05",
+      "target": "T06"
+    },
+    {
+      "source": "T06",
+      "target": "T07"
+    },
+    {
+      "source": "T07",
+      "target": "T07b"
+    },
+    {
+      "source": "T07",
+      "target": "T08"
+    },
+    {
+      "source": "T08",
+      "target": "T09"
+    },
+    {
+      "source": "T09",
+      "target": "T10"
+    },
+    {
+      "source": "T09",
+      "target": "T11"
+    },
+    {
+      "source": "T09",
+      "target": "T12"
+    },
+    {
+      "source": "T10",
+      "target": "T12b"
+    },
+    {
+      "source": "T11",
+      "target": "T12b"
+    },
+    {
+      "source": "T12",
+      "target": "T12b"
+    },
+    {
+      "source": "T12b",
+      "target": "T13"
+    },
+    {
+      "source": "T13",
+      "target": "I01"
+    },
+    {
+      "source": "I01",
+      "target": "T14"
+    },
+    {
+      "source": "T13",
+      "target": "T14"
+    },
+    {
+      "source": "T14",
+      "target": "T15"
+    },
+    {
+      "source": "T15",
+      "target": "T15b"
+    },
+    {
+      "source": "T15b",
+      "target": "T16"
+    },
+    {
+      "source": "T15",
+      "target": "T16"
+    },
+    {
+      "source": "T13",
+      "target": "T13b"
+    },
+    {
+      "source": "T15b",
+      "target": "T13b"
+    },
+    {
+      "source": "T16",
+      "target": "T17"
+    },
+    {
+      "source": "T16",
+      "target": "T18"
+    },
+    {
+      "source": "T17",
+      "target": "T19"
+    },
+    {
+      "source": "T18",
+      "target": "T19"
+    },
+    {
+      "source": "T19",
+      "target": "T19b"
+    },
+    {
+      "source": "T13",
+      "target": "T22"
+    },
+    {
+      "source": "T13b",
+      "target": "T22"
+    },
+    {
+      "source": "T14",
+      "target": "T22"
+    },
+    {
+      "source": "T15",
+      "target": "T22"
+    },
+    {
+      "source": "T15b",
+      "target": "T22"
+    },
+    {
+      "source": "T16",
+      "target": "T22"
+    },
+    {
+      "source": "T19",
+      "target": "T22"
+    },
+    {
+      "source": "T22",
+      "target": "T23"
+    },
+    {
+      "source": "T23",
+      "target": "T24"
+    },
+    {
+      "source": "T24",
+      "target": "T25"
+    },
+    {
+      "source": "T25",
+      "target": "T26"
+    },
+    {
+      "source": "T26",
+      "target": "T27"
+    },
+    {
+      "source": "T27",
+      "target": "T28"
+    },
+    {
+      "source": "T28",
+      "target": "T_philosophical_core"
+    },
+    {
+      "source": "T28",
+      "target": "T_meta_dim_9_10"
+    },
+    {
+      "source": "T28",
+      "target": "T_meta_dim_11_12"
+    },
+    {
+      "source": "T28",
+      "target": "T_meta_dim_13_14"
+    },
+    {
+      "source": "T28",
+      "target": "TM01"
+    },
+    {
+      "source": "TM01",
+      "target": "TM02"
+    },
+    {
+      "source": "TM02",
+      "target": "TM03"
+    },
+    {
+      "source": "TM03",
+      "target": "TM04"
+    },
+    {
+      "source": "TM04",
+      "target": "TM05"
+    },
+    {
+      "source": "TM05",
+      "target": "TM06"
+    },
+    {
+      "source": "TM06",
+      "target": "TM07"
+    },
+    {
+      "source": "TM07",
+      "target": "T_gate_delta"
+    },
+    {
+      "source": "T_philosophical_core",
+      "target": "T_gate_delta"
+    },
+    {
+      "source": "T_meta_dim_9_10",
+      "target": "T_gate_delta"
+    },
+    {
+      "source": "T_meta_dim_11_12",
+      "target": "T_gate_delta"
+    },
+    {
+      "source": "T_meta_dim_13_14",
+      "target": "T_gate_delta"
+    },
+    {
+      "source": "T_gate_delta",
+      "target": "T20a"
+    },
+    {
+      "source": "T19b",
+      "target": "T20a"
+    },
+    {
+      "source": "T19",
+      "target": "T20a"
+    },
+    {
+      "source": "T01b",
+      "target": "T20a"
+    },
+    {
+      "source": "T01b",
+      "target": "T20b"
+    },
+    {
+      "source": "T19b",
+      "target": "T20b"
+    },
+    {
+      "source": "T19",
+      "target": "T20b"
+    },
+    {
+      "source": "T01b",
+      "target": "T20c"
+    },
+    {
+      "source": "T19",
+      "target": "T20c"
+    },
+    {
+      "source": "T20a",
+      "target": "T20_output_guard"
+    },
+    {
+      "source": "T20b",
+      "target": "T20_output_guard"
+    },
+    {
+      "source": "T20c",
+      "target": "T20_output_guard"
+    },
+    {
+      "source": "T20_output_guard",
+      "target": "T20d_cross_media_review"
+    },
+    {
+      "source": "T20_output_guard",
+      "target": "T21"
+    }
+  ]
+}

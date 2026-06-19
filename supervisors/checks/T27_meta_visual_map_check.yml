@@ -1,0 +1,45 @@
+# 作者：阿洋
+node: T27_visual_quality
+desc: "14维度可视化质量深度检查"
+critical_path: false
+checks:
+  - id: T27V-C01
+    type: quality
+    severity: CRITICAL
+    desc: "维度网络图是否使用有意义的布局算法"
+    validate: "dimension_network 描述中包含布局算法声明（如力导向/圆形/层级）"
+  - id: T27V-C02
+    type: quality
+    severity: CRITICAL
+    desc: "热力图颜色映射是否合理（区分度高且色盲友好）"
+    validate: "weight_heatmap 描述中包含颜色映射方案声明 AND 含色盲友好说明"
+  - id: T27V-C03
+    type: quality
+    severity: HIGH
+    desc: "主题-维度流向图是否含时间维度追踪"
+    validate: "topic_dimension_flow 描述中包含至少1个 '时间流向' 或 '时序变化' 要素"
+  - id: T27V-C04
+    type: quality
+    severity: HIGH
+    desc: "可视化交互性配置（静态vs交互声明）"
+    validate: "每种可视化含 '交互性' 声明（static / hover / click / drag）"
+  - id: T27V-C05
+    type: quality
+    severity: HIGH
+    desc: "视觉编码一致性（同类数据使用相同视觉变量）"
+    validate: "3个可视化中 '权重' '强度' '频率' 类数据使用一致的视觉编码（如大小/颜色/连线粗细）"
+  - id: T27V-C06
+    type: quality
+    severity: MEDIUM
+    desc: "annotations标注完整性（关键节点是否有文字标注）"
+    validate: "dimension_network 描述中含 ≥ 14个节点标注说明"
+  - id: T27V-C07
+    type: quality
+    severity: MEDIUM
+    desc: "可视化图例/坐标轴完整性"
+    validate: "每种可视化描述中含 '图例' 或 '坐标轴' 说明"
+  - id: T27V-C08
+    type: quality
+    severity: LOW
+    desc: "文件格式输出声明（PNG/SVG/HTML）"
+    validate: "output 中至少声明一种文件格式（如 '输出为SVG矢量格式'）"

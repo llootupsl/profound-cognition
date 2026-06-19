@@ -1,0 +1,45 @@
+# 作者：阿洋
+node: TM03_adversarial
+desc: "多智能体对抗综合检查"
+critical_path: true
+checks:
+  - id: TM03-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "是否配置 ≥ 3个对抗角色（含正方/反方/调和方）"
+    validate: "output.agents ≥ 3 AND 角色分布含 proponent, opponent, synthesizer"
+  - id: TM03-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "辩论轮次是否 ≥ 3轮"
+    validate: "output.debate_rounds ≥ 3"
+  - id: TM03-C03
+    type: quality
+    severity: HIGH
+    desc: "反方论点是否实质性（非稻草人论证）"
+    validate: "opponent论点含 ≥ 2个基于证据的实质性反对"
+  - id: TM03-C04
+    type: quality
+    severity: HIGH
+    desc: "综合结果是否超越简单多数（含辩证整合）"
+    validate: "synthesizer输出含 '辩证整合' 或 '超越对立' 的论证结构"
+  - id: TM03-C05
+    type: consistency
+    severity: HIGH
+    desc: "对抗过程是否引用T26跨维度洞察"
+    validate: "辩论内容含 ≥ 3处 §T26 引用"
+  - id: TM03-C06
+    type: quality
+    severity: MEDIUM
+    desc: "每轮辩论是否含新证据（非重复已有论点）"
+    validate: "每轮辩论引用 ≥ 1个该轮新引入的§ref"
+  - id: TM03-C07
+    type: quality
+    severity: MEDIUM
+    desc: "辩论收敛性评估（分歧是否缩小）"
+    validate: "output 含 '收敛性评估' 字段"
+  - id: TM03-C08
+    type: quality
+    severity: LOW
+    desc: "未解决分歧清单是否保留"
+    validate: "output 含 unresolved_disagreements 列表"

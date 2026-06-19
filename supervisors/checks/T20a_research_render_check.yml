@@ -1,0 +1,38 @@
+# 作者：阿洋
+# T20a_research_render Supervisor Check
+check_id: T20a_research_render_check
+target_node: T20a_research_render
+description: "深度研究报告渲染质量检查"
+
+checks:
+  - name: M13_structure
+    description: "自然文风 7 步结构完整性"
+    check:
+      - field: M13_step_count
+        condition: "eq"
+        value: 7
+        on_fail: "7 步结构不完整，退回 T20a 补全"
+      - field: M13_core_ratio
+        condition: "in"
+        value: [0.35, 0.55]
+        on_fail: "第三步(逐层剥开)占比不在 35%-55% 范围，退回 T20a 调整"
+  
+  - name: M14_paragraph_gate
+    description: "每段通过 M14 质量闸门"
+    check:
+      - field: M14_paragraph_pass_rate
+        condition: "eq"
+        value: 1.0
+        on_fail: "存在未通过 M14 闸门的段落，退回 T20a 修改"
+  
+  - name: M10_graduation
+    description: "L8 逼退函数全部满足"
+    check:
+      - field: M10_data_sources
+        condition: "gte"
+        value: 5
+        on_fail: "数据来源不足 5 个"
+      - field: M10_counterexamples
+        condition: "gte"
+        value: 3
+        on_fail: "反例讨论不足 3 个"

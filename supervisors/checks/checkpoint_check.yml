@@ -1,0 +1,74 @@
+# 作者：阿洋
+check_id: "CHECKPOINT"
+task_name: "Checkpoint 原子写入检查"
+protocol_ref: "checkpoint-protocol.md"
+
+must_pass:
+  - id: "CP-001"
+    check: "临时文件存在性"
+    condition: "nrsf/{research_id}-§T{id}.tmp 文件存在"
+    severity: "blocking"
+    applies_to: "每个 Task 完成时"
+
+  - id: "CP-002"
+    check: "临时文件非空"
+    condition: "临时文件大小 > 0"
+    severity: "blocking"
+
+  - id: "CP-003"
+    check: "包含正确的 § 节标记"
+    condition: "临时文件包含 §T{id} 节标记"
+    severity: "blocking"
+
+  - id: "CP-004"
+    check: "字数达到最小要求"
+    condition: "临时文件字数 >= 该 Task 最小字数要求（见 checkpoint-protocol.md §4）"
+    severity: "blocking"
+
+  - id: "CP-005"
+    check: "原子 rename 完成"
+    condition: "临时文件已 rename/merge 到 NRSF-Full 正式位置"
+    severity: "blocking"
+
+  - id: "CP-006"
+    check: "checkpoint_history 已更新"
+    condition: "checkpoint_history 中新增该 Task 的 completed 记录"
+    severity: "blocking"
+
+  - id: "CP-007"
+    check: "NRSF-Summary 并发写入原子化"
+    condition: "纯文件模式下：独立临时摘要文件已合并 + 原子 rename 完成；Mem0 模式下：API 调用成功"
+    severity: "blocking"
+    applies_to: "Gate 节点"
+
+warnings:
+  - id: "CP-W001"
+    check: "段落级引用标记"
+    condition: "§ 节中论断段落包含 [来源:...] 引用标记"
+    severity: "warning"
+
+  - id: "CP-W002"
+    check: "未验证标记比例"
+    condition: "[未验证] 标记不超过论断段落的 30%"
+    severity: "warning"
+
+checkpoint_recovery_checks:
+  - id: "CP-R001"
+    check: ".tmp 文件已扫描"
+    condition: "恢复时已扫描 nrsf/ 目录下的 .tmp 文件"
+    severity: "blocking"
+
+  - id: "CP-R002"
+    check: "残留 .tmp 文件已删除"
+    condition: "所有残留 .tmp 文件已删除"
+    severity: "blocking"
+
+  - id: "CP-R003"
+    check: "从正确位置恢复"
+    condition: "从最后一个 completed 任务的下一个任务继续执行"
+    severity: "blocking"
+
+  - id: "CP-R004"
+    check: "in_progress 任务处理"
+    condition: "in_progress 任务：NRSF 中已有 § 节→验证完整性；无 § 节→标记 pending 重新执行"
+    severity: "blocking"

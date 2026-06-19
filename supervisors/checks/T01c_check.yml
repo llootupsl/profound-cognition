@@ -1,0 +1,46 @@
+# 作者：阿洋
+check_id: T01c_check
+task_id: T01c
+description: 验证 T01c 输入情绪基调提取的完整性和格式
+
+checks:
+  - id: ck_t01c_emotional_tone
+    description: emotional_tone非空检查
+    type: field_not_empty
+    field: emotional_tone
+    severity: ERROR
+
+  - id: ck_t01c_emotional_tone_fields
+    description: emotional_tone必须包含urgency/stance/intensity
+    type: required_fields
+    fields: [urgency, stance, intensity]
+    severity: ERROR
+
+  - id: ck_t01c_intensity_range
+    description: intensity必须在1-5范围内
+    type: range_check
+    field: emotional_tone.intensity
+    min: 1
+    max: 5
+    severity: WARN
+
+  - id: ck_t01c_persona_init_trigger
+    description: persona_init_trigger必须为布尔值
+    type: boolean_check
+    field: persona_init_trigger
+    severity: ERROR
+
+  - id: ck_t01c_depth_scan_priority
+    description: depth_scan_priority格式检查
+    type: field_not_empty
+    field: depth_scan_priority
+    severity: WARN
+
+  - id: ck_t01c_tok_budget
+    description: 实际token使用不超过tok_budget的120%
+    type: budget_check
+    budget: 500
+    margin: 0.2
+    severity: WARN
+
+pass_threshold: all_error_must_pass

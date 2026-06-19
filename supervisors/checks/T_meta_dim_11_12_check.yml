@@ -1,0 +1,55 @@
+# 作者：阿洋
+node: T_meta11_12_method_gen
+desc: "元维度11-12：二阶方法论+代际思维检查"
+critical_path: true
+checks:
+  - id: TM11-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "元维度11（二阶方法论）是否产出 ≥ 3个方面"
+    validate: "output.dim_11_second_order_method.aspects ≥ 3"
+  - id: TM11-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "元维度12（代际思维）是否产出 ≥ 3个方面"
+    validate: "output.dim_12_generational_thinking.aspects ≥ 3"
+  - id: TM11-C03
+    type: quality
+    severity: HIGH
+    desc: "二阶方法论是否含方法论比较矩阵"
+    validate: "dim_11_second_order_method 含 ≥ 3种方法论的比较分析"
+  - id: TM11-C04
+    type: quality
+    severity: HIGH
+    desc: "二阶方法论是否识别方法论局限与盲区"
+    validate: "dim_11_second_order_method 含 '方法论盲区' 或 'methodological blind spots' 识别"
+  - id: TM11-C05
+    type: quality
+    severity: HIGH
+    desc: "代际思维是否覆盖 ≥ 3个世代（如：当前/下一代/远后代）"
+    validate: "dim_12_generational_thinking 覆盖 ≥ 3个世代时间跨度"
+  - id: TM11-C06
+    type: quality
+    severity: HIGH
+    desc: "代际思维是否含代际正义伦理分析"
+    validate: "dim_12_generational_thinking 含 '代际正义' 或 'intergenerational justice' 分析"
+  - id: TM11-C07
+    type: quality
+    severity: MEDIUM
+    desc: "二阶方法论是否含量化/质化方法整合"
+    validate: "dim_11_second_order_method 含 '混合方法' 或 'mixed-methods' 论述"
+  - id: TM11-C08
+    type: quality
+    severity: MEDIUM
+    desc: "代际思维是否含代际折现率讨论"
+    validate: "dim_12_generational_thinking 含 '折现率' 或 'discount rate' 讨论"
+  - id: TM11-C09
+    type: consistency
+    severity: LOW
+    desc: "二阶方法论是否与TM05元反思互补"
+    validate: "dim_11_second_order_method 与 TM05 内容不重复且有互补视角"
+  - id: TM11-C10
+    type: quality
+    severity: LOW
+    desc: "代际思维是否含长时段（百年+）情景"
+    validate: "dim_12_generational_thinking 含 ≥ 1个百年以上时间跨度情景"

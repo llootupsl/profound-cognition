@@ -1,0 +1,20 @@
+{
+  "name": "profound-cognition",
+  "owner": { "name": "阿洋", "url": "https://github.com/llootupsl" },
+  "metadata": {
+    "description": "Marketplace hosting the profound-cognition plugin.",
+    "version": "5.1.0"
+  },
+  "plugins": [
+    {
+      "name": "profound-cognition",
+      "description": "穷尽式深度研究 Skill——把任何问题穷尽到骨头里。57 节点 DAG 编排，14 维全息框架，三路对抗验证，EXHAUST 穷尽模式，永远穷尽无档位无上限。",
+      "version": "5.1.0",
+      "author": { "name": "阿洋", "url": "https://github.com/llootupsl" },
+      "source": "./",
+      "category": "research",
+      "homepage": "https://github.com/llootupsl/profound-cognition",
+      "tags": ["research", "deep-thinking", "multi-agent", "dag", "exhaust-only"]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+# 作者：阿洋
+node: T_meta9_10_agno_cog
+desc: "元维度9-10：无知学+认知神经科学检查"
+critical_path: true
+checks:
+  - id: TM9-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "元维度9（无知学/Agnotology）是否产出 ≥ 3个方面"
+    validate: "output.dim_9_agnotology.aspects ≥ 3"
+  - id: TM9-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "元维度10（认知神经科学）是否产出 ≥ 3个方面"
+    validate: "output.dim_10_cognitive_neuroscience.aspects ≥ 3"
+  - id: TM9-C03
+    type: quality
+    severity: HIGH
+    desc: "无知学分析是否含5种无知类型（原生/建构/策略/选择性/制度性）"
+    validate: "dim_9_agnotology 覆盖 ≥ 3种无知类型（native/constructed/strategic/selective/institutional）"
+  - id: TM9-C04
+    type: quality
+    severity: HIGH
+    desc: "无知学分析是否识别知识生产中的权力不对称"
+    validate: "dim_9_agnotology 含 '知识权力不对称' 或 'epistemic injustice' 分析"
+  - id: TM9-C05
+    type: quality
+    severity: HIGH
+    desc: "认知神经科学是否引用具体脑区/神经机制"
+    validate: "dim_10_cognitive_neuroscience 含 ≥ 2个具体神经机制（如前额叶/杏仁核/多巴胺系统）"
+  - id: TM9-C06
+    type: quality
+    severity: HIGH
+    desc: "认知偏误是否与决策过程关联"
+    validate: "dim_10_cognitive_neuroscience 含 ≥ 3个认知偏误与决策关联分析"
+  - id: TM9-C07
+    type: consistency
+    severity: MEDIUM
+    desc: "无知学分析是否与T24法律伦理维度（dim_10）互洽"
+    validate: "dim_9_agnotology 与 T24/dim_10 内容不矛盾"
+  - id: TM9-C08
+    type: consistency
+    severity: MEDIUM
+    desc: "认知神经科学是否与T24心理维度（dim_12）互洽"
+    validate: "dim_10_cognitive_neuroscience 与 T24/dim_12 内容不矛盾"
+  - id: TM9-C09
+    type: completeness
+    severity: LOW
+    desc: "未知-已知矩阵是否已产出"
+    validate: "dim_9_agnotology 含 '已知-未知矩阵' 或 'known-unknown matrix'"
+  - id: TM9-C10
+    type: quality
+    severity: LOW
+    desc: "认知负荷评估是否已执行"
+    validate: "dim_10_cognitive_neuroscience 含 '认知负荷' 或 'cognitive load' 评估"
