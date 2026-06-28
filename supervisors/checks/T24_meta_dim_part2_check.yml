@@ -1,0 +1,58 @@
+﻿# 作者：阿洋
+node: T24_meta_dim_part2_depth
+desc: "全息框架第二部分-10维度深度质量检查"
+critical_path: true
+checks:
+  - id: T24M-C01
+    type: quality
+    severity: CRITICAL
+    desc: "技术维度（dim_5）是否含技术路线对比"
+    validate: "dim_5 中 '技术路线对比' 含 ≥ 2条路线的详细对比"
+  - id: T24M-C02
+    type: quality
+    severity: CRITICAL
+    desc: "经济维度（dim_6）是否含多情景财务模型"
+    validate: "dim_6 中 '成本-收益分析' 含 ≥ 3种情景的财务推定"
+  - id: T24M-C03
+    type: quality
+    severity: HIGH
+    desc: "政治维度（dim_7）是否识别权力结构与博弈格局"
+    validate: "dim_7 中 '权力结构分析' 识别 ≥ 3个利益相关方及其互动模式"
+  - id: T24M-C04
+    type: quality
+    severity: HIGH
+    desc: "社会维度（dim_8）是否含人口统计与趋势分析"
+    validate: "dim_8 中引用 ≥ 2个定量社会指标（如基尼系数、人口增长率等）"
+  - id: T24M-C05
+    type: quality
+    severity: HIGH
+    desc: "生态维度（dim_9）是否含承载力和外部性分析"
+    validate: "dim_9 中 '生态承载力' 含具体阈值数据或 '外部性分析' 含正负外部性列表"
+  - id: T24M-C06
+    type: quality
+    severity: HIGH
+    desc: "法律伦理维度（dim_10）是否识别合规风险与伦理困境"
+    validate: "dim_10 含 ≥ 2个具体伦理困境且无过度简化"
+  - id: T24M-C07
+    type: quality
+    severity: HIGH
+    desc: "文化维度（dim_11）是否含跨文化比较视角"
+    validate: "dim_11 含 ≥ 2个文化语境下的差异分析"
+  - id: T24M-C08
+    type: quality
+    severity: HIGH
+    desc: "心理认知维度（dim_12）是否含群体心理模型"
+    validate: "dim_12 含 ≥ 1个群体心理模型（如从众、极化、框架效应等）"
+  - id: T24M-C09
+    type: quality
+    severity: MEDIUM
+    desc: "每维度深度检查（≥ 800字/维度）"
+    validate: "每个full维度字数 ≥ 800"
+  - id: T24M-C10
+    type: quality
+    severity: MEDIUM
+    desc: "跨维度交叠避免（相同案例不在 ≥ 3个维度中重复）"
+    validate: "同一案例/事实在 ≤ 2个维度中被用作主例"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

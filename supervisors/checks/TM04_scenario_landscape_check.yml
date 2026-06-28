@@ -1,0 +1,48 @@
+﻿# 作者：阿洋
+node: TM04_scenario_plan
+desc: "情景规划检查"
+critical_path: true
+checks:
+  - id: TM04-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "是否产出 ≥ 4个情景（含基线/乐观/悲观/黑天鹅）"
+    validate: "output.scenarios ≥ 4 AND 含 baseline, optimistic, pessimistic, wildcard 情景"
+  - id: TM04-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "每个情景是否含驱动因素矩阵"
+    validate: "每个scenario含 driving_forces 字段且 driving_forces ≥ 3"
+  - id: TM04-C03
+    type: quality
+    severity: HIGH
+    desc: "驱动因素不确定性轴是否正确构建（2轴法）"
+    validate: "output.uncertainty_axes 含 2个正交轴且每个轴有极值端点定义"
+  - id: TM04-C04
+    type: quality
+    severity: HIGH
+    desc: "情景叙述是否连贯（含时间线/因果链）"
+    validate: "每个scenario含 timeline 或 causal_chain 字段"
+  - id: TM04-C05
+    type: consistency
+    severity: HIGH
+    desc: "情景是否与T25/dim_13情景推演一致"
+    validate: "TM04情景与T25/dim_13.scenarios 不矛盾且互为补充"
+  - id: TM04-C06
+    type: quality
+    severity: MEDIUM
+    desc: "早期预警信号是否识别"
+    validate: "每个scenario含 early_warning_signals ≥ 2"
+  - id: TM04-C07
+    type: quality
+    severity: MEDIUM
+    desc: "稳健策略是否跨情景有效"
+    validate: "output 含 robust_strategies 字段且 ≥ 3条策略在 ≥ 3个情景中有效"
+  - id: TM04-C08
+    type: completeness
+    severity: LOW
+    desc: "情景概率分布是否标注"
+    validate: "output 含 scenario_probability_distribution"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

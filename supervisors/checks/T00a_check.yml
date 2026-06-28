@@ -1,0 +1,67 @@
+﻿# 作者：阿洋
+task_id: "T00a"
+task_file: "tasks/T00a_time_anchor.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在（node_id, status, run_date, run_date_source, timezone, nrsf_header_written, timeliness_switch, reality_verification）"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "run_date 格式是否为 ISO 8601（含时区信息）"
+    severity: CRITICAL
+  - id: D02
+    description: "run_date_source 是否为合法枚举值（system_clock | inferred_from_user_message）"
+    severity: CRITICAL
+  - id: D03
+    description: "NRSF header/run_date 是否已写入并标记为不可变（immutable: true）"
+    severity: CRITICAL
+  - id: D04
+    description: "时效检索开关（timeliness_retrieval_switch）是否已设为 ACTIVE"
+    severity: CRITICAL
+  - id: D05
+    description: "现实校验规则（reality_verification_rules）是否已激活"
+    severity: CRITICAL
+  - id: D06
+    description: "弱后端退路条件是否已评估（如 run_date_source 为 inferred_from_user_message 时是否有 quality_penalty 标注）"
+    severity: HIGH
+  - id: D07
+    description: "run_date 是否非硬编码固定日期（必须从系统时钟或用户消息实时获取）"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "run_date 是否不晚于当前真实日期（不允许未来日期）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "run_date 是否有来源标注（system_clock 或 inferred_from_user_message）"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

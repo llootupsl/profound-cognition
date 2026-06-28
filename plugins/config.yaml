@@ -1,0 +1,450 @@
+# 作者：阿洋
+# Profound Cognition v6.0.0 — Plugins Unified Configuration
+# 统一插件配置中心：所有插件适配器的注册表、版本、依赖、激活策略集中声明
+# 配套文档：docs/plugin-compatibility-matrix.md
+# 健康检查：scripts/plugins-health-check.py
+#
+# 字段说明：
+#   name        : 插件唯一标识（与 .md 文件 stem 一致）
+#   version     : 适配器版本号
+#   category    : 插件分类（search/crawl/render/compress/vector/visual/chart/slide）
+#   enabled     : 是否启用（true/false）
+#   priority    : 优先级（critical/optional/supplement）
+#   endpoint    : 服务端点（如适用）
+#   env_var     : 所需环境变量列表
+#   min_python  : 最低 Python 版本要求
+#   depends_on  : 依赖的其他插件（同名）
+#   conflicts_with : 与之冲突的插件（不可同时启用）
+#   performance : 性能基准（参见 docs/plugin-compatibility-matrix.md）
+#   exhaust_retry_to : 不可用时的穷尽重试回退目标
+
+plugins:
+  # ============================================================
+  # 搜索类插件（search）
+  # ============================================================
+  - name: searxng-adapter
+    version: "1.1.0"
+    category: search
+    enabled: true
+    priority: critical
+    endpoint: "http://{searxng_host}:{port}/search"
+    env_var: ["SEARXNG_HOST", "SEARXNG_PORT"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [duckduckgo-adapter, whoogle-adapter]
+    performance:
+      p50_latency_ms: 800
+      p95_latency_ms: 2500
+      peak_memory_mb: 120
+      success_rate: 0.97
+
+  - name: duckduckgo-adapter
+    version: "1.0.2"
+    category: search
+    enabled: true
+    priority: optional
+    endpoint: "https://duckduckgo.com/"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [whoogle-adapter]
+    performance:
+      p50_latency_ms: 1200
+      p95_latency_ms: 3500
+      peak_memory_mb: 80
+      success_rate: 0.92
+
+  - name: whoogle-adapter
+    version: "1.0.1"
+    category: search
+    enabled: true
+    priority: optional
+    endpoint: "http://{whoogle_host}:{port}/search"
+    env_var: ["WHOGLE_HOST", "WHOGLE_PORT"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [duckduckgo-adapter]
+    performance:
+      p50_latency_ms: 1000
+      p95_latency_ms: 3000
+      peak_memory_mb: 90
+      success_rate: 0.93
+
+  - name: aihot-adapter
+    version: "1.0.0"
+    category: search
+    enabled: true
+    priority: supplement
+    endpoint: "https://api.aihot.example.com/v1/hot-ranking"
+    env_var: ["AIHOT_API_KEY"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [searxng-adapter]
+    performance:
+      p50_latency_ms: 600
+      p95_latency_ms: 2000
+      peak_memory_mb: 60
+      success_rate: 0.95
+
+  # ============================================================
+  # 爬取类插件（crawl）
+  # ============================================================
+  - name: crawl4ai-adapter
+    version: "1.2.0"
+    category: crawl
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.10"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [markitdown-adapter]
+    performance:
+      p50_latency_ms: 3500
+      p95_latency_ms: 12000
+      peak_memory_mb: 350
+      success_rate: 0.88
+
+  - name: firecrawl-adapter
+    version: "1.0.0"
+    category: crawl
+    enabled: false
+    priority: optional
+    endpoint: "https://api.firecrawl.dev/v0/scrape"
+    env_var: ["FIRECRAWL_API_KEY"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: [crawl4ai-adapter]
+    exhaust_retry_to: [crawl4ai-adapter]
+    performance:
+      p50_latency_ms: 2500
+      p95_latency_ms: 8000
+      peak_memory_mb: 150
+      success_rate: 0.94
+
+  - name: markitdown-adapter
+    version: "1.0.0"
+    category: crawl
+    enabled: true
+    priority: supplement
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 1500
+      p95_latency_ms: 5000
+      peak_memory_mb: 200
+      success_rate: 0.90
+
+  # ============================================================
+  # 向量/检索类插件（vector）
+  # ============================================================
+  - name: lightrag-adapter
+    version: "1.0.0"
+    category: vector
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.10"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [qdrant-adapter]
+    performance:
+      p50_latency_ms: 2000
+      p95_latency_ms: 6000
+      peak_memory_mb: 500
+      success_rate: 0.91
+
+  - name: qdrant-adapter
+    version: "1.0.0"
+    category: vector
+    enabled: true
+    priority: optional
+    endpoint: "http://{qdrant_host}:6333"
+    env_var: ["QDRANT_HOST", "QDRANT_API_KEY"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [meilisearch-adapter]
+    performance:
+      p50_latency_ms: 800
+      p95_latency_ms: 2500
+      peak_memory_mb: 180
+      success_rate: 0.96
+
+  - name: meilisearch-adapter
+    version: "1.0.0"
+    category: vector
+    enabled: false
+    priority: optional
+    endpoint: "http://{meili_host}:7700"
+    env_var: ["MEILI_HOST", "MEILI_MASTER_KEY"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 600
+      p95_latency_ms: 2000
+      peak_memory_mb: 150
+      success_rate: 0.95
+
+  - name: moka-adapter
+    version: "1.0.0"
+    category: vector
+    enabled: false
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.10"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 1200
+      p95_latency_ms: 4000
+      peak_memory_mb: 250
+      success_rate: 0.92
+
+  # ============================================================
+  # 压缩类插件（compress）
+  # ============================================================
+  - name: llmlingua-compressor
+    version: "1.0.0"
+    category: compress
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 4000
+      p95_latency_ms: 12000
+      peak_memory_mb: 800
+      success_rate: 0.89
+
+  # ============================================================
+  # 渲染类插件（render）
+  # ============================================================
+  - name: weasyprint-adapter
+    version: "1.0.0"
+    category: render
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [typst-templates]
+    performance:
+      p50_latency_ms: 5000
+      p95_latency_ms: 15000
+      peak_memory_mb: 400
+      success_rate: 0.90
+
+  - name: typst-templates
+    version: "1.0.0"
+    category: render
+    enabled: true
+    priority: critical
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [weasyprint-adapter]
+    performance:
+      p50_latency_ms: 2500
+      p95_latency_ms: 8000
+      peak_memory_mb: 200
+      success_rate: 0.94
+
+  - name: bmmd-adapter
+    version: "1.0.0"
+    category: render
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 1800
+      p95_latency_ms: 6000
+      peak_memory_mb: 180
+      success_rate: 0.93
+
+  # ============================================================
+  # 幻灯片类插件（slide）
+  # ============================================================
+  - name: marp-adapter
+    version: "1.0.0"
+    category: slide
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: [slidev-adapter, revealjs-adapter]
+    exhaust_retry_to: [revealjs-adapter]
+    performance:
+      p50_latency_ms: 2000
+      p95_latency_ms: 7000
+      peak_memory_mb: 220
+      success_rate: 0.92
+
+  - name: slidev-adapter
+    version: "1.0.0"
+    category: slide
+    enabled: false
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: [marp-adapter, revealjs-adapter]
+    exhaust_retry_to: [marp-adapter]
+    performance:
+      p50_latency_ms: 3000
+      p95_latency_ms: 10000
+      peak_memory_mb: 300
+      success_rate: 0.88
+
+  - name: revealjs-adapter
+    version: "1.0.0"
+    category: slide
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: [marp-adapter, slidev-adapter]
+    exhaust_retry_to: [marp-adapter]
+    performance:
+      p50_latency_ms: 2200
+      p95_latency_ms: 7500
+      peak_memory_mb: 240
+      success_rate: 0.91
+
+  # ============================================================
+  # 可视化/图表类插件（visual/chart）
+  # ============================================================
+  - name: observable-plot-adapter
+    version: "1.0.0"
+    category: chart
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 1500
+      p95_latency_ms: 5000
+      peak_memory_mb: 150
+      success_rate: 0.94
+
+  - name: paper-figure-adapter
+    version: "1.0.0"
+    category: visual
+    enabled: true
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 2500
+      p95_latency_ms: 8000
+      peak_memory_mb: 280
+      success_rate: 0.90
+
+  - name: panelizer-adapter
+    version: "1.0.0"
+    category: visual
+    enabled: false
+    priority: optional
+    endpoint: "local"
+    env_var: []
+    min_python: "3.10"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 3000
+      p95_latency_ms: 9000
+      peak_memory_mb: 320
+      success_rate: 0.89
+
+  - name: iconify-adapter
+    version: "1.0.0"
+    category: visual
+    enabled: true
+    priority: supplement
+    endpoint: "https://api.iconify.design"
+    env_var: []
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: []
+    performance:
+      p50_latency_ms: 400
+      p95_latency_ms: 1500
+      peak_memory_mb: 50
+      success_rate: 0.97
+
+  - name: qwen-image-adapter
+    version: "1.0.0"
+    category: visual
+    enabled: false
+    priority: optional
+    endpoint: "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis"
+    env_var: ["DASHSCOPE_API_KEY"]
+    min_python: "3.9"
+    depends_on: []
+    conflicts_with: []
+    exhaust_retry_to: [iconify-adapter]
+    performance:
+      p50_latency_ms: 8000
+      p95_latency_ms: 25000
+      peak_memory_mb: 200
+      success_rate: 0.85
+
+# ============================================================
+# 全局策略
+# ============================================================
+global:
+  # 默认穷尽重试链：当所有专用回退都失败时，最终回退到 LLM 内建知识
+  final_fallback: "LLM_INTERNAL_REASONING"
+  # 健康检查脚本
+  health_check_script: "scripts/plugins-health-check.py"
+  # 兼容性矩阵文档
+  compatibility_matrix_doc: "docs/plugin-compatibility-matrix.md"
+  # 插件启用策略：critical 必须启用，optional 可选，supplement 仅在需要时启用
+  enable_policy:
+    critical: "must_enable"
+    optional: "user_choice"
+    supplement: "on_demand"
+  # 性能基准采集周期（天）
+  performance_benchmark_cycle_days: 30

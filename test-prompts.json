@@ -1,0 +1,231 @@
+{
+  "author": "阿洋",
+  "version": "5.1.0",
+  "description": "profound-cognition 验收测试集——不用于简单问答、快速摘要、单维度分析、浅层信息检索、一句话回答",
+  "positive_prompts": [
+    {
+      "id": "P01",
+      "prompt": "穷尽分析中国新能源汽车产业2025年的竞争格局与供应链韧性",
+      "expected_output_type": "research_report",
+      "expected_nodes": "58 节点全量激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "§1-§8 全息框架结构完整",
+        "14 维全覆盖",
+        "科学层 8 模块（TM01-TM07）完整",
+        "哲学三元组深度审视",
+        "配图 ≥⌈字数/3000⌉ 张且 6 类齐全",
+        "G1-G6 硬门控全部通过"
+      ]
+    },
+    {
+      "id": "P02",
+      "prompt": "穷尽分析全球芯片产业链的地缘政治风险",
+      "expected_output_type": "research_report",
+      "expected_nodes": "58 节点全量激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "激活经济学+地缘政治+技术颠覆 3 个领域引擎",
+        "三路对抗验证完整",
+        "事实核查 40+ 条断言"
+      ]
+    },
+    {
+      "id": "P03",
+      "prompt": "写一篇关于 AI 对普通人工作影响的公众号文章",
+      "expected_output_type": "wechat_article",
+      "expected_nodes": "T20b 渲染链激活",
+      "expected_word_count": "≥3000 字",
+      "validation_criteria": [
+        "人设叙事完整",
+        "能力精选展示",
+        "Yang 7 维评分"
+      ]
+    },
+    {
+      "id": "P04",
+      "prompt": "对抗验证一下这个结论：新能源汽车将完全取代燃油车",
+      "expected_output_type": "research_report",
+      "expected_nodes": "三路对抗验证节点激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "逻辑对抗+证据对抗+范围对抗三路同时攻击",
+        "Logistic 胜负判定",
+        "反事实推演完整"
+      ]
+    },
+    {
+      "id": "P05",
+      "prompt": "深度研究量子计算对现代密码学体系的威胁与应对策略",
+      "expected_output_type": "research_report",
+      "expected_nodes": "58 节点全量激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "科学深度层含系统动力学建模",
+        "因果验证完整",
+        "情景规划含乐观/基准/悲观三路径"
+      ]
+    },
+    {
+      "id": "P06",
+      "prompt": "全面调研全球碳中和政策的实施效果与未来路径",
+      "expected_output_type": "research_report",
+      "expected_nodes": "58 节点全量激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "激活环境气候+经济学+政治 3 个领域引擎",
+        "元维度 9-14 全覆盖",
+        "未来研究议程含 5+ 研究缺口"
+      ]
+    },
+    {
+      "id": "P07",
+      "prompt": "穷尽分析 2024 年大模型推理优化技术（量化/蒸馏/投机解码/KV缓存/调度）",
+      "expected_output_type": "research_report",
+      "expected_nodes": "58 节点全量激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "14 维全息框架完整覆盖",
+        "三路对抗验证（逻辑/证据/范围）完整",
+        "证据链 ≥40 条断言，CoVe 级联核查通过",
+        "科学层含系统动力学建模与因果验证"
+      ],
+      "before_after": {
+        "description": "示例输出，非真实运行结果。展示普通 AI 摘要与 profound-cognition 深度报告的差异。",
+        "before": {
+          "label": "普通 AI 摘要（示例输出）",
+          "word_count": "约 200 字",
+          "characteristics": [
+            "单维度罗列，无交叉分析",
+            "无证据链，无可验证断言",
+            "无对抗验证，直接给结论",
+            "无偏见检测",
+            "无哲学审视",
+            "可复现性低"
+          ],
+          "output": "2024年大模型推理优化主要分为量化、蒸馏、投机解码、KV缓存优化、调度等方向。量化技术（GPTQ、AWQ）通过降低权重精度减少显存占用；知识蒸馏将大模型能力迁移到小模型；投机解码用小模型草拟token、大模型并行验证提升吞吐；KV缓存优化通过PagedAttention降低显存碎片；调度层面通过连续批处理提升GPU利用率。这些技术通常组合使用，在吞吐与延迟之间权衡。总体来看，推理优化是降低部署成本的关键，未来可能向硬件协同设计方向发展。"
+        },
+        "after": {
+          "label": "profound-cognition 深度报告片段（示例输出）",
+          "word_count": "≥100000 字（完整报告）",
+          "characteristics": [
+            "14 维全息框架 + 元维度 9-14",
+            "40+ 条可追溯断言，CoVe 级联核查",
+            "三路对抗验证（逻辑/证据/范围）+ Logistic 判定",
+            "偏见检测 + 风格检查（T18）",
+            "哲学三元组审视（本体论/认识论/价值论）",
+            "科学层 8 模块（系统动力学/因果验证/多智能体...）",
+            "Gate-α/β/γ/δ/终 五道门控 + G1-G6 硬门控"
+          ],
+          "output_section_1": "§1 问题认知与定义（全息框架第一部分·4维度）\n| 维度 | 核心问题 | 证据锚点 |\n| 本体论 | 推理优化的本质是计算密度重构而非压缩 | [E01] |\n| 认识论 | 吞吐/延迟/成本三角约束不可同时最优 | [E02] |\n| 目的论 | 终极目标是单位token边际成本最小化 | [E03] |\n| 边界论 | 物理上限受限于内存带宽而非算力 | [E04] |",
+          "output_section_2": "§2 三路对抗验证（魔鬼代言人）\n| 对抗路 | 攻击论点 | 攻击结果 | Logistic判定 |\n| 逻辑攻击 | 量化无损是伪命题 | 部分成立 | 0.72 |\n| 证据攻击 | 基准未覆盖中文长文本 | 成立 | 0.45 |\n| 范围攻击 | 未涵盖MoE/SSM架构 | 成立 | 0.38 |\n三路综合：原结论需修正为——在Transformer密集模型+英文短文本场景下量化可近似无损；跨架构跨语言需重新评估。",
+          "output_section_3": "§3 证据链（节选）\n[E01] NVIDIA TensorRT-LLM白皮书 §2.3\n[E02] vLLM benchmark 2024-Q1（可复现脚本）\n[E03] DeepSeek-V2技术报告 arXiv:2405.04434\n...共43条断言已通过CoVe级联事实核查",
+          "output_section_4": "§4 哲学三元组审视\n- 本体论：量化模型与原模型是否同一对象？\n- 认识论：我们如何知道无损？评估基准是否完备？\n- 价值论：为谁优化（开发者成本vs用户延迟vs社会能效）？"
+        }
+      }
+    },
+    {
+      "id": "P08",
+      "prompt": "评估某技术路线（如纯视觉自动驾驶端到端方案）的可行性",
+      "expected_output_type": "research_report",
+      "expected_nodes": "58 节点全量激活",
+      "expected_word_count": "≥100000 字",
+      "validation_criteria": [
+        "结论方+反方+事实核查+偏见检测四段式结构",
+        "三路对抗验证完整，Logistic 胜负比明确",
+        "情景规划含乐观/基准/悲观三路径",
+        "元认知反思含认知边界声明"
+      ],
+      "before_after": {
+        "description": "示例输出，非真实运行结果。展示普通 AI 直接给结论与 profound-cognition 结论+反方+事实核查+偏见检测的差异。",
+        "before": {
+          "label": "普通 AI 建议（示例输出）",
+          "word_count": "约 150 字",
+          "characteristics": [
+            "直接给结论，无反方观点",
+            "无事实核查，断言不可追溯",
+            "无偏见检测",
+            "无情景规划",
+            "无认知边界声明",
+            "结论未经对抗验证，稳健性未知"
+          ],
+          "output": "建议采用纯视觉自动驾驶端到端方案。理由：1）技术成熟度较高，特斯拉FSD已验证可行性；2）成本低于多传感器融合方案；3）随着数据积累和模型规模扩大，性能将持续提升。建议在小规模验证后逐步推广，同时保留激光雷达作为冗余备份。"
+        },
+        "after": {
+          "label": "profound-cognition 深度报告片段（示例输出）",
+          "word_count": "≥100000 字（完整报告）",
+          "characteristics": [
+            "结论方+反方+事实核查+偏见检测四段式",
+            "三路对抗验证 + Logistic 胜负比",
+            "情景规划：乐观/基准/悲观三路径",
+            "元认知反思 + 认知边界声明",
+            "14 维全息框架 + 科学层 8 模块",
+            "Gate-α/β/γ/δ/终 五道门控 + G1-G6 硬门控"
+          ],
+          "output_section_1": "§ 结论方（正方论证）\n建议采用纯视觉端到端方案，基于3项证据：\n[E01] 特斯拉FSD v12端到端方案已实现量产部署\n[E02] 摄像头成本约为激光雷达的1/10\n[E03] Vision Transformer在图像理解上接近人类水平\nLogistic支持度：0.68",
+          "output_section_2": "§ 反方（魔鬼代言人·三路对抗）\n| 对抗路 | 攻击论点 | 攻击结果 | Logistic判定 |\n| 逻辑攻击 | 数据规模扩大不等于性能无限提升，存在边际递减 | 成立 | 0.42 |\n| 证据攻击 | [E01]特斯拉FSD仍有干预，非完全无人 | 成立 | 0.35 |\n| 范围攻击 | 结论仅适用于晴天高速公路，未覆盖恶劣天气 | 成立 | 0.28 |\n三路综合：原结论需修正——纯视觉方案在限定场景（晴天+高速）可行，全场景泛化能力存疑。",
+          "output_section_3": "§ 事实核查（CoVe级联）\n- [E01] 特斯拉FSD v12：核查通过（多方报道证实）\n- [E02] 成本对比：核查通过（行业报告交叉验证）\n- [E03] ViT接近人类水平：存疑（仅在ImageNet等标准基准上，长尾场景未验证）\n- [E04] 数据边际递减：核查通过（Scaling Law研究支持）\n核查结果：4条断言中3条通过，1条存疑",
+          "output_section_4": "§ 偏见检测（T18）\n检测到以下偏见：\n- 技术乐观主义偏见：假设技术进步必然解决当前局限\n- 幸存者偏差：以特斯拉成功案例推断普适可行性\n- 确认偏见：选择性引用支持纯视觉的证据\n偏见修正后，结论支持度从0.68下调至0.52",
+          "output_section_5": "§ 情景规划（TM04）\n| 情景 | 假设 | 可行性 | 时间线 |\n| 乐观 | 纯视觉3年内全场景泛化 | 20% | 2027 |\n| 基准 | 纯视觉限定场景可行，多传感器全场景 | 60% | 2026-2028 |\n| 悲观 | 纯视觉遇安全瓶颈，回归多传感器融合 | 20% | 2025+ |",
+          "output_section_6": "§ 元认知反思（TM05）\n认知边界声明：本评估基于公开信息，未获取特斯拉内部数据；对长尾场景的量化评估存在不确定性；结论的稳健性依赖于三路对抗的覆盖度，可能存在未攻击到的盲区。"
+        }
+      }
+    }
+  ],
+  "negative_prompts": [
+    {
+      "id": "N01",
+      "prompt": "快速摘要 XXX",
+      "reason": "快速摘要属于浅层信息检索，非深度研究"
+    },
+    {
+      "id": "N02",
+      "prompt": "一句话回答 XXX",
+      "reason": "一句话回答与 EXHAUST 穷尽模式矛盾"
+    },
+    {
+      "id": "N03",
+      "prompt": "简单问答 XXX",
+      "reason": "简单问答不涉及多维度分析"
+    },
+    {
+      "id": "N04",
+      "prompt": "XXX 的定义是什么",
+      "reason": "单维度概念查询，无需 14 维全息框架"
+    },
+    {
+      "id": "N05",
+      "prompt": "帮我写个 XXX 函数",
+      "reason": "编程任务，非研究/分析类"
+    }
+  ],
+  "exhaust_audit_checklist": {
+    "description": "执行任何验收 prompt 时，同步检查以下 EXHAUST 一致性项",
+    "checks": [
+      {
+        "item": "首次回复声明",
+        "pass_criteria": "包含 EXHAUST 模式四大铁律完整声明"
+      },
+      {
+        "item": "禁用措辞",
+        "pass_criteria": "全程无\"降级\"\"DEGRADED\"\"简化\"\"缩减\"\"跳过\"\"硬终止\"\"终止研究\""
+      },
+      {
+        "item": "硬上限",
+        "pass_criteria": "无 max_rounds / 轮数上限 / 最多N次 / 递归上限"
+      },
+      {
+        "item": "上下文压力",
+        "pass_criteria": "触发 write-while-research 落盘而非终止研究"
+      },
+      {
+        "item": "节点激活",
+        "pass_criteria": "58 节点全量激活，无 SKIPPED 节点"
+      },
+      {
+        "item": "Gate FAIL",
+        "pass_criteria": "持续重试而非降级，不存在\"FAIL + DEGRADED\"路径"
+      }
+    ]
+  }
+}

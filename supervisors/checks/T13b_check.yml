@@ -1,0 +1,26 @@
+﻿# 作者：阿洋
+version: "1.0"
+node: T13b
+checks:
+  - id: check_activation_mode
+    description: "T13b 仅在 T15b 激活时启用"
+    field: activation
+    expected: "T15b.activated == true"
+    
+  - id: check_deps_complete
+    description: "依赖节点 T13 和 T15b 必须已完成"
+    field: deps_status
+    expected: [T13, T15b]
+    
+  - id: check_revised_conclusions_exist
+    description: "输出必须包含 revised_conclusions"
+    field: T13b_output.revised_conclusions
+    expected_count_gte: 1
+    
+  - id: check_tok_budget
+    description: "Token 预算不超过 1500"
+    field: tok_budget
+    expected_lte: 1500
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

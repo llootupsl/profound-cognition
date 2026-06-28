@@ -1,0 +1,40 @@
+﻿# 作者：阿洋
+# Supervisor Check: T07b 纵横交汇分析
+
+check_id: T07b
+task_file: tasks/T07b_cross_axis.md
+severity: MEDIUM
+
+checks:
+  - id: T07b-M1
+    description: "时间轴里程碑数量是否满足最低要求"
+    rule: "count(time_axis_milestones) >= 3"
+    fail_action: "返回不足原因，要求补充时间锚点"
+
+  - id: T07b-M2
+    description: "横向比较锚点数量是否满足最低要求"
+    rule: "count(comparative_anchors) >= 3"
+    fail_action: "返回不足原因，要求补充参照案例"
+
+  - id: T07b-M3
+    description: "交叉洞察数量是否满足最低要求"
+    rule: "count(cross_axis_insights) >= 3"
+    fail_action: "返回不足原因，要求执行更多配对分析"
+
+  - id: T07b-M4
+    description: "每条交叉洞察是否有明确的数据来源"
+    rule: "ALL(insights have non-empty time_axis_point AND non-empty compare_axis_point)"
+    fail_action: "标记缺失来源的洞察，要求补充"
+
+  - id: T07b-M5
+    description: "intersection_type 枚举值是否合法"
+    rule: "ALL(intersection_type IN [pattern_emergence, contrast_amplification, causal_transfer, anomaly_detection])"
+    fail_action: "标记非法值，要求更正"
+
+  - id: T07b-M6
+    description: "是否存在无意义的交叉对"
+    rule: "NO insight where time_axis_point AND compare_axis_point 无实质关联"
+    fail_action: "标记无意义配对，要求过滤"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

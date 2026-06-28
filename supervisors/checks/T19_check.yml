@@ -1,0 +1,145 @@
+﻿# 作者：阿洋
+# 执行顺序一致性检查：T22→T19→T28→T17（链路本身无环，此为执行指引）
+task_id: "T19"
+task_file: "T19_quality_delivery.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "是否检查了证据账本完整度？对抗验证轮次达标？L1-L9全部完成？铁律四格式合规？"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+
+density_checks:
+  - id: DEN01
+    description: "information_density_check 字段是否存在且非空（R8-01）"
+    severity: CRITICAL
+    check_method: "field_exists"
+  - id: DEN02
+    description: "overall_grade 是否为 HIGH 或 MEDIUM（非 LOW）"
+    severity: CRITICAL
+    check_method: "value_in_set"
+    expected_values: ["HIGH", "MEDIUM"]
+  - id: DEN03
+    description: "chapter_distribution 是否覆盖所有核心章节（§1-§5）"
+    severity: CRITICAL
+    check_method: "chapter_coverage"
+    required_chapters: ["§1", "§2", "§3", "§4", "§5"]
+  - id: DEN04
+    description: "任一核心章节（§1-§5）grade 是否非 LOW"
+    severity: CRITICAL
+    check_method: "no_core_chapter_low"
+  - id: DEN05
+    description: "low_density_ratio 是否 ≤ 0.10"
+    severity: MAJOR
+    check_method: "threshold_check"
+    threshold: 0.10
+    comparison: "<="
+  - id: DEN06
+    description: "requires_remediation 为 true 时，remediation_chapters 是否非空"
+    severity: CRITICAL
+    check_method: "conditional_non_empty"
+    condition_field: "requires_remediation"
+    condition_value: true
+    target_field: "remediation_chapters"
+  - id: DEN07
+    description: "requires_remediation 为 true 时，final_delivery_status 是否为 NO_GO"
+    severity: CRITICAL
+    check_method: "conditional_value_match"
+    condition_field: "requires_remediation"
+    condition_value: true
+    target_field: "final_delivery_status"
+    expected_value: "NO_GO"
+
+calibration_checks:
+  - id: CAL01
+    description: "calibration_check 字段是否存在且非空（R9-02 MAPIE 校准检查）"
+    severity: CRITICAL
+    check_method: "field_exists"
+    required_field: "calibration_check"
+  - id: CAL02
+    description: "all_conclusions_annotated 是否为 PASS（所有结论的置信度等级已标注）"
+    severity: CRITICAL
+    check_method: "value_match"
+    required_field: "calibration_check.all_conclusions_annotated.status"
+    expected_value: "PASS"
+  - id: CAL03
+    description: "mapie_calibration_verified 是否为 PASS（置信度等级来自 MAPIE 校准）"
+    severity: CRITICAL
+    check_method: "value_match"
+    required_field: "calibration_check.mapie_calibration_verified.status"
+    expected_value: "PASS"
+  - id: CAL04
+    description: "mapie_calibration_verified 为 FAIL 时，fallback_count 是否已记录"
+    severity: MAJOR
+    check_method: "conditional_field_exists"
+    condition_field: "calibration_check.mapie_calibration_verified.status"
+    condition_value: "FAIL"
+    target_field: "calibration_check.mapie_calibration_verified.fallback_count"
+  - id: CAL05
+    description: "coverage_rate_distribution 是否完整（high_count/medium_count/low_count/tentative_count 四字段齐全）"
+    severity: MAJOR
+    check_method: "fields_exist"
+    required_fields:
+      - "calibration_check.mapie_calibration_verified.coverage_rate_distribution.high_count"
+      - "calibration_check.mapie_calibration_verified.coverage_rate_distribution.medium_count"
+      - "calibration_check.mapie_calibration_verified.coverage_rate_distribution.low_count"
+      - "calibration_check.mapie_calibration_verified.coverage_rate_distribution.tentative_count"
+  - id: CAL06
+    description: "nrsf_mapie_log_complete 是否为 PASS（§mapie_log 完整写入 NRSF）"
+    severity: CRITICAL
+    check_method: "value_match"
+    required_field: "calibration_check.nrsf_mapie_log_complete.status"
+    expected_value: "PASS"
+  - id: CAL07
+    description: "mapie_calibration_verified 为 FAIL 时，final_delivery_status 是否为 NO_GO"
+    severity: CRITICAL
+    check_method: "conditional_value_match"
+    condition_field: "calibration_check.mapie_calibration_verified.status"
+    condition_value: "FAIL"
+    target_field: "final_delivery_status"
+    expected_value: "NO_GO"
+
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

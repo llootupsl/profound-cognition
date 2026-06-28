@@ -1,0 +1,57 @@
+﻿# 作者：阿洋
+# T20b_wechat_render Supervisor Check
+check_id: T20b_wechat_render_check
+target_node: T20b_wechat_render
+description: "微信公众号渲染质量检查"
+
+checks:
+  - name: K4_ai_role_boundary
+    description: "AI 角色边界：安全区/条件区/禁区互不侵犯"
+    check:
+      - field: ai_boundary_violation_count
+        condition: "eq"
+        value: 0
+        on_fail: "检测到 AI 角色边界违规，退回 T20b 修正 K4"
+  
+  - name: K6_takeaway_count
+    description: "10 个能带走的产出完整"
+    check:
+      - field: K6_takeaway_count
+        condition: "gte"
+        value: 10
+        on_fail: "能带走的少于 10 个，退回 T20b 补全"
+  
+  - name: K9_quote_quality
+    description: "金句库类型覆盖 + 防假第一人称"
+    check:
+      - field: K9_quote_types
+        condition: "gte"
+        value: 5
+        on_fail: "金句类型少于 5 种，退回 T20b 补金句"
+      - field: K9_fake_first_person
+        condition: "eq"
+        value: 0
+        on_fail: "检测到假第一人称金句，退回 T20b 删除"
+  
+  - name: Y7_polish_intensity
+    description: "润色强度判定存在且合理"
+    check:
+      - field: Y7_intensity_set
+        condition: "eq"
+        value: true
+        on_fail: "未设置润色强度，退回 T20b 判定"
+  
+  - name: L4_must_block
+    description: "L4 活人感强制层 5 定性 × 8 定量全部通过"
+    check:
+      - field: L4_qualitative_pass
+        condition: "eq"
+        value: 5
+        on_fail: "L4 定性检查未全部通过，退回 T20b 修改"
+      - field: L4_quantitative_pass
+        condition: "gte"
+        value: 6
+        on_fail: "L4 定量检查通过不足 6/8，退回 T20b 修改"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

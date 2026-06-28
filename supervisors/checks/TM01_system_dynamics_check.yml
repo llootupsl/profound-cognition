@@ -1,0 +1,48 @@
+﻿# 作者：阿洋
+node: TM01_sys_dynamics
+desc: "系统动力学仿真检查"
+critical_path: true
+checks:
+  - id: TM01-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "系统动力学模型是否含存量/流量/反馈回路"
+    validate: "output.model 含 stocks ≥ 3 AND flows ≥ 3 AND feedback_loops ≥ 2"
+  - id: TM01-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "仿真运行是否产出 ≥ 3个时间步结果"
+    validate: "output.simulation_results.time_steps ≥ 3"
+  - id: TM01-C03
+    type: consistency
+    severity: HIGH
+    desc: "模型参数是否与T24各维度数据一致"
+    validate: "模型参数来源标注为 §T24/dim_* 且参数值在T24数据范围内"
+  - id: TM01-C04
+    type: quality
+    severity: HIGH
+    desc: "反馈回路识别是否正确（正反馈/负反馈标注）"
+    validate: "每个 feedback_loop 含 type ∈ {reinforcing, balancing}"
+  - id: TM01-C05
+    type: quality
+    severity: HIGH
+    desc: "仿真结果是否含敏感性分析"
+    validate: "output.simulation_results 含 sensitivity_analysis 字段且至少对2个参数做敏感性测试"
+  - id: TM01-C06
+    type: completeness
+    severity: MEDIUM
+    desc: "系统边界图是否已产出"
+    validate: "output.system_boundary 含边界内变量列表和边界外变量列表"
+  - id: TM01-C07
+    type: quality
+    severity: MEDIUM
+    desc: "时间延迟效应是否建模"
+    validate: "≥ 1个 flow 含 delay 参数描述"
+  - id: TM01-C08
+    type: quality
+    severity: LOW
+    desc: "模型假设清单是否完整（≥ 5条）"
+    validate: "output.model.assumptions 中条目数 ≥ 5"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

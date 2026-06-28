@@ -1,0 +1,74 @@
+﻿# 作者：阿洋
+task_id: "T03b"
+task_file: "T03b_cross_axis_matrix.md"
+
+structural_checks:
+  - id: S01
+    description: "cross_axis_matrix 字段是否存在且包含 time_stages、variables、cells 三个子字段"
+    severity: CRITICAL
+  - id: S02
+    description: "time_stages 是否至少 3 个阶段"
+    severity: CRITICAL
+  - id: S03
+    description: "variables 是否至少 6 个变量"
+    severity: CRITICAL
+  - id: S04
+    description: "cells 矩阵维度是否为 len(time_stages) × len(variables)，即至少 3×6"
+    severity: CRITICAL
+  - id: S05
+    description: "critical_crossover_points 是否至少 2 个"
+    severity: CRITICAL
+  - id: S06
+    description: "temporal_variable_dynamics 是否存在且覆盖所有变量"
+    severity: HIGH
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "cells 中每个单元格是否都有具体状态描述（非空、非模糊词）"
+    severity: CRITICAL
+  - id: D03
+    description: "critical_crossover_points 中每条是否包含 variable、from_stage、to_stage、change_description 且 change_description 非模糊"
+    severity: CRITICAL
+  - id: D04
+    description: "crossover_point 是否为质变而非渐变（change_description 需体现质变特征）"
+    severity: HIGH
+
+integrity_checks:
+  - id: I01
+    description: "time_stages 是否与 T02 时间演化数据一致"
+    severity: HIGH
+  - id: I02
+    description: "variables 是否与 T03 结构变量一致"
+    severity: HIGH
+  - id: I03
+    description: "cells 中数据是否无内部矛盾"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失（time_stages、variables、cells、critical_crossover_points、temporal_variable_dynamics）"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

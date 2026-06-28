@@ -1,0 +1,106 @@
+# 作者：阿洋
+name: CI
+on: [push, pull_request]
+jobs:
+  integrity-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run reference integrity check
+        run: python scripts/reference-integrity.py
+  exhaust-consistency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run EXHAUST consistency check
+        run: python scripts/exhaust-consistency-check.py
+  tasks-integrity-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tasks/ directory health check
+        run: python scripts/tasks-integrity-check.py
+  encoding-compatibility-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run cross-platform encoding compatibility check
+        run: python scripts/encoding-compatibility-check.py
+  version-consistency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run version consistency check
+        run: python scripts/version-consistency-check.py
+  protocol-version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run protocol version check
+        run: python scripts/protocol-version-check.py
+  legacy-field-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run LEGACY field name check
+        run: python scripts/legacy-field-check.py
+  cycle-detection-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run DAG cycle detection check (Kahn's algorithm)
+        run: python scripts/cycle-detection-check.py
+  node-task-check-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run node-task-check consistency check (D1.4.1)
+        run: python scripts/node-task-check-consistency.py
+  protocol-deps-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run protocol dependency graph check (D1.4.2/D3.4.1)
+        run: python scripts/protocol-deps-check.py
+  capability-binding-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run capability binding check (D1.4.3/D7.4.x)
+        run: python scripts/capability-binding-check.py
+  kg-availability-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run KG availability check (R5-04/R5-05)
+        run: python scripts/kg-availability-check.py
+  plugins-health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run plugins health check (D8.4.1-D8.4.5)
+        run: python scripts/plugins-health-check.py
+  supervisor-check-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run supervisor check YAML tests (D10.4.2)
+        run: python scripts/supervisor-check-tests.py
+  formula-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run formula engine unit tests (D4.4.4)
+        run: python scripts/formula-unit-tests.py
+  audit-6-remediation-progress-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Audit-6 remediation progress check (Wave 5)
+        run: python scripts/audit-6-remediation-progress-check.py
+  audit-6-summary-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Audit-6 summary check (12 dimensions + circular self-reference)
+        run: python scripts/audit-6-summary-check.py

@@ -1,0 +1,193 @@
+﻿# 作者：阿洋
+task_id: "PERSONA"
+task_file: "persona/persona-init-protocol.md"
+schema_file: "persona/persona-schema.yaml"
+
+structural_checks:
+  - id: S01
+    description: "persona_type 字段是否存在于输出中且为有效枚举值（researcher | wechat_author | educator）"
+    severity: CRITICAL
+
+  - id: S02
+    description: "persona_type 为 researcher 时，researcher 字段组是否完整（expertise_domains / methodology_preference / writing_style / citation_style）"
+    severity: CRITICAL
+
+  - id: S03
+    description: "persona_type 为 wechat_author 时，wechat_author 字段组是否完整（identity / core_values / personal_stories / catchphrase / emotion_expression / target_audience / expected_tone / self_deprecation / knowledge_zones / cultural_refs / humor_style / reader_name / ending_pref / style_ref）"
+    severity: CRITICAL
+
+  - id: S04
+    description: "persona_type 为 educator 时，educator 字段组是否完整（teaching_style / target_level / pacing / assessment_style）"
+    severity: CRITICAL
+
+  - id: S05
+    description: "researcher.writing_style 是否为有效枚举值（academic | analytical | strategic | investigative）"
+    severity: CRITICAL
+
+  - id: S06
+    description: "researcher.citation_style 是否为有效枚举值（apa | chicago | inline | footnote）"
+    severity: CRITICAL
+
+  - id: S07
+    description: "wechat_author.identity 是否为有效枚举值（前媒体人 | 科技评论员 | 创业者 | 分析师 | 观察者 | 实践者 | 研究者 | 跨界思考者）"
+    severity: CRITICAL
+
+  - id: S07b
+    description: "wechat_author.communication_style 是否为有效枚举值（正式 | 轻松 | 犀利 | 温和 | 幽默 | 讽刺 | 热情 | 冷静）"
+    severity: CRITICAL
+
+  - id: S07c
+    description: "wechat_author.knowledge_zones 数组非空，且每个 domain 与 knowledge/domain-engines.md 中 35 引擎列表存在合理映射"
+    severity: CRITICAL
+
+  - id: S07d
+    description: "wechat_author.core_values 是否为有效枚举值（开放 | 保守 | 批判 | 建设 | 中立 | 激进 | 务实 | 理想）"
+    severity: CRITICAL
+
+  - id: S07e
+    description: "wechat_author.catchphrase 存在时，短语数量 ≥ 2 且 ≤ 5"
+    severity: MAJOR
+
+  - id: S07f
+    description: "wechat_author.emotional_baseline 是否为有效枚举值（理性 | 热血 | 冷静 | 温暖 | 悲观 | 乐观 | 矛盾 | 沉稳）"
+    severity: CRITICAL
+
+  - id: S07g
+    description: "wechat_author.reader_name 是否为有效枚举值（亲近 | 平等 | 权威 | 疏离 | 陪伴 | 引导 | 对话 | 观察）"
+    severity: CRITICAL
+
+  - id: S07h
+    description: "wechat_author.style_ref 是否为有效枚举值（故事驱动 | 数据驱动 | 逻辑驱动 | 情绪驱动 | 混合）"
+    severity: CRITICAL
+
+  - id: S07i
+    description: "wechat_author.emotion_expression 是否为有效枚举值（克制 | 适度 | 丰富 | 强烈 | 内敛 | 外放 | 层次 | 爆发）"
+    severity: CRITICAL
+
+  - id: S07j
+    description: "wechat_author.self_deprecation 是否为有效枚举值（无 | 轻微 | 适度 | 明显 | 频繁 | 点睛 | 反差 | 贯穿）"
+    severity: CRITICAL
+
+  - id: S07k
+    description: "wechat_author.target_audience 字段非空，且为有效字符串值（如：职场新人、创业者、学术界、大众读者等）"
+    severity: CRITICAL
+
+  - id: S07l
+    description: "wechat_author.expected_tone 是否为有效枚举值（犀利批判 | 温和启发 | 幽默调侃 | 严肃分析 | 娓娓道来 | 冷静克制）"
+    severity: CRITICAL
+
+  - id: S08
+    description: "educator.teaching_style 是否为有效枚举值（Socratic | Storytelling | Systematic）"
+    severity: CRITICAL
+
+  - id: S09
+    description: "educator.target_level 是否为有效枚举值（beginner | intermediate | advanced | expert）"
+    severity: CRITICAL
+
+  - id: S10
+    description: "educator.pacing 是否为有效枚举值（slow | moderate | fast | adaptive）"
+    severity: CRITICAL
+
+  - id: S11
+    description: "educator.assessment_style 是否为有效枚举值（quiz | project | discussion | reflection）"
+    severity: CRITICAL
+
+persona_type_validation:
+  - id: P01
+    description: "persona_type 必须为 researcher / wechat_author / educator 三者之一，不接受其他值"
+    severity: CRITICAL
+
+  - id: P02
+    description: "persona_type 与 output_type 必须一致：researcher ↔ research_report, wechat_author ↔ wechat_article, educator ↔ course_material"
+    severity: CRITICAL
+
+  - id: P03
+    description: "若 output_type 为 legacy 类型（research_master / analysis_report / press_commentary / decision_memo / strategic_foresight / quick_insight / visual_brief），persona_type 必须为 researcher"
+    severity: CRITICAL
+
+  - id: P04
+    description: "若 output_type 为 legacy 类型（lecture_notes / video_script），persona_type 必须为 educator"
+    severity: CRITICAL
+
+teaching_style_validation:
+  - id: T01
+    description: "teaching_style 验证在 persona_type == educator 时生效"
+    severity: CRITICAL
+
+  - id: T02
+    description: "educator 的 teaching_style 必须为 Socratic / Storytelling / Systematic 三者之一"
+    severity: CRITICAL
+
+  - id: T03
+    description: "educator 的 target_level 必须与课程复杂度匹配（beginner 不可使用 expert 级术语密度）"
+    severity: MAJOR
+
+  - id: T04
+    description: "educator 的 pacing 为 adaptive 时，必须提供反馈机制说明"
+    severity: MAJOR
+
+consistency_checks:
+  - id: C01
+    description: "persona_type 为 researcher 时，不应出现 wechat_author 或 educator 专属字段（如 catchphrase / teaching_style）"
+    severity: MAJOR
+
+  - id: C02
+    description: "persona_type 为 wechat_author 时，不应出现 researcher 或 educator 专属字段（如 citation_style / assessment_style）"
+    severity: MAJOR
+
+  - id: C03
+    description: "persona_type 为 educator 时，不应出现 researcher 或 wechat_author 专属字段（如 citation_style / catchphrase）"
+    severity: MAJOR
+
+  - id: C04
+    description: "researcher.expertise_domains 数组非空，且每个 domain 与 knowledge/domain-engines.md 中 35 引擎列表存在合理映射"
+    severity: MAJOR
+
+  - id: C05
+    description: "wechat_author.catchphrase 存在时，短语数量 ≥ 2 且 ≤ 5（避免过度使用导致人工感）"
+    severity: MINOR
+
+  - id: C06
+    description: "wechat_author.K4_AI_boundary 存在时，在后续 output 产出中不得出现对应主题"
+    severity: CRITICAL
+
+init_source_checks:
+  - id: I01
+    description: "init_source 字段必须存在且为 interactive / default / user_override 三者之一"
+    severity: CRITICAL
+
+  - id: I02
+    description: "init_source 为 default 时，必须告知用户使用了默认人设"
+    severity: MAJOR
+
+  - id: I03
+    description: "init_source 为 interactive 时，必须收集了至少 2 个非默认字段值"
+    severity: MINOR
+
+must_not:
+  - id: M01
+    description: "persona_type 为空或未定义——Phase 0 初始化必须产出 persona_type"
+    severity: CRITICAL
+
+  - id: M02
+    description: "persona_type 与 output_type 不一致——如输出 research_report 但使用 wechat_author 人设"
+    severity: CRITICAL
+
+  - id: M03
+    description: "educator 的 teaching_style 为空或不在枚举值内"
+    severity: CRITICAL
+
+  - id: M04
+    description: "字段值不在对应枚举范围内——如 writing_style 使用了未定义的风格名称"
+    severity: CRITICAL
+
+  - id: M05
+    description: "跨类型字段污染——如 researcher 配置中出现 catchphrase"
+    severity: MAJOR
+
+  - id: M06
+    description: "K4_AI_boundary 中声明的禁忌话题在 output 中被触及"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

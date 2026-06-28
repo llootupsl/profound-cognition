@@ -1,0 +1,138 @@
+# 作者：阿洋
+task_id: "T09"
+task_file: "T09_cog_reason.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "推理路径数是否与 complexity_score 等级映射一致（1-3→5, 4-6→7, 7-8→9, 9-10→12）？每条路径的 analysis_layer 是否互不重复（对照 candidate_layers 一一验证）？路径间是否有实质性分化（含独立meta_assumption+完整reasoning_chain+置信度）？路径间有共识/分歧矩阵？"
+    severity: CRITICAL
+  - id: D03
+    description: "M9 主线竞争择优：是否已执行五维加权评分（证据强度25%+解释力25%+反证容忍度20%+新颖性15%+可扩展性15%）？主线得分是否 ≥ 60 分？主线与第二名分差是否 ≥ 5 分？评分是否有具体理由？若任一不满足，FAIL → 退回 Step A"
+    severity: CRITICAL
+  - id: D04_M9
+    description: "M9_competition_executed == true：M9 主线竞争择优是否已执行（4 阶段：筛选 3-5 条最强路径→独立展开→五维对抗性评分→排名）？是否仅停留在声明层面而无实际评分数据？"
+    severity: CRITICAL
+  - id: D05_M9
+    description: "M9_mainline_ratio ≥ 0.60：主线（Rank 1 路径）在最终综合叙事中的占比是否 ≥ 60%？若主线占比 < 60%，说明路径区分度不足或存在平均分配倾向，FAIL"
+    severity: CRITICAL
+  - id: D06_M9
+    description: "M9_score_detail == true：五维评分每个维度的每项评分是否附有具体理由（基于实际证据和论证质量，非主观偏好）？若出现'综合判断''整体评估'等模糊表述替代具体理由，FAIL"
+    severity: CRITICAL
+  - id: D07_R3_01
+    description: "【R3-01 路径数自适应】complexity_score 是否从 T00 §ref 读取且在 1-10 范围内？path_config.paths 是否与 complexity_score 等级映射一致（1-3→5, 4-6→7, 7-8→9, 9-10→12）？若 T00 未提供 complexity_score，是否标注 [COMPLEXITY_SCORE_MISSING] 并默认 MEDIUM 档（7 条）？"
+    severity: CRITICAL
+    check_method: "cross_ref_verify"
+  - id: D08_R3_01
+    description: "【R3-01 维度不重复】所有推理路径的 analysis_layer 是否两两互不相同（无重复维度）？每条路径的 analysis_layer 是否均从 candidate_layers（13 个候选：structural/stakeholder/temporal/causal/counterfactual/systemic/normative/empirical/comparative/predictive/diagnostic/evaluative/neurosymbolic）中选取？若存在重复维度，FAIL"
+    severity: CRITICAL
+    check_method: "uniqueness_scan"
+  - id: D09_R3_01
+    description: "【R3-01 meta_assumption 不雷同】所有推理路径的 meta_assumption 是否两两存在实质性差异（非措辞变换、非同义改写）？检查方法：(a) 语义相似度 < 0.7（基于关键词重叠率估算）；(b) 每条 meta_assumption 必须指向不同的根本前提或分析视角；(c) 若两条路径的 meta_assumption 仅差几个虚词或同义词，判定为雷同，FAIL"
+    severity: CRITICAL
+    check_method: "semantic_similarity_scan"
+  - id: D10_R3_01
+    description: "【R3-01 analysis_layer 与 meta_assumption 声明完整性】每条推理路径是否同时声明了 analysis_layer 和 meta_assumption 两个字段？任一字段缺失 → FAIL。meta_assumption 是否不少于 20 字（避免敷衍声明）？"
+    severity: CRITICAL
+    check_method: "field_completeness_scan"
+  - id: D11_R5_01
+    description: "【R5-01】applied_models 字段是否存在且非空（至少 1 个模型被应用）"
+    severity: CRITICAL
+  - id: D12_R5_01
+    description: "【R5-01】applied_models 中每个条目是否包含 model_id / application_scope / contribution 三个字段"
+    severity: CRITICAL
+  - id: D13_R5_01
+    description: "【R5-01】applied_models 中标注 [EXTRA] 的模型是否有充分理由（≥20字）"
+    severity: MAJOR
+  - id: D14_R5_01
+    description: "【R5-01】recommended_thinking_models 中未被应用的模型是否标注 [SKIPPED] 并说明理由"
+    severity: MAJOR
+  - id: D15_R5_01
+    description: "【R5-01】applied_models 中 model_id 是否在路由表（knowledge/thinking-models/routing-table.md）的 30 个模型清单内"
+    severity: CRITICAL
+    check_method: "cross_ref_verify"
+  - id: D16_A6_10
+    description: "【A6.10-F5 / P1-13 修复，Wave 5】strongest_path_score 是否存在且在 [0.0, 1.0] 范围内？若 > 1.0 或 < 0.0 视为数值越界 FAIL？该分数是否对应推理路径中 Rank 1 路径（mainline）的得分？"
+    severity: CRITICAL
+    check_method: "numeric_range_check"
+    required_field: "strongest_path_score"
+    min_value: 0.0
+    max_value: 1.0
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+  - id: I03
+    description: "pruning_report 的三个子字段（noise_variables_eliminated / root_variables_expanded / paths_redistributed）是否都存在"
+    severity: MAJOR
+  - id: I04
+    description: "pruning_report 中 noise_variables_eliminated + root_variables_expanded 之和是否等于模式指定的总变量数"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"
+
+lightrag_checks:
+  - id: LR01
+    description: "LightRAG 检索相关性分数：retrieval_results[*].score 均值是否 ≥ 0.7（< 0.7 触发索引重建或回退到简单向量搜索）"
+    severity: MAJOR
+    check_method: "numeric_threshold"
+    required_field: "retrieval_scores_mean"
+    threshold: 0.7
+    on_fail: "trigger_reindex_or_vector_search"
+  - id: LR02
+    description: "LightRAG 检索覆盖率：retrieval_results 数组长度 / top_k 是否 == 1.0（< 1.0 表示索引不完整）"
+    severity: MINOR
+    check_method: "numeric_threshold"
+    required_field: "retrieval_coverage"
+    threshold: 1.0
+  - id: LR03
+    description: "LightRAG 查询模式合法性：query_mode 是否为 local|hybrid|global|naive 之一"
+    severity: MAJOR
+    check_method: "enum_value_check"
+    required_field: "query_mode"
+    allowed_values: ["local", "hybrid", "global", "naive"]
+  - id: LR04
+    description: "LightRAG 检索延迟：retrieval_latency_ms 是否 ≤ 5000（> 5000ms 触发 hybrid→naive 回退）"
+    severity: MINOR
+    check_method: "numeric_threshold"
+    required_field: "retrieval_latency_ms"
+    threshold: 5000
+    on_fail: "switch_to_naive"

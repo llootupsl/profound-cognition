@@ -1,0 +1,28 @@
+# 作者：阿洋
+name: Reference Integrity Check
+
+on:
+  pull_request:
+    paths:
+      - '**'
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run reference integrity check
+        run: python scripts/reference-integrity.py
+
+      - name: Dead code scan (blocking)
+        run: |
+          echo "::group::Dead Code Scan"
+          # Extract dead code scan results from the integrity check output
+          # The script exits with code 1 if ANY check fails (including dead code)
+          python scripts/reference-integrity.py 2>&1 | tee integrity-report.txt
+          if grep -q "死代码" integrity-report.txt; then
+            echo "::warning:: Dead code detected - see details above"
+          fi
+          echo "::endgroup::"
+        # This step always runs; the previous step already blocks PR on failure

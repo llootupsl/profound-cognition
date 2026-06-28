@@ -1,0 +1,68 @@
+﻿# 作者：阿洋
+node: T_philo_core_triad
+desc: "哲学核心三元组检查"
+critical_path: true
+checks:
+  - id: TPH-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "哲学三元组是否含本体论/认识论/价值论三部分"
+    validate: "output 含 ontology, epistemology, axiology 三字段"
+  - id: TPH-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "本体论是否含存在论承诺声明"
+    validate: "ontology 含 '存在论承诺' 或 'ontological commitment' 声明"
+  - id: TPH-C03
+    type: quality
+    severity: HIGH
+    desc: "本体论是否识别 ≥ 3个实体类型及其关系"
+    validate: "ontology 含 ≥ 3个 entity_type 及其 interrelation 描述"
+  - id: TPH-C04
+    type: quality
+    severity: HIGH
+    desc: "认识论是否含知识获取方式声明"
+    validate: "epistemology 含 '知识获取方式' 或 'ways of knowing' 且 ≥ 3种"
+  - id: TPH-C05
+    type: quality
+    severity: HIGH
+    desc: "认识论是否含知识确证标准"
+    validate: "epistemology 含 '知识确证' 或 'justification' 标准"
+  - id: TPH-C06
+    type: quality
+    severity: HIGH
+    desc: "价值论是否含价值层级结构"
+    validate: "axiology 含 '价值层级' 或 'value hierarchy' 且 ≥ 3层级"
+  - id: TPH-C07
+    type: quality
+    severity: HIGH
+    desc: "价值论是否含伦理原则声明"
+    validate: "axiology 含 ≥ 3条伦理原则"
+  - id: TPH-C08
+    type: consistency
+    severity: MEDIUM
+    desc: "哲学三元组是否内部一致（本体论→认识论→价值论不矛盾）"
+    validate: "ontology, epistemology, axiology 三者之间无逻辑矛盾"
+  - id: TPH-C09
+    type: consistency
+    severity: MEDIUM
+    desc: "哲学立场是否与全息框架（T23-T25）一致"
+    validate: "哲学三元组与T23-T25的认知坐标和悲剧性智慧不矛盾"
+  - id: TPH-C10
+    type: quality
+    severity: MEDIUM
+    desc: "哲学立场是否含多元主义自觉"
+    validate: "output 含 '多元主义' 或 'pluralism' 声明"
+  - id: TPH-C11
+    type: quality
+    severity: LOW
+    desc: "哲学反思是否含局限性声明"
+    validate: "output 含 '哲学局限性' 或 'philosophical limitation' 自省"
+  - id: TPH-C12
+    type: quality
+    severity: LOW
+    desc: "哲学三元组是否可追溯至具体哲学传统"
+    validate: "≥ 2个哲学传统被引用（如实用主义/现象学/批判理论/分析哲学）"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

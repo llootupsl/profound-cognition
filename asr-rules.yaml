@@ -1,0 +1,561 @@
+# ASR 硬门禁用清单配置 (Anti-Slop Rule Set — Hard Gate Rules)
+# Profound Cognition v6.0 — R6-03 ASR 硬门规则透明化
+#
+> **定位**: 渲染管道所有输出的强制前置门禁的机器可读规则源。
+> **配套文件**: rendering-pipeline/asr-hard-gate.md（人类可读说明 + 执行逻辑）
+> **字段说明**:
+#   - rule_id: 规则唯一标识（ASR-{CATEGORY}-{NNN}）
+#   - category: 类别（font/color/layout/motion/deco/image/typo/viz）
+#   - description: 禁令描述
+#   - detection_rule: 检测规则（正则/AST/语义）
+#   - violation_example: 违规示例
+#   - fix_suggestion: 修复建议
+#   - source_annotation: 来源标注
+#   - rationale: 设计理由（为什么要有这条规则）
+#   - severity: 严重等级（blocking=违反即拒 / warning=警告但允许输出）
+#   - override_condition: 豁免条件（满足此条件时规则不触发）
+#   - failure_output_template: 检查失败时的违规输出模板
+#
+# 作者: 阿洋
+# 最后更新: 2026-06-25
+# 规则总数: 44 条（8 类别）
+
+metadata:
+  version: "1.0.0"
+  total_rules: 44
+  categories: 8
+  execution_mode: "HARD GATE"
+  check_timing: "渲染输出前（visual_dna 生成之后、最终产物落地之前）"
+  check_scope: ["CSS", "HTML", "图片元数据", "图表代码", "排版参数"]
+  failure_handling:
+    blocking: "违反即拒 + 返回违规清单 + 触发重试（计入熔断计数）"
+    warning: "记录警告日志 + 允许输出 + 标记待复审"
+  circuit_breaker:
+    normal: "未触发质量驱动终止（连续 2 次重试分数提升 < 1 分）→ 返回违规清单，触发重试"
+    fused: "触发质量驱动终止（consecutive_low_improvement >= 2）→ 质量保持为最高分方案，仅复查核心禁令（ASR-COLOR-001/002 + ASR-FONT-001）"
+    exhaust_consistency: "不设硬性重试次数上限，与 EXHAUST 模式四大铁律一致（详见 rendering-pipeline/fuse-mechanism.md §3）"
+
+# ============================================================
+# 失败输出规范（SubTask 5.8.5）
+# ============================================================
+# ASR 检查失败时，每条违规按以下格式输出（含 rationale + override_condition）：
+#
+# [ASR-XXXX-NNN] {description}
+#   ├─ 违规代码: <检测到的具体代码/值>
+#   ├─ 检测规则: <触发的检测规则说明>
+#   ├─ 修复建议: <具体的修复方案>
+#   ├─ 设计理由: <rationale — 为什么要有这条规则>
+#   ├─ 严重等级: <blocking|warning>
+#   └─ 豁免条件: <override_condition — 何种情况下可豁免>
+#
+# 门禁结果: 拒绝输出（N 条 blocking 违规 + M 条 warning 警告）
+# 重试状态: 已计入熔断质量驱动终止计数（当前 consecutive_low_improvement=X/2，连续 2 次重试分数提升 < 1 分即终止）
+
+rules:
+  # ============================================================
+  # 一、字体禁令（ASR-FONT-001 ~ 006）
+  # ============================================================
+  - rule_id: ASR-FONT-001
+    category: font
+    description: "禁 Inter 作为 Premium 产出字体"
+    detection_rule: "正则 `font-family.*Inter` 且 `产出类型 == Premium`（含 research_report / wechat_article 中 vibe_words 含 premium/creative）"
+    violation_example: 'font-family: "Inter", sans-serif;（Premium 场景）'
+    fix_suggestion: "替换为 Geist / Outfit / Cabinet Grotesk / Satoshi。示例：font-family: \"Geist\", \"Outfit\", sans-serif;"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·排版禁令"
+    rationale: "Inter 是 LLM 训练数据统计平均的产物，被广泛用作'安全字体'，缺乏设计意图与审美主张。Premium 产出必须有意识地选择具备独特字怀和笔画特征的字体，以体现设计决策。"
+    severity: blocking
+    override_condition: "当产出类型为系统 UI 组件库文档（output_type=ui_documentation）且需与宿主应用字体保持一致时，允许使用 Inter 作为 fallback 字体"
+
+  - rule_id: ASR-FONT-002
+    category: font
+    description: "禁 Roboto 作为品牌字体"
+    detection_rule: "正则 `font-family.*Roboto` 且 `产出类型 == Brand`（含品牌标识/Logo/品牌主视觉）"
+    violation_example: 'font-family: "Roboto", sans-serif;（品牌标题）'
+    fix_suggestion: "替换为 Satoshi / Cabinet Grotesk / General Sans。品牌字体须具备独特字怀和笔画特征。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·排版禁令（扩展）"
+    rationale: "Roboto 是 Material Design 的默认字体，被过度使用导致品牌识别度丧失。品牌字体的核心价值在于独特性，使用通用字体无法建立品牌视觉资产。"
+    severity: blocking
+    override_condition: "当品牌方明确指定 Roboto 为官方品牌字体（需提供 brand_guideline 引用）时允许使用"
+
+  - rule_id: ASR-FONT-003
+    category: font
+    description: "禁 Arial 作为正文字体"
+    detection_rule: "正则 `font-family.*Arial` 且 `role == body`（正文段落）"
+    violation_example: 'font-family: "Arial", sans-serif;（正文）'
+    fix_suggestion: "西文正文替换为 Source Serif 4 / Fraunces（Editorial 感）或 Geist（UI 感）；中文正文使用思源宋体/思源黑体。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·排版禁令（扩展）"
+    rationale: "Arial 是操作系统默认字体，缺乏排版个性，长时间阅读易疲劳。资深设计师通过正文字体选择建立阅读节奏与品牌调性。"
+    severity: warning
+    override_condition: "当目标平台为老旧 Windows 系统（< Windows 7）且无法嵌入字体时，允许作为 fallback 链最后一项"
+
+  - rule_id: ASR-FONT-004
+    category: font
+    description: "禁默认无衬线字体用于学术正文"
+    detection_rule: "学术场景（output_type == research_report 且 target_audience == academic）+ 正则 `font-family.*sans-serif` 且 `role == body`"
+    violation_example: "学术论文正文使用 font-family: sans-serif;"
+    fix_suggestion: "学术正文必须使用衬线字体：Source Serif 4 / Noto Serif SC / STSong。学术场景衬线正文是出版规范要求。"
+    source_annotation: "visual-dna.md §三 字体方案 + LC-026 学术严谨设计语言"
+    rationale: "学术出版规范（APA/IEEE/Nature）均要求正文使用衬线字体，衬线字体在小字号长文阅读中具备更好的可读性，且符合学术严谨的视觉传统。"
+    severity: blocking
+    override_condition: "当产出为学术海报（poster）或演示幻灯片（slide）场景，需远距离阅读时，允许使用无衬线字体"
+
+  - rule_id: ASR-FONT-005
+    category: font
+    description: "禁混合 3 种以上字体族"
+    detection_rule: "AST 检查：提取所有 font-family 声明，去重后字体族 count > 3（标题/正文/代码 3 族为上限）"
+    violation_example: "同时使用 Inter（标题）+ Source Serif（正文）+ JetBrains Mono（代码）+ Outfit（强调）= 4 族"
+    fix_suggestion: "最多保留 3 个字体族：1 标题族 + 1 正文族 + 1 代码族。强调需求通过字重/字号变化实现，不引入第 4 族。"
+    source_annotation: "Impeccable 禁用清单驱动理念·字体一致性约束"
+    rationale: "字体族过多破坏视觉一致性，导致页面碎片化。3 族（标题/正文/代码）是排版设计的经验上限，超过此数即表明设计缺乏约束。"
+    severity: blocking
+    override_condition: "当产出为多语言混合文档（含中英日韩等多语种）且每种语种需独立字体族时，允许扩展至 5 族"
+
+  - rule_id: ASR-FONT-006
+    category: font
+    description: "禁通用衬线字体用于 Editorial 场景"
+    detection_rule: "正则 `font-family.*(Times New Roman|Georgia|Garamond)` 且 `vibe_words 含 editorial`"
+    violation_example: 'font-family: "Times New Roman", serif;（Editorial 场景）'
+    fix_suggestion: "替换为 Fraunces / Gambarino / Editorial New / Instrument Serif。通用衬线字体缺乏 Editorial 气质。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·排版禁令"
+    rationale: "Times New Roman/Georgia 等通用衬线字体是操作系统默认字体，缺乏 Editorial 设计语言的细节特征（如可变字重、光学尺寸、装饰性衬线），无法传达 Editorial 场景所需的精致感。"
+    severity: warning
+    override_condition: "当产出为法律文书或合同文本（需遵循法定排版规范）时允许使用 Times New Roman"
+
+  # ============================================================
+  # 二、配色禁令（ASR-COLOR-001 ~ 006）
+  # ============================================================
+  - rule_id: ASR-COLOR-001
+    category: color
+    description: "禁 AI 紫 #7C3AED 系"
+    detection_rule: "色值检测：十六进制色值转 HSL，判断是否在 #7C3AED ±10% 范围内（H ∈ [250°, 280°], S > 60%, L ∈ [40%, 60%]）。覆盖 #7C3AED/#8B5CF6/#6D28D9/#A78BFA 等 AI 紫色系。"
+    violation_example: "--color-primary: #7C3AED; 或 background: linear-gradient(to right, #8B5CF6, #6D28D9);"
+    fix_suggestion: "替换为有色彩主张的色值。学术蓝 #1A56DB、暖调人文 #B45309、科技青 #06B6D4。如需紫色，使用低饱和度薰衣草灰 #9C8DB8。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·配色禁令（AI Purple/Blue 审美）"
+    rationale: "AI 紫 #7C3AED 是 LLM 生成内容最显著的'统计平均色'，一眼可辨为 AI 产物。该色相饱和度过高，缺乏品牌个性，且与多数品牌色系冲突。"
+    severity: blocking
+    override_condition: "当品牌方官方品牌色即为紫色系（如 Twitch #9146FF / Yahoo #6001D2）且提供 brand_guideline 时允许使用"
+
+  - rule_id: ASR-COLOR-002
+    category: color
+    description: "禁纯黑 #000000 作为大面积背景"
+    detection_rule: "正则 `background.*#000000` 或 `background.*rgb(0,\\s*0,\\s*0)` 或 `background.*#000`（大面积背景场景）"
+    violation_example: "body { background: #000000; }"
+    fix_suggestion: "使用 Off-Black / Zinc-950 / Charcoal：#0A0A0A（Zinc-950）/ #18181B（Zinc-900）/ #1C1C1E（Charcoal）。纯黑在 OLED 屏幕上产生过强对比，缺乏层次。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·配色禁令（禁止纯黑）"
+    rationale: "纯黑 #000000 在 OLED 屏幕上产生过强对比度，导致视觉疲劳且缺乏层次感。资深设计师使用 Off-Black 营造高级感的暗色界面，保留细节层次。"
+    severity: blocking
+    override_condition: "当产出为印刷媒介（CMYK 印刷）且需纯黑油墨满版印刷时允许使用"
+
+  - rule_id: ASR-COLOR-003
+    category: color
+    description: "禁纯白 #FFFFFF 作为大面积背景"
+    detection_rule: "正则 `background.*#FFFFFF` 或 `background.*rgb(255,\\s*255,\\s*255)` 且背景面积 > 50%（通过布局区域占比计算）"
+    violation_example: "body { background: #FFFFFF; }（占满全屏）"
+    fix_suggestion: "使用暖白/冷白替代：#FAFAFA（Zinc-50）/ #F9FAFB（Gray-50）/ #FDFDFC（暖白）。纯白背景缺乏温度感，资深设计师极少使用。"
+    source_annotation: "Impeccable 禁用清单驱动理念·配色温度约束"
+    rationale: "纯白 #FFFFFF 缺乏温度感，在屏幕上产生刺眼的高光，且与内容元素的对比度过强。暖白/冷白能传达品牌调性（暖=人文/冷=科技）。"
+    severity: warning
+    override_condition: "当产出为印刷媒介且需纯白纸张满版印刷时允许使用"
+
+  - rule_id: ASR-COLOR-004
+    category: color
+    description: "禁 Tailwind 默认蓝 #3B82F6 作为主色"
+    detection_rule: "正则 `--primary.*#3B82F6` 或 `--color-primary.*#3B82F6` 或 `background.*#3B82F6`（主色用途）"
+    violation_example: "--color-primary: #3B82F6;（Tailwind blue-500）"
+    fix_suggestion: "替换为有品牌主张的蓝色：学术蓝 #1A56DB、深海蓝 #1E40AF、钢蓝 #075985。Tailwind 默认蓝是'未做设计决策'的标志。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·配色禁令（扩展）+ Impeccable 禁用清单"
+    rationale: "Tailwind 默认蓝 #3B82F6 是'未做设计决策'的标志，被广泛用于未定制配色的项目中。该色相饱和度过高，缺乏品牌识别度。"
+    severity: blocking
+    override_condition: "当产出为 Tailwind UI 框架本身的文档或演示时允许使用"
+
+  - rule_id: ASR-COLOR-005
+    category: color
+    description: "禁高饱和度渐变"
+    detection_rule: "解析 linear-gradient/radial-gradient 两端色值，转 HSL 后判断两端饱和度是否均 > 80%。正则匹配 `gradient.*` 后提取色值。"
+    violation_example: "background: linear-gradient(135deg, #FF006E, #8338EC);（两端饱和度均 >90%）"
+    fix_suggestion: "降低渐变端点饱和度至 60% 以下，或使用同色系明度渐变（如 #1A56DB → #3B82F6 同色系深浅渐变）。高饱和渐变是 AI 设计最显著的廉价标志。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·配色禁令（霓虹渐变）+ Impeccable 禁用清单"
+    rationale: "高饱和度渐变是 AI 生成内容最显著的廉价标志，模拟霓虹灯效果但在屏幕上产生视觉噪音。资深设计师使用低饱和度或同色系明度渐变营造层次。"
+    severity: blocking
+    override_condition: "当产出为娱乐/游戏类内容（vibe_words 含 playful/gaming）且品牌调性明确要求高饱和度时允许使用"
+
+  - rule_id: ASR-COLOR-006
+    category: color
+    description: "禁暖冷灰波动"
+    detection_rule: "AST 检查：提取所有灰色系色值（S < 10%），转 HSL 后判断色相 H 是否统一。若文档内存在暖灰（H ∈ [20°, 50°]）与冷灰（H ∈ [200°, 240°]）混用即违规。"
+    violation_example: "--color-border: #E5E7EB;（冷灰 H=220°）与 --color-bg-alt: #F5F0EB;（暖灰 H=30°）同时出现"
+    fix_suggestion: "全文档统一一种灰调。学术/科技场景用冷灰（Zinc 系），人文/品牌场景用暖灰（Stone 系）。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·配色禁令（禁止暖冷灰波动）"
+    rationale: "暖灰与冷灰混用破坏配色一致性，导致页面视觉碎片化。灰调统一是配色系统的基本要求，反映设计师对色彩温度的有意识控制。"
+    severity: warning
+    override_condition: "当产出需刻意对比暖冷灰（如配色教学文档/色彩理论演示）时允许使用"
+
+  # ============================================================
+  # 三、布局禁令（ASR-LAYOUT-001 ~ 006）
+  # ============================================================
+  - rule_id: ASR-LAYOUT-001
+    category: layout
+    description: "禁居中英雄区（DV>4 时）"
+    detection_rule: "CSS 选择器组合检测：text-align: center + (min-height: 100vh 或 min-height: 100dvh) 且 DESIGN_VARIANCE > 4。同时检查父容器是否为 flex 居中。"
+    violation_example: '<section class="hero" style="text-align:center; min-height:100vh; display:flex; justify-content:center; align-items:center;">'
+    fix_suggestion: "DV>4 时使用分屏布局（左对齐内容 + 右对齐资产）或不对称留白布局。示例：grid-template-columns: 7fr 5fr;"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·布局禁令（DV>4 禁止居中英雄区）"
+    rationale: "居中英雄区是 LLM 生成前端代码最模板化的标志，缺乏视觉节奏。DV>4 表示设计方差要求高，必须使用不对称布局创造视觉张力。"
+    severity: blocking
+    override_condition: "当 DV <= 4（设计方差要求低）或产出为登录页/404 页等需居中强调的场景时允许使用"
+
+  - rule_id: ASR-LAYOUT-002
+    category: layout
+    description: "禁 h-screen 全屏占位"
+    detection_rule: "正则 `height:\\s*100vh` 或 `min-height:\\s*100vh` 或 Tailwind 类 h-screen。排除 min-height: 100dvh（允许）。"
+    violation_example: '<div class="h-screen"> 或 section { height: 100vh; }'
+    fix_suggestion: "替换为 min-h-[100dvh]（CSS：min-height: 100dvh;）。dvh（dynamic viewport height）防止 iOS Safari 地址栏伸缩导致的布局跳动。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·布局禁令（禁止 h-screen）"
+    rationale: "100vh 在 iOS Safari 中包含地址栏高度，导致布局被地址栏遮挡。dvh 动态适应视口，是现代响应式设计的最佳实践。"
+    severity: blocking
+    override_condition: "当目标平台明确为桌面端且不涉及移动端浏览器时允许使用（但建议统一使用 dvh）"
+
+  - rule_id: ASR-LAYOUT-003
+    category: layout
+    description: "禁 3 列等宽卡片网格"
+    detection_rule: "正则 `grid-template-columns:\\s*1fr\\s+1fr\\s+1fr` 且 AST 检查三个网格子元素内容结构无差异（相同标签结构 + 相同 class 模式）。"
+    violation_example: '<div style="display:grid; grid-template-columns: 1fr 1fr 1fr;"> 内含 3 个结构相同的卡片'
+    fix_suggestion: "使用非对称栅格 grid-template-columns: 2fr 1fr 1fr 或 grid-template-columns: 1fr 1.5fr 1fr，或改为 2 列 + 1 全宽的混合布局。等宽三列是 AI 生成最模板化的布局模式。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·布局禁令（扩展）+ Impeccable 禁用清单"
+    rationale: "等宽三列卡片是 AI 生成最模板化的布局模式，缺乏视觉层次。非对称栅格能创造视觉节奏，引导读者视线流动。"
+    severity: blocking
+    override_condition: "当产出为产品对比表/价格表/特性矩阵等需严格对齐的场景时允许使用"
+
+  - rule_id: ASR-LAYOUT-004
+    category: layout
+    description: "禁默认 Tailwind 间距阶梯"
+    detection_rule: "正则检测 Tailwind 默认间距类：\\b(p|m|gap|space)-(4|8|12|16)\\b 出现频率 > 60%（占所有间距类比例）。"
+    violation_example: '大量使用 <div class="p-4 m-4 gap-4"> 而无自定义间距变量'
+    fix_suggestion: "基于 visual_dna 的 4px 栅格系统定义语义化间距变量：--space-xs: 4px; --space-sm: 8px; --space-md: 16px;，使用 CSS 变量替代 Tailwind 默认类。"
+    source_annotation: "Impeccable 禁用清单驱动理念·栅格约束 + visual-dna.md §四 4px 基准栅格系统"
+    rationale: "Tailwind 默认间距类（p-4/m-4/gap-4）是未做间距设计的标志，缺乏语义化。语义化间距变量能传达设计意图（如 --space-section vs --space-element）。"
+    severity: warning
+    override_condition: "当产出为快速原型/Demo 且无需生产级质量时允许使用"
+
+  - rule_id: ASR-LAYOUT-005
+    category: layout
+    description: "禁无栅格约束的自由布局"
+    detection_rule: "AST 检查：页面主布局容器无 display: grid 或 display: flex 声明，且子元素使用绝对定位（position: absolute）占比 > 30%。"
+    violation_example: "所有子元素使用 position: absolute; top: Xpx; left: Ypx; 手动定位"
+    fix_suggestion: "主布局必须使用 grid 或 flex 约束。绝对定位仅用于叠加层（overlay/tooltip/modal）。引入 12 列栅格系统：grid-template-columns: repeat(12, 1fr);。"
+    source_annotation: "Impeccable 禁用清单驱动理念·栅格约束"
+    rationale: "自由布局（绝对定位堆叠）缺乏响应式能力，且维护成本高。栅格系统是现代 CSS 布局的基础，确保跨设备一致性。"
+    severity: blocking
+    override_condition: "当产出为创意海报/艺术作品等需精确像素级定位的场景时允许使用"
+
+  - rule_id: ASR-LAYOUT-006
+    category: layout
+    description: "禁卡片滥用（高密度场景）"
+    detection_rule: "AST 检查：VISUAL_DENSITY > 7（驾驶舱密度）时，box-shadow + border-radius 组合的卡片元素占比 > 50%。"
+    violation_example: "VD=8 的仪表盘中每个数据块都包裹在带阴影圆角的卡片内"
+    fix_suggestion: "VD>7 时用 border-top 分割线或负空间（margin）替代卡片阴影。仅在有层级提升需求时使用卡片。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·组件禁令（卡片仅在有层级提升需求时使用）"
+    rationale: "高密度场景下卡片滥用导致视觉噪音过大，每个卡片都争夺注意力。分割线或负空间能更有效地组织信息层级。"
+    severity: warning
+    override_condition: "当 VD <= 7（非高密度场景）或卡片确实用于层级提升（如模态对话框/弹出层）时允许使用"
+
+  # ============================================================
+  # 四、动效禁令（ASR-MOTION-001 ~ 005）
+  # ============================================================
+  - rule_id: ASR-MOTION-001
+    category: motion
+    description: "禁 width/height 动画"
+    detection_rule: "正则 `transition:\\s*.*width` 或 `transition:\\s*.*height` 或 @keyframes 内含 width: / height: 属性变化。"
+    violation_example: "transition: width 0.3s ease; 或 @keyframes expand { from { width: 0; } to { width: 100%; } }"
+    fix_suggestion: "仅动画 transform 和 opacity（GPU 加速，不触发重排）。宽度变化用 transform: scaleX()，高度变化用 transform: scaleY()。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·动效禁令（仅允许 transform+opacity）"
+    rationale: "width/height 动画触发浏览器重排（reflow），是性能杀手，导致帧率下降和卡顿。transform/opacity 由 GPU 合成，不触发重排，性能最优。"
+    severity: blocking
+    override_condition: "当动画目标元素无法使用 transform（如需影响文档流的其他元素）且性能影响可接受时允许使用"
+
+  - rule_id: ASR-MOTION-002
+    category: motion
+    description: "禁 linear 缓动"
+    detection_rule: "正则 `transition-timing-function:\\s*linear` 或 `animation-timing-function:\\s*linear` 或 `cubic-bezier\\(0,\\s*0,\\s*1,\\s*1\\)`（linear 的贝塞尔表达）。"
+    violation_example: "transition: all 0.3s linear;"
+    fix_suggestion: "使用自然缓动曲线：入场 ease-out（cubic-bezier(0.25, 0.1, 0.25, 1.0)）、出场 ease-in（cubic-bezier(0.42, 0, 1.0, 1.0)）、循环 ease-in-out。"
+    source_annotation: "visual-dna.md §六 动效速率规范 + Impeccable 禁用清单"
+    rationale: "linear 缓动在物理世界不存在，缺乏自然感。自然缓动曲线模拟物理惯性，符合人类对运动的直觉认知。"
+    severity: warning
+    override_condition: "当动画为进度条/加载指示器等需匀速进行的场景时允许使用"
+
+  - rule_id: ASR-MOTION-003
+    category: motion
+    description: "禁旋转动画用于非加载场景"
+    detection_rule: "正则 `transform:\\s*rotate` 或 `animation.*spin` 或 @keyframes.*rotate 且上下文非 loading/spinner（AST 检查父元素 class 不含 loading/spinner/loader）。"
+    violation_example: "按钮悬停时 transform: rotate(180deg);（非加载场景）"
+    fix_suggestion: "旋转动画仅用于加载指示器（spinner）。非加载场景的强调动效用 transform: scale() 或 opacity 变化。"
+    source_annotation: "Impeccable 禁用清单驱动理念·动效语义约束"
+    rationale: "旋转动画在用户认知中与加载状态强关联，用于非加载场景会造成认知混淆。动效语义必须与上下文一致。"
+    severity: warning
+    override_condition: "当产出为娱乐/游戏类内容且旋转动效为品牌识别符号时允许使用"
+
+  - rule_id: ASR-MOTION-004
+    category: motion
+    description: "禁弹跳动画用于正式产出"
+    detection_rule: "正则 `animation:\\s*.*bounce` 或 cubic-bezier 参数中 y 值超出 [0, 1] 范围（如 cubic-bezier(0.34, 1.56, 0.64, 1.0) 中 1.56 > 1 表示弹跳）。且产出类型 ∈ {research_report, wechat_article}（正式产出）。"
+    violation_example: "animation: bounce 0.5s; 或 transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1.0);（正式报告）"
+    fix_suggestion: "正式产出使用克制缓动：cubic-bezier(0.25, 0.1, 0.25, 1.0)（标准 ease-out）。弹跳动画仅允许在 course_material 的趣味交互场景。"
+    source_annotation: "Impeccable 禁用清单驱动理念·动效正式性约束"
+    rationale: "弹跳动画在正式产出中显得轻浮，破坏专业感。正式场景需使用克制缓动，传达严谨与稳重。"
+    severity: blocking
+    override_condition: "当产出为 course_material 且目标受众为 youth（青少年教育）时允许使用"
+
+  - rule_id: ASR-MOTION-005
+    category: motion
+    description: "禁自动播放动画"
+    detection_rule: "正则 `animation:\\s*.*\\d+s.*infinite`（无限循环自动播放）且无 animation-play-state:\\s*paused 声明，且非 loading 指示器上下文。"
+    violation_example: "animation: pulse 2s infinite;（无暂停控制）"
+    fix_suggestion: "动画须提供用户控制（hover 触发 / scroll 触发 / 点击触发）。如需持续动画，添加 prefers-reduced-motion 媒体查询适配。"
+    source_annotation: "Impeccable 禁用清单驱动理念·无障碍动效约束"
+    rationale: "自动播放动画干扰用户注意力，且对前庭功能障碍用户造成不适。prefers-reduced-motion 是无障碍设计的基本要求。"
+    severity: blocking
+    override_condition: "当动画为加载指示器/spinner 等需持续运行的场景时允许使用"
+
+  # ============================================================
+  # 五、装饰禁令（ASR-DECO-001 ~ 005）
+  # ============================================================
+  - rule_id: ASR-DECO-001
+    category: deco
+    description: "禁 emoji 作为装饰"
+    detection_rule: "Unicode 范围检测：正则 [\\u{1F600}-\\u{1F64F}]|[\\u{1F300}-\\u{1F5FF}]|[\\u{1F680}-\\u{1F6FF}]|[\\u{1F700}-\\u{1F77F}]|[\\u{2600}-\\u{26FF}]|[\\u{2700}-\\u{27BF}]"
+    violation_example: "<h2>🚀 快速开始</h2> 或 <p>状态：✅ 已完成</p>"
+    fix_suggestion: "替换为图标系统：Phosphor Icons / Radix Icons / Tabler Icons。图标具备一致的线宽和视觉权重，emoji 不具备。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·内容禁令（禁止代码中使用 emoji）"
+    rationale: "emoji 在不同操作系统上渲染不一致（Apple/Google/Microsoft 各有风格），破坏视觉一致性。图标系统具备统一的线宽、圆角和视觉权重。"
+    severity: blocking
+    override_condition: "当产出为社交媒体内容（wechat_article 中 vibe_words 含 social/casual）且 emoji 为内容语义的一部分时允许使用"
+
+  - rule_id: ASR-DECO-002
+    category: deco
+    description: "禁 em-dash（—）作为分隔符"
+    detection_rule: "正则 —（U+2014 EM DASH）用于分隔上下文（前后均有文字且非引文标注场景）。AST 检查标题节点内含 —。"
+    violation_example: "<h1>性能优化 — 从理论到实践</h1> 或 <p>前端工程化 — 构建工具篇</p>"
+    fix_suggestion: "标题中使用冒号 : 或竖线 | 替代。正文中使用破折号 ——（中文双破折号）仅用于引文标注，不用于标题分隔。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·内容禁令（禁止 em-dash 在标题中）"
+    rationale: "em-dash 在标题中是 AI 生成内容的典型特征，被过度使用作为'高级感'的分隔符。冒号或竖线更符合中文排版规范。"
+    severity: warning
+    override_condition: "当产出为英文内容且 em-dash 用于引文标注或语意转折（符合英文排版规范）时允许使用"
+
+  - rule_id: ASR-DECO-003
+    category: deco
+    description: "禁阴影堆叠超过 3 层"
+    detection_rule: "AST 检查 box-shadow 属性值，按逗号分隔计数 shadow 层级 > 3 组。正则 `box-shadow:\\s*.*,.+,.+,.+`（4 组及以上）。"
+    violation_example: "box-shadow: 0 1px 2px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.1);（4 层）"
+    fix_suggestion: "最多保留 3 层阴影，且阴影须着色到背景色调（tinted shadows）。示例：box-shadow: 0 1px 2px rgba(26,86,219,0.05), 0 4px 8px rgba(26,86,219,0.08);"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·组件禁令（卡片阴影着色）+ Impeccable 禁用清单"
+    rationale: "阴影堆叠过多导致视觉沉重，且黑色阴影与背景色调不协调。着色阴影（tinted shadow）能传达品牌色系，提升设计完成度。"
+    severity: warning
+    override_condition: "当产出为 Material Design 风格且需遵循 MD 规范的 elevation 系统时允许使用（但建议使用 MD 标准阴影）"
+
+  - rule_id: ASR-DECO-004
+    category: deco
+    description: "禁毛玻璃效果用于正文区域"
+    detection_rule: "正则 `backdrop-filter:\\s*blur` 且 AST 检查应用元素 role == body（正文段落容器）。"
+    violation_example: "article { backdrop-filter: blur(10px); background: rgba(255,255,255,0.5); }（正文区域）"
+    fix_suggestion: "毛玻璃效果仅用于导航栏/侧边栏/浮层等非正文区域。正文区域使用实色背景或轻微透明度（rgba(255,255,255,0.95)）确保可读性。"
+    source_annotation: "Impeccable 禁用清单驱动理念·可读性优先约束"
+    rationale: "毛玻璃效果在正文区域降低文字对比度，导致可读性下降。毛玻璃适用于浮层（需透过底层内容感知上下文），不适用于需长时间阅读的正文。"
+    severity: blocking
+    override_condition: "当正文背景为纯色且毛玻璃仅用于装饰性叠加层（不影响文字可读性）时允许使用"
+
+  - rule_id: ASR-DECO-005
+    category: deco
+    description: "禁霓虹发光效果"
+    detection_rule: "AST 检查 box-shadow 值：含 0 0 模式（无偏移阴影）且 blur > 10px 且颜色饱和度 > 70%（HSL 中 S > 0.7）。"
+    violation_example: "box-shadow: 0 0 20px #FF006E;（无偏移 + 大模糊 + 高饱和）"
+    fix_suggestion: "移除发光效果，改用着色阴影（tinted shadow）：box-shadow: 0 4px 12px rgba(255,0,110,0.15);（有偏移 + 低透明度）。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·配色禁令（AI Purple/Blue 审美·霓虹渐变）+ Impeccable 禁用清单"
+    rationale: "霓虹发光效果是 AI Purple/Blue 审美的典型装饰，模拟霓虹灯但在屏幕上产生视觉噪音。着色阴影能传达层次感而不喧宾夺主。"
+    severity: blocking
+    override_condition: "当产出为娱乐/夜店/赛博朋克风格内容且品牌调性明确要求霓虹效果时允许使用"
+
+  # ============================================================
+  # 六、配图禁令（ASR-IMAGE-001 ~ 005）
+  # ============================================================
+  - rule_id: ASR-IMAGE-001
+    category: image
+    description: "禁 AI 生图 API 生成图片直接使用"
+    detection_rule: "双重检测：(1) 图片元数据检测：EXIF/metadata 含 AI 生成标记；(2) 代码扫描检测：渲染产物中含任何 AI 生图 API 调用代码。任一检测命中即违规。"
+    violation_example: "(1) 直接嵌入 Midjourney 生成的图片；(2) 渲染代码中调用 flux.generate_image()"
+    fix_suggestion: "完全禁用 AI 生图 API。所有图像必须通过代码生成（SVG / Mermaid / Canvas / CSS / Typst draw）。"
+    source_annotation: "Impeccable 禁用清单驱动理念·配图风格统一约束 + illustration-generator.md §0 核心铁律"
+    rationale: "AI 生图缺乏风格一致性，且版权状态不明。代码生成图像（SVG/Mermaid）具备矢量可缩放、可编辑、风格统一的优势，且完全可追溯。"
+    severity: blocking
+    override_condition: "当产出为 AI 生图技术演示文档（需展示 AI 生图能力本身）且明确标注来源时允许使用"
+
+  - rule_id: ASR-IMAGE-002
+    category: image
+    description: "禁低分辨率图片"
+    detection_rule: "图片元数据检测：印刷场景 DPI < 300 或图片宽度 < 2480px（A4@300dpi）；Web 场景图片宽度 < 1920px（全宽图）或 < 800px（内容区图）。"
+    violation_example: "印刷报告中使用 72dpi 的 Web 图片；全宽 Banner 使用 800px 宽图片"
+    fix_suggestion: "印刷场景：图片 ≥ 300dpi，A4 全宽 ≥ 2480px。Web 场景：全宽图 ≥ 1920px，内容区图 ≥ 1200px。提供 srcset 多分辨率适配。"
+    source_annotation: "Impeccable 禁用清单驱动理念·配图分辨率约束 + visual-dna.md 配图规范"
+    rationale: "低分辨率图片在印刷或高 DPI 屏幕上产生模糊，严重影响专业感。分辨率是配图质量的基础门槛。"
+    severity: blocking
+    override_condition: "当图片为历史档案/唯一可用来源且无法获取高分辨率版本时允许使用（但需标注'低分辨率'说明）"
+
+  - rule_id: ASR-IMAGE-003
+    category: image
+    description: "禁无 Alt 文本的图片"
+    detection_rule: "AST 检查 <img> 标签：无 alt 属性，或 alt=\"\"（空 alt，仅装饰图允许），且图片非纯装饰用途。"
+    violation_example: '<img src="chart.png">（无 alt）或 <img src="diagram.png" alt="">（内容图空 alt）'
+    fix_suggestion: '所有内容图片必须提供描述性 alt：<img src="chart.png" alt="2024年Q1-Q4营收增长趋势图，从1.2亿增长至1.8亿">。装饰图可使用 alt="" 但须添加 role="presentation"。'
+    source_annotation: "Impeccable 禁用清单驱动理念·无障碍约束"
+    rationale: "Alt 文本是无障碍设计的基本要求，屏幕阅读器依赖 alt 文本描述图片内容。SEO 也依赖 alt 文本理解图片语义。"
+    severity: blocking
+    override_condition: "当图片为纯装饰性背景图（role=presentation）且不影响内容理解时允许使用空 alt"
+
+  - rule_id: ASR-IMAGE-004
+    category: image
+    description: "禁图片拉伸变形"
+    detection_rule: "CSS 检查 `object-fit:\\s*fill` 或 AST 检查图片显示宽高比与原始宽高比偏差 > 5%。"
+    violation_example: '<img src="photo.jpg" style="width:100%; height:200px; object-fit:fill;">（强制拉伸）'
+    fix_suggestion: "使用 object-fit: cover（裁切填充）或 object-fit: contain（完整显示）。确保容器宽高比与图片原始比例一致，使用 aspect-ratio CSS 属性。"
+    source_annotation: "Impeccable 禁用清单驱动理念·配图比例约束"
+    rationale: "图片拉伸变形破坏视觉真实性，是业余设计的标志。object-fit 能在保持比例的前提下适配容器。"
+    severity: blocking
+    override_condition: "当图片为抽象图案/纹理等无明确比例要求的内容时允许使用"
+
+  - rule_id: ASR-IMAGE-005
+    category: image
+    description: "禁图片与正文无间距"
+    detection_rule: "AST 检查 <img> 紧邻 <p>/<h1>-<h6>/<li> 等文本元素，且图片元素无 margin/margin-bottom/margin-top 声明（或值为 0）。"
+    violation_example: '<img src="figure.png"><p>如图所示...</p>（无 margin）'
+    fix_suggestion: "图片与正文间须有明确间距：img { margin-bottom: var(--space-md); }（16px）。图注与图片间距 margin-top: var(--space-xs);（4px）。"
+    source_annotation: "visual-dna.md §四 4px 基准栅格系统 + Impeccable 禁用清单"
+    rationale: "图片与正文无间距导致视觉粘连，破坏阅读节奏。间距是排版节奏的基础，遵循 4px 栅格系统确保一致性。"
+    severity: warning
+    override_condition: "当图片为内联图标（inline icon）且需与文字紧贴时允许使用"
+
+  # ============================================================
+  # 七、排版禁令（ASR-TYPO-001 ~ 006）
+  # ============================================================
+  - rule_id: ASR-TYPO-001
+    category: typo
+    description: "禁行长超过 75 个中文字符"
+    detection_rule: "文本内容检测：每行中文字符数 > 75（含标点）。通过 text-content 提取 + 按容器宽度估算每行字符数。"
+    violation_example: "正文容器宽度允许每行 80+ 中文字符"
+    fix_suggestion: "限制正文容器宽度：中文正文每行 30-75 字符为宜。设置 max-width: 42em;（约 42 个中文字符宽度）。"
+    source_annotation: "Impeccable 禁用清单驱动理念·中文排版可读性约束"
+    rationale: "行长过长导致阅读时眼球追踪困难，易跳行或回读。中文排版规范建议每行 30-75 字符为最佳阅读宽度。"
+    severity: warning
+    override_condition: "当产出为表格/代码块等需宽屏展示的场景时允许使用"
+
+  - rule_id: ASR-TYPO-002
+    category: typo
+    description: "禁行高低于 1.5（正文）"
+    detection_rule: "CSS 检查 line-height 值：正文字体（role == body）line-height < 1.5。无单位值和带单位值均检测。"
+    violation_example: "p { line-height: 1.3; }（正文行高 1.3）"
+    fix_suggestion: "正文行高 ≥ 1.5，推荐 1.75（visual_dna 默认值）。中文排版因字符高度一致，行高需比西文更大。"
+    source_annotation: "visual-dna.md §三 字号阶梯（Body 行高 1.75）+ Impeccable 禁用清单"
+    rationale: "行高过低导致行间粘连，阅读时易跳行。中文字符高度一致，需更大行高确保行间区分。1.5 是 WCAG AA 级无障碍标准的最低要求。"
+    severity: blocking
+    override_condition: "当文本为标题/标签/按钮等非正文场景（role != body）时允许使用 1.2-1.4 的行高"
+
+  - rule_id: ASR-TYPO-003
+    category: typo
+    description: "禁段落间距等于行高"
+    detection_rule: "CSS 检查：margin-bottom（段落间距）== line-height * font-size（行高值）。"
+    violation_example: "p { font-size: 16px; line-height: 1.75; margin-bottom: 28px; }（28px = 16px × 1.75）"
+    fix_suggestion: "段落间距须明显大于行高：margin-bottom: calc(var(--line-height) * 1.5); 或使用 var(--space-lg)（24px）。段落间距 ≥ 行高 × 1.3。"
+    source_annotation: "Impeccable 禁用清单驱动理念·排版节奏约束"
+    rationale: "段落间距等于行高时，段落边界消失，读者无法区分段落与行内换行。段落间距需明显大于行高以建立段落层级。"
+    severity: warning
+    override_condition: "当文本为诗歌/歌词等需紧凑排版的场景时允许使用"
+
+  - rule_id: ASR-TYPO-004
+    category: typo
+    description: "禁标题层级超过 4 级"
+    detection_rule: "AST 检查 HTML 中出现 <h5> 或 <h6> 标签。"
+    violation_example: "<h4>4.1.2.3 子节标题</h4> 后跟 <h5>4.1.2.3.1 更深层级</h5>"
+    fix_suggestion: "超过 4 级的标题改用粗体段落或列表项替代：<p><strong>4.1.2.3.1 更深层级</strong></p>。重构信息结构。"
+    source_annotation: "Impeccable 禁用清单驱动理念·信息层级约束"
+    rationale: "标题层级超过 4 级意味着信息结构过深，读者迷失。H1-H4 足以表达绝大多数信息层级，更深层级应通过列表或粗体段落表达。"
+    severity: warning
+    override_condition: "当产出为技术文档/API 文档等需深层级嵌套的场景时允许使用（但建议重构信息架构）"
+
+  - rule_id: ASR-TYPO-005
+    category: typo
+    description: "禁无段首缩进的中文正文（学术场景除外）"
+    detection_rule: "AST 检查：中文正文段落（lang=\"zh\" 或内容含中文字符 > 50%）+ 无 text-indent 声明 + 产出类型 != research_report。"
+    violation_example: "微信公众号文章中文正文段落无 text-indent，每段顶格"
+    fix_suggestion: "中文正文段落添加段首缩进：p { text-indent: 2em; }（缩进 2 个字符宽度）。学术报告可使用顶格 + 段间空行格式。"
+    source_annotation: "Impeccable 禁用清单驱动理念·中文排版规范约束"
+    rationale: "段首缩进是中文排版的传统规范，帮助读者识别段落边界。学术场景使用西式顶格 + 段间空行是出版规范的特殊要求。"
+    severity: warning
+    override_condition: "当产出为学术报告（research_report）或 Web UI 文档等需顶格排版的场景时允许使用"
+
+  - rule_id: ASR-TYPO-006
+    category: typo
+    description: "禁数字使用比例字体（高密度场景）"
+    detection_rule: "CSS 检查：VISUAL_DENSITY > 7（高密度场景）时，数字内容未使用等宽字体（font-variant-numeric: tabular-nums 或 font-family 含 mono）。"
+    violation_example: "VD=8 的仪表盘中数字使用比例字体，列对齐错乱"
+    fix_suggestion: "高密度场景所有数字使用 font-variant-numeric: tabular-nums;（等宽数字）或等宽字体族（JetBrains Mono / Geist Mono）。"
+    source_annotation: "LC-026 Taste-Skill 反 Slop 规则·排版禁令（VD>7 时所有数字必须使用等宽字体）"
+    rationale: "比例字体的数字宽度不一致，导致高密度场景下列对齐错乱。等宽数字确保表格/仪表盘的数字列对齐，提升可读性。"
+    severity: blocking
+    override_condition: "当 VD <= 7（非高密度场景）或数字为单独展示（非列对齐场景）时允许使用比例字体"
+
+  # ============================================================
+  # 八、数据可视禁令（ASR-VIZ-001 ~ 005）
+  # ============================================================
+  - rule_id: ASR-VIZ-001
+    category: viz
+    description: "禁默认 Matplotlib 配色"
+    detection_rule: "图表代码检测：正则 `tab:blue|tab:orange|tab:green|tab:red|tab:purple|tab:brown|tab:pink|tab:gray|tab:olive|tab:cyan` 或未设置 color/colormap 参数。"
+    violation_example: "plt.plot(x, y)（未指定 color，使用默认 tab:blue）"
+    fix_suggestion: "从 visual_dna 读取配色方案注入图表：plt.plot(x, y, color='#1A56DB')。或使用 Nature/Cell 级学术配色包。"
+    source_annotation: "Impeccable 禁用清单驱动理念·数据可视化配色约束 + visual-dna.md §九 LC-030 data-viz-plots 对接"
+    rationale: "Matplotlib 默认 tab 配色是未做配色设计的标志，缺乏品牌识别度。配色应从 visual_dna 读取，确保与整体设计语言一致。"
+    severity: blocking
+    override_condition: "当产出为 Matplotlib 教学文档/快速原型且无需生产级质量时允许使用"
+
+  - rule_id: ASR-VIZ-002
+    category: viz
+    description: "禁 3D 饼图"
+    detection_rule: "图表代码检测：正则 `projection\\s*=\\s*['\"]3d['\"]` 且图表类型为 pie（ax.pie( 或 plt.pie(）。"
+    violation_example: "ax = fig.add_subplot(111, projection='3d'); ax.pie(sizes, labels=labels)"
+    fix_suggestion: "使用 2D 饼图或更优的条形图/树状图替代。饼图仅适用于 ≤5 个分类且需展示占比关系的场景。"
+    source_annotation: "Impeccable 禁用清单驱动理念·数据可视化准确性约束"
+    rationale: "3D 饼图因透视畸变严重扭曲面积感知，前方的扇区显得更大，是数据可视化的经典反模式（Edward Tufte 强烈批评）。"
+    severity: blocking
+    override_condition: "当 3D 饼图为教学示例（用于演示为何不应使用 3D 饼图）时允许使用"
+
+  - rule_id: ASR-VIZ-003
+    category: viz
+    description: "禁无坐标轴标签的图表"
+    detection_rule: "图表代码 AST 检查：Matplotlib 图表缺少 ax.set_xlabel() / ax.set_ylabel()；ECharts 图表缺少 xAxis.name / yAxis.name；Plotly 图表缺少 xaxis.title / yaxis.title。"
+    violation_example: "plt.plot(x, y); plt.show()（无轴标签）"
+    fix_suggestion: "所有图表必须标注坐标轴：ax.set_xlabel('时间（月）'); ax.set_ylabel('营收（亿元）')。轴标签须含单位。"
+    source_annotation: "Impeccable 禁用清单驱动理念·数据可视化完整性约束"
+    rationale: "无坐标轴标签的图表无法独立解读，读者无法判断数据维度和单位。坐标轴标签是数据可视化完整性的基本要求。"
+    severity: blocking
+    override_condition: "当图表为饼图/桑基图/网络图等无坐标轴的图表类型时允许使用"
+
+  - rule_id: ASR-VIZ-004
+    category: viz
+    description: "禁图例遮挡数据"
+    detection_rule: "图表渲染检测：图例 bounding box 与数据点/数据线 bounding box 重叠面积 > 5%。"
+    violation_example: "图例默认放置在图表右上角，遮挡了该区域的数据峰值"
+    fix_suggestion: "将图例放置在图表外部：Matplotlib ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')；ECharts legend.top: 'bottom'。或使用直接标注法。"
+    source_annotation: "Impeccable 禁用清单驱动理念·数据可视化可读性约束"
+    rationale: "图例遮挡数据导致读者无法获取完整信息，是数据可视化的可读性缺陷。图例应放置在不干扰数据的位置。"
+    severity: warning
+    override_condition: "当图表数据稀疏且图例位置无数据点时允许使用默认位置"
+
+  - rule_id: ASR-VIZ-005
+    category: viz
+    description: "禁彩虹色板用于顺序数据"
+    detection_rule: "图表代码检测：正则 `cmap\\s*=\\s*['\"](jet|rainbow|hsv)['\"]` 且数据类型为 sequential（顺序型）。"
+    violation_example: "plt.scatter(x, y, c=values, cmap='jet')（values 为连续温度数据）"
+    fix_suggestion: "顺序数据使用顺序型色板：cmap='viridis'（感知均匀）/ cmap='Blues'（单色渐变）/ cmap='YlOrRd'（黄-橙-红渐变）。"
+    source_annotation: "Impeccable 禁用清单驱动理念·数据可视化色彩科学约束"
+    rationale: "彩虹色板在顺序数据上制造虚假的分类边界，误导读者认为存在离散类别。顺序型色板（viridis）是感知均匀的科学色板。"
+    severity: blocking
+    override_condition: "当数据为分类数据（categorical）且需使用定性色板时允许使用 Set1/Set2 等定性色板（但仍禁用 jet/rainbow）"

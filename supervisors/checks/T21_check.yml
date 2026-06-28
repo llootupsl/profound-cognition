@@ -1,0 +1,302 @@
+﻿# 作者：阿洋
+task_id: "T21"
+task_file: "tasks/T21_knowledge_recycle.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中 recycle_summary 的所有 required_fields 是否全部存在（total_candidates / duplicates_filtered / conflicts_detected / similars_annotated / uniques_passed / written_to_engines / conflict_records / decay_log / skipped_no_match / dedup_details / write_timestamp）"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化YAML格式（非自然段落）"
+    severity: CRITICAL
+  - id: S03
+    description: "written_to_engines 数组中每个条目是否含 engine / entries / file_path / entry_summaries / version_info 五字段"
+    severity: CRITICAL
+  - id: S04
+    description: "dedup_details 数组中每个条目是否含 original_finding / similarity_score / filter_reason 三字段"
+    severity: CRITICAL
+  - id: S05
+    description: "version_info 数组中每个条目是否含 knowledge_id / version / is_new 三字段（非新建条目还需含 superseded 字段）"
+    severity: CRITICAL
+  - id: S06
+    description: "conflict_records 数组中每个条目是否含 old_knowledge_id / new_knowledge_id / conflict_description / resolution_status 四字段"
+    severity: CRITICAL
+  - id: S07
+    description: "decay_log 数组中每个条目是否含 knowledge_id / decay_date / old_confidence / new_confidence 四字段"
+    severity: CRITICAL
+
+layer_output_checks:
+  - id: check_layer_2_output
+    description: "Layer 2 人类读者洞察摘要已输出"
+    field: T21_output.layer_2_human_summary
+    required: true
+    check:
+      - field: "top_3_findings"
+        count: 3
+      - field: "further_reading"
+        count_gte: 1
+
+  - id: check_layer_2_conflict_hint
+    description: "若存在 CONFLICT 状态知识，Layer 2 是否包含知识冲突提示"
+    field: T21_output.layer_2_human_summary.conflict_hints
+    conditional: true
+
+  - id: check_layer_3_always_on
+    description: "Layer 3 框架演进层始终激活输出（always-on），必须包含 dag_improvements（≥1 条）、methodology_optimizations（≥1 条）、rendering_feedback（≥1 条）三项最低输出"
+    field: T21_output.layer_3_always_on
+    required: true
+    check:
+      - field: "dag_improvements"
+        count_gte: 1
+      - field: "methodology_optimizations"
+        count_gte: 1
+      - field: "rendering_feedback"
+        count_gte: 1
+
+  - id: check_external_storage_attempt
+    description: "外部存储写入尝试已执行，external_storage_status 中 meilisearch / qdrant / local_files 三部分均已记录"
+    field: T21_output.external_storage_status
+    required: true
+    check:
+      - field: "meilisearch.status"
+        values: ["SUCCESS", "RETRYING", "SKIPPED"]
+      - field: "qdrant.status"
+        values: ["SUCCESS", "RETRYING", "SKIPPED"]
+      - field: "local_files.status"
+        values: ["SUCCESS"]
+
+depth_checks:
+  - id: D01
+    description: "是否仅扫描了 cross_reference_potential == HIGH 的 new_discoveries？MEDIUM/LOW 级发现是否被正确排除？"
+    severity: CRITICAL
+  - id: D02
+    description: "去重阈值 80% 是否严格执行？每一对 candidate 的语义相似度是否已计算？"
+    severity: CRITICAL
+  - id: D03
+    description: "去重结果是否合理：duplicates_filtered + conflicts_detected + similars_annotated + uniques_passed == total_candidates？"
+    severity: CRITICAL
+  - id: D04
+    description: "跨 source_task_id 重复是否按优先原则处理：T13 > T15 > T12 > T11 > T10 > T09？"
+    severity: CRITICAL
+  - id: D05
+    description: "T13 confidence == TENTATIVE 的结论去重优先级是否被降低？"
+    severity: CRITICAL
+  - id: D06
+    description: "每条写入引擎的 finding 是否严格遵循 ## [T21-AUTO] {{YYYY-MM-DD}} 追加格式？含洞察/来源/置信度/原始上下文/知识ID/溯源链/版本信息七字段？"
+    severity: CRITICAL
+  - id: D07
+    description: "所有写入目标 file_path 是否指向 knowledge/domains/ 下的有效引擎文件（24 个引擎之一）？"
+    severity: CRITICAL
+  - id: D08
+    description: "同一引擎同一批次内是否存在重复写入？（同一引擎的 entry_summaries 去重检查）"
+    severity: CRITICAL
+  - id: D09
+    description: "cross_domain 类型的 finding 是否同时写入了所有相关引擎文件（而非仅写入单一引擎）？"
+    severity: CRITICAL
+  - id: D10
+    description: "skipped_no_match 列表中的条目是否记录了重试次数？是否为 2 次后仍无法匹配？"
+    severity: MAJOR
+  - id: D11
+    description: "写入前是否检查了目标引擎文件中已存在的旧条目（语义相似度阈值 0.80）？"
+    severity: CRITICAL
+  - id: D12
+    description: "dry_run 模式下是否确认无实际文件写入操作？"
+    severity: CRITICAL
+  - id: D13
+    description: "版本控制是否正确执行？相同 knowledge_id 的更新是否递增版本号（vN → vN+1）而非覆盖旧版本？旧版本是否标注 superseded_by？"
+    severity: CRITICAL
+  - id: D14
+    description: "每条知识的 provenance 溯源链是否完整？是否包含 source_task_id → source_upstream_tasks → original_discovery_node 三级链路？"
+    severity: CRITICAL
+  - id: D15
+    description: "相似度 ≥ 0.80 且结论矛盾的条目是否被标记为 CONFLICT 而非 DUPLICATE？冲突双方是否均保留并写入引擎文件？"
+    severity: CRITICAL
+  - id: D16
+    description: "知识衰减检查是否执行？超过 90 天未被引用的知识 confidence 是否降低 0.1？衰减后 confidence 是否不低于 0.3？"
+    severity: CRITICAL
+  - id: D17
+    description: "Layer 3 是否始终激活（always-on）？dag_improvements / methodology_optimizations / rendering_feedback 三项是否均存在且各 ≥ 1 条？"
+    severity: CRITICAL
+  - id: D18
+    description: "external_storage_status 是否完整？meilisearch / qdrant / local_files 三部分写入状态是否均已记录？"
+    severity: CRITICAL
+  - id: D19
+    description: "Meilisearch 文档 id 格式是否为 {knowledge_id}_{version}？"
+    severity: CRITICAL
+  - id: D20
+    description: "Qdrant payload 中是否包含完整的 provenance 溯源链（source_task_id / source_upstream_tasks / original_discovery_node）？"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "total_candidates 是否等于所有来源的候选条目数之和？（T13 conclusions + T15 insights + T09/10/11/12 HIGH discoveries + T15b resonance）"
+    severity: CRITICAL
+  - id: I02
+    description: "written_to_engines 各引擎 entries 数之和 + skipped_no_match 数是否等于 uniques_passed + conflicts_detected？"
+    severity: CRITICAL
+  - id: I03
+    description: "相似度 0.50-0.80 的条目是否被正确标记为 SIMILAR_KEPT 而非 DUPLICATE？（不丢失有价值的近似知识）"
+    severity: MAJOR
+  - id: I04
+    description: "domain_hint 与目标引擎文件映射是否与 domain-engines.md 的 24 引擎列表一致？无映射错误？"
+    severity: CRITICAL
+  - id: I05
+    description: "write_timestamp 是否为有效 ISO 8601 格式且为当前会话时间（非历史时间）？"
+    severity: MINOR
+  - id: I06
+    description: "original_problem_summary 是否完整（非空、非截断、非占位符）且 ≤ 50 字？"
+    severity: MAJOR
+  - id: I07
+    description: "conflict_records 中每条记录是否完整？old_knowledge_id / new_knowledge_id / conflict_description / resolution_status 四字段是否均非空？resolution_status 是否仅为 PENDING | RESOLVED | DEFERRED 之一？"
+    severity: CRITICAL
+  - id: I08
+    description: "decay_log 格式是否正确？每条记录的 knowledge_id / decay_date / old_confidence / new_confidence 是否均非空？new_confidence 是否 ≥ 0.3？old_confidence 是否 > new_confidence？"
+    severity: CRITICAL
+  - id: I09
+    description: "version_info 中版本号是否一致？同一 knowledge_id 的版本号是否严格递增（v1 → v2 → v3）？superseded 字段指向的旧版本是否确实存在于引擎文件中？"
+    severity: CRITICAL
+  - id: I10
+    description: "external_storage_status 中 meilisearch.documents_written + qdrant.points_written 是否与 written_to_engines 的 entries 总数一致？"
+    severity: CRITICAL
+  - id: I11
+    description: "external_storage_status 中 meilisearch.status 为 RETRYING 时，error 字段是否非空？"
+    severity: MAJOR
+  - id: I12
+    description: "external_storage_status 中 qdrant.status 为 RETRYING 时，error 字段是否非空？"
+    severity: MAJOR
+  - id: I13_A6_10
+    description: "【A6.10-F14 / P1-18 修复，Wave 5】deduplication_log 是否存在且完整？每条记录 status 是否为 ORIGINAL|DUPLICATE|PARTIAL 三态之一？三种状态是否均至少出现 1 次（若无 DUPLICATE/PARTIAL 须注明无重复或部分匹配原因）？每条含 finding_id / similarity_score / status / decision 四字段？similarity_score 在 [0.0, 1.0] 范围内？"
+    severity: CRITICAL
+    check_method: "three_state_completeness_scan"
+    required_field: "deduplication_log"
+    allowed_status_values: ["ORIGINAL", "DUPLICATE", "PARTIAL"]
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3（全文搜索：很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑）"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失（recycle_summary 下所有 required_fields 是否全部非空）"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突（如 written_to_engines 的 entries 数至少为 1）"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+  - id: C06
+    constitution_ref: "知识回收专项条款"
+    description: "MEDIUM/LOW 级 new_discoveries 是否被正确排除——cross_reference_potential != HIGH 的发现不得出现在 candidates 中"
+    severity: CRITICAL
+  - id: C07
+    constitution_ref: "知识回收专项条款"
+    description: "去重操作是否在写入前完成——未执行去重而直接写入引擎文件视为 FAIL"
+    severity: CRITICAL
+  - id: C08
+    constitution_ref: "知识回收专项条款"
+    description: "append 格式是否正确——每条 finding 是否独立为一个 ## [T21-AUTO] 节，含洞察/来源/置信度/原始上下文/知识ID/溯源链/版本信息七个必需字段"
+    severity: CRITICAL
+  - id: C09
+    constitution_ref: "知识回收专项条款"
+    description: "file_path 有效性——所有写入目标路径是否指向 knowledge/domains/ 下实际存在的 .md 文件"
+    severity: CRITICAL
+  - id: C10
+    constitution_ref: "知识回收专项条款"
+    description: "同一引擎无重复写入——每个引擎文件在同一批次中不应出现语义相同（相似度 > 0.80）的多次写入"
+    severity: CRITICAL
+  - id: C11
+    constitution_ref: "四维知识管理-版本控制"
+    description: "每条知识的 version_meta 是否完整？created_at / source_task_id / change_summary 三字段是否均存在且非空？"
+    severity: CRITICAL
+  - id: C12
+    constitution_ref: "四维知识管理-冲突检测"
+    description: "所有 CONFLICT 条目的 resolution_status 是否为 PENDING？是否未在当前执行中自动变更为 RESOLVED 或 DEFERRED？"
+    severity: CRITICAL
+  - id: C13
+    constitution_ref: "知识回收专项条款-Layer3"
+    description: "Layer 3 是否始终激活（always-on）？dag_improvements / methodology_optimizations / rendering_feedback 三项是否均满足最低数量要求（≥1）？"
+    severity: CRITICAL
+  - id: C14
+    constitution_ref: "知识回收专项条款-外部存储"
+    description: "external_storage_status 是否完整？meilisearch / qdrant / local_files 三部分状态是否均被记录？"
+    severity: CRITICAL
+  - id: C15
+    constitution_ref: "知识回收专项条款-外部存储"
+    description: "Meilisearch 文档 id 格式是否为 {knowledge_id}_{version}？文档字段是否与规范一致（id / knowledge_id / version / finding / finding_summary / domain_hint / source_task_id / confidence / provenance / tags）？"
+    severity: CRITICAL
+
+must_not:
+  - id: M01
+    description: "接受非激活状态下的输出——本节点始终激活，若未产出任何回收知识则 FAIL"
+    severity: CRITICAL
+  - id: M02
+    description: "接受 MEDIUM/LOW 级发现被回收——cross_reference_potential != HIGH 的 new_discoveries 不得出现在 candidates 中"
+    severity: CRITICAL
+  - id: M03
+    description: "跳过去重直接写入——duplicates_filtered == 0 且未声明跳过原因视为去重未执行"
+    severity: CRITICAL
+  - id: M04
+    description: "对相似度 0.50-0.80 条目执行去重——应保留并标注 SIMILAR，直接丢弃视为过度去重"
+    severity: CRITICAL
+  - id: M05
+    description: "未按 ## [T21-AUTO] 格式追加——引擎文件中的新条目必须严格遵循规范格式，缺失任何必需字段（洞察/来源/置信度/原始上下文/知识ID/溯源链/版本信息）则 FAIL"
+    severity: CRITICAL
+  - id: M06
+    description: "写入 knowledge/domains/ 以外路径——所有写入目标必须在该目录下"
+    severity: CRITICAL
+  - id: M07
+    description: "同一引擎同一批次重复写入语义相同的 finding"
+    severity: CRITICAL
+  - id: M08
+    description: "domain_hint 映射错误——如将科技类 finding 写入 art-engine.md"
+    severity: CRITICAL
+  - id: M09
+    description: "cross_domain finding 仅写入单一引擎——必须写入所有相关引擎文件"
+    severity: MAJOR
+  - id: M10
+    description: "T13 TENTATIVE 结论覆盖更高置信度副本——TENTATIVE 结论去重优先级必须低于非 TENTATIVE 结论"
+    severity: CRITICAL
+  - id: M11
+    description: "覆盖或删除引擎文件现有内容——禁止一切非追加式修改，只能 append"
+    severity: CRITICAL
+  - id: M12
+    description: "dry_run 模式下执行实际文件写入"
+    severity: CRITICAL
+  - id: M13
+    description: "覆盖旧版本知识——版本控制要求保留历史版本，相同 knowledge_id 的更新必须递增版本号追加写入，不得覆盖或删除旧版本"
+    severity: CRITICAL
+  - id: M14
+    description: "自动解决冲突——CONFLICT 条目的 resolution_status 不得在当前执行中从 PENDING 变更为 RESOLVED 或 DEFERRED，必须由后续研究任务或人工确认"
+    severity: CRITICAL
+  - id: M15
+    description: "知识衰减后 confidence 低于 0.3——0.3 为硬性下限，衰减后 new_confidence 不得低于此值"
+    severity: CRITICAL
+  - id: M16
+    description: "省略 provenance 溯源链——每条知识必须包含 source_task_id 和 source_upstream_tasks，确保可回溯至原始 DAG 节点"
+    severity: CRITICAL
+  - id: M17
+    description: "跳过 Layer 3 输出——always-on 模式下 Layer 3 缺失 dag_improvements / methodology_optimizations / rendering_feedback 任一项视为 FAIL"
+    severity: CRITICAL
+  - id: M18
+    description: "跳过外部存储写入——外部存储可用时未执行 Meilisearch + Qdrant 写入视为 FAIL"
+    severity: CRITICAL
+  - id: M19
+    description: "Meilisearch 文档 id 格式不正确——必须以 {knowledge_id}_{version} 格式命名"
+    severity: CRITICAL
+  - id: M20
+    description: "Qdrant payload 缺少 provenance 溯源链——必须包含 source_task_id / source_upstream_tasks / original_discovery_node"
+    severity: CRITICAL
+  - id: M21
+    description: "外部存储写入失败未记录——external_storage_status 中状态为 RETRYING 但 error 字段为空"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

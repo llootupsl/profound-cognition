@@ -1,0 +1,58 @@
+﻿# 作者：阿洋
+node: T23_meta_dim_part1_depth
+desc: "全息框架第一部分-4维度深度质量检查"
+critical_path: true
+checks:
+  - id: T23M-C01
+    type: quality
+    severity: CRITICAL
+    desc: "维度1（学科深度）是否覆盖 ≥ 5个学科视角"
+    validate: "dim_1中覆盖学科数量 ≥ 5"
+  - id: T23M-C02
+    type: quality
+    severity: CRITICAL
+    desc: "维度2（时间跨度）是否覆盖历史/现状/未来三阶段"
+    validate: "dim_2.aspects 中至少包含 '历史脉络', '现状诊断', '未来趋势' 中的2项且有实质性内容"
+  - id: T23M-C03
+    type: quality
+    severity: HIGH
+    desc: "维度3（空间场域）是否含多层级空间分析"
+    validate: "dim_3 内容覆盖 ≥ 3个空间层级（如：本地/区域/全球）"
+  - id: T23M-C04
+    type: quality
+    severity: HIGH
+    desc: "维度4（假设前提）是否识别 ≥ 3个隐含假设"
+    validate: "dim_4中 '假设前提审视' 明确列出 ≥ 3个隐含假设并逐一检验"
+  - id: T23M-C05
+    type: quality
+    severity: HIGH
+    desc: "认知坐标标注精度（每个维度的x/y/z值合理）"
+    validate: "每个维度的 '认知坐标' 中 x∈{1-10}, y∈{1-10}, z∈{1-10} 且为整数"
+  - id: T23M-C06
+    type: quality
+    severity: HIGH
+    desc: "维度间概念重叠度检查（避免重复论述）"
+    validate: "dim_1至dim_4中无 ≥ 30%内容语义重复"
+  - id: T23M-C07
+    type: quality
+    severity: MEDIUM
+    desc: "每个aspect内容深度（≥ 200字/aspect）"
+    validate: "每个aspect内容字数 ≥ 200"
+  - id: T23M-C08
+    type: quality
+    severity: MEDIUM
+    desc: "问题重构是否产生新洞察（非复述原始问题）"
+    validate: "dim_4中 '问题重构' 产生的问题表述与原问题表述有实质性差异"
+  - id: T23M-C09
+    type: quality
+    severity: LOW
+    desc: "关键变量识别是否可量化"
+    validate: "dim_3中 '关键变量识别' 含 ≥ 3个可量化变量（有单位或数值范围）"
+  - id: T23M-C10
+    type: quality
+    severity: LOW
+    desc: "边界条件界定是否明确（含至少1个否定性边界）"
+    validate: "dim_4中 '边界条件界定' 含至少1个明确的 '不适用于...' 或 '超出...范围' 的边界声明"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

@@ -1,0 +1,106 @@
+﻿# 作者：阿洋
+task_id: "T12b"
+task_file: "T12b_cross_adversarial_synthesis.md"
+
+structural_checks:
+  - id: S01
+    description: "cross_adversarial_assessment 字段是否存在且包含 reinforced_attacks、internal_contradictions、unresolved_vulnerabilities 三个子字段"
+    severity: CRITICAL
+  - id: S02
+    description: "reinforced_attacks 是否非空"
+    severity: CRITICAL
+  - id: S03
+    description: "internal_contradictions 是否至少 1 条"
+    severity: CRITICAL
+  - id: S04
+    description: "unresolved_vulnerabilities 是否至少 1 条"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "reinforced_attacks 中每条是否都包含 attack、evidence_support、priority 三个字段且 evidence_support 非空"
+    severity: CRITICAL
+  - id: D03
+    description: "reinforced_attacks 是否确实注入了 T11/T12 内容（非简单复述 T10 原始攻击）"
+    severity: CRITICAL
+  - id: D04
+    description: "internal_contradictions 中每条是否都包含 t10_position 和 t11_or_t12_position 且两者立场不同"
+    severity: CRITICAL
+  - id: D05
+    description: "priority 是否有区分度（不可全部相同）"
+    severity: HIGH
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（T10/T11/T12引用）"
+    severity: CRITICAL
+  - id: I02
+    description: "reinforced_attacks 中的攻击是否与 T10 原始攻击存在对应关系"
+    severity: HIGH
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失（reinforced_attacks、internal_contradictions、unresolved_vulnerabilities）"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"
+
+fusion_algorithm_checks:
+  - id: FA01
+    description: "阶段一加权融合已执行：使用 FE-001 Softmax 公式 w_i = exp(s_i) / Σexp(s_j) 计算归一化权重"
+    severity: CRITICAL
+    check_method: "verify weighted_fusion_result exists and w_i calculated via softmax"
+  - id: FA02
+    description: "阶段一权重非等权（除非 softmax_zero_input 异常回退）：w_i 应反映 s_i 差异，不可全部为 1/3（除非标注 formula_retrying）"
+    severity: HIGH
+    check_method: "verify w_i values are differentiated or formula_retrying flag present"
+  - id: FA03
+    description: "阶段二辩证综合已执行：正反合三段式辩证分析产出 consensus/divergence/complementarity 三类关系"
+    severity: CRITICAL
+    check_method: "verify dialectical_relations contains consensus, divergence, complementarity"
+  - id: FA04
+    description: "阶段二分歧关系非空（除非三路完全一致，需显式说明）：divergence 至少 1 条或显式标注无分歧"
+    severity: HIGH
+    check_method: "verify divergence list non-empty or explicit no-divergence statement"
+  - id: FA05
+    description: "阶段三钢化论证已执行：对分歧结论执行 steel-manning，产出 steel_manning_result"
+    severity: CRITICAL
+    check_method: "verify steel_manning_result exists for each divergence claim"
+  - id: FA06
+    description: "阶段三钢化论证六标准已应用：逐命题攻击/精度提升/边界明确/不确定性标注/替代排除/博弈稳定"
+    severity: HIGH
+    check_method: "verify steel_manning_result references six standards"
+  - id: FA07
+    description: "阶段三生存状态已标注：survival_status 为 thesis_survived|antithesis_survived|both_survived|neither_survived|open_question 之一"
+    severity: CRITICAL
+    check_method: "verify survival_status field present and valid"
+  - id: FA08
+    description: "三阶段融合引用正确：FE-001 softmax-attention.md + dialectical-analysis.md + steel-manning.md"
+    severity: HIGH
+    check_method: "verify references to formula-engine/softmax-attention, thinking-models/general/dialectical-analysis, thinking-models/general/steel-manning"
+  - id: FA09
+    description: "execution_params 达到最低值：synthesis_stages=3, steel_manning=true"
+    severity: CRITICAL
+    check_method: "verify execution_params.synthesis_stages >= 3 and execution_params.steel_manning == true"

@@ -1,0 +1,153 @@
+# 作者：阿洋
+# Profound Cognition v6.0.0 — Persona Schema
+# 人设系统扩展至覆盖全部 3 种产品类型
+
+persona_type:
+  type: enum
+  values:
+    - researcher      # research_report
+    - wechat_author   # wechat_article
+    - educator        # course_material
+  required: true
+
+# Researcher persona fields
+researcher:
+  expertise_domains: [string]      # 专业领域
+  methodology_preference: string   # 方法论偏好
+  writing_style: enum              # 写作风格
+    values: [academic, analytical, strategic, investigative]
+  citation_style: enum             # 引用风格
+    values: [apa, chicago, inline, footnote]
+  orcid:                           # ORCID 研究者标识符（D15.4.1）
+    type: string
+    pattern: '^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$'  # ORCID iD 格式：XXXX-XXXX-XXXX-XXXX（末位可为校验位 X）
+    required: false                # 可选字段，用户未提供时不阻塞流程
+    description: "ORCID iD 是研究者的持久数字标识符，引用时自动附加到研究报告署名"
+
+# WeChat author persona fields (Yang's 12-field system)
+wechat_author:
+  identity:
+    type: enum
+    values: [前媒体人, 科技评论员, 创业者, 分析师, 观察者, 实践者, 研究者, 跨界思考者]
+    source: [explicit, inferred]
+    evidence: string
+  core_values:
+    type: enum
+    values: [开放, 保守, 批判, 建设, 中立, 激进, 务实, 理想]
+    source: [explicit, inferred]
+    evidence: string
+  personal_stories:
+    type: array[object]
+    items:
+      properties:
+        scenario: { type: string }
+        emotion: { type: string }
+        turning_point: { type: string }
+        clarity_status: { type: enum, values: [完整, 待补充] }
+    source: [explicit, inferred]
+    evidence: string
+  catchphrase:
+    type: array[string]
+    minItems: 2
+    items:
+      type: string
+      description: "从用户原文中提取的具体短语"
+    source: [explicit, inferred]
+    evidence: string
+  emotion_expression:
+    type: enum
+    values: [克制, 适度, 丰富, 强烈, 内敛, 外放, 层次, 爆发]
+    source: [explicit, inferred]
+    evidence: string
+  self_deprecation:
+    type: enum
+    values: [无, 轻微, 适度, 明显, 频繁, 点睛, 反差, 贯穿]
+    source: [explicit, inferred]
+    evidence: string
+  knowledge_zones:
+    type: array[string]
+    minItems: 1
+    items:
+      type: string
+      enum: [art, business, cognitive-science, culture, education, engineering, environment-climate, film, finance-quant, food, health, history, law, literature, media-communication, philosophy, political, psychology, religion, science, social, sports, tech, urban-planning, anthropology, architecture, data, design, economics, linguistics, music, military, diplomacy, national-power, mathematics]
+      description: "参见 knowledge/domain-engines.md 中的 35 个领域引擎列表"
+    source: [explicit, inferred]
+    evidence: string
+  cultural_refs:
+    type: array[string]
+    items:
+      type: string
+      description: "用户提及的文化参照系：文学作品、电影、历史事件、网络梗等"
+    source: [explicit, inferred]
+    evidence: string
+  humor_style:
+    type: enum
+    values: [冷幽默, 黑色幽默, 自嘲式, 讽刺式, 无厘头, 温和调侃, 无]
+    source: [explicit, inferred]
+    evidence: string
+  reader_name:
+    type: string
+    description: "作者对读者的称呼方式，如'朋友''各位''你'"
+    source: [explicit, inferred]
+    evidence: string
+  ending_pref:
+    type: enum
+    values: [开放式提问, 行动号召, 情感共鸣, 余韵式总结, 分享引导]
+    source: [explicit, inferred]
+    evidence: string
+  style_ref:
+    type: enum
+    values: [故事驱动, 数据驱动, 逻辑驱动, 情绪驱动, 混合]
+    source: [explicit, inferred]
+    evidence: string
+
+  # === derived_from 字段（从上述 12 字段推导，非直接采集）===
+  communication_style:             # derived_from: identity + emotion_expression + humor_style
+    type: enum
+    values: [正式, 轻松, 犀利, 温和, 幽默, 讽刺, 热情, 冷静]
+    derived: true
+    derived_from: [identity, emotion_expression, humor_style]
+  emotional_baseline:              # derived_from: emotion_expression + self_deprecation + personal_stories
+    type: enum
+    values: [理性, 热血, 冷静, 温暖, 悲观, 乐观, 矛盾, 沉稳]
+    derived: true
+    derived_from: [emotion_expression, self_deprecation, personal_stories]
+
+# Educator persona fields
+educator:
+  teaching_style: enum
+    values: [Socratic, Storytelling, Systematic]
+  target_level: enum               # 目标学员水平
+    values: [beginner, intermediate, advanced, expert]
+  pacing: enum                     # 教学节奏
+    values: [slow, moderate, fast, adaptive]
+  assessment_style: enum           # 评估风格
+    values: [quiz, project, discussion, reflection]
+
+# Default persona templates
+defaults:
+  researcher:
+    methodology_preference: "mixed_methods"
+    writing_style: "analytical"
+    citation_style: "inline"
+    orcid: null  # 默认无 ORCID，用户提供后自动附加到署名
+  wechat_author:
+    identity: "知识分享者"
+    core_values: "开放"
+    personal_stories: []
+    catchphrase: []
+    emotion_expression: "适度"
+    self_deprecation: "轻微"
+    knowledge_zones: ["general"]
+    cultural_refs: []
+    humor_style: "温和调侃"
+    reader_name: "读者"
+    ending_pref: "开放式提问"
+    style_ref: "混合"
+    target_audience: "大众读者"
+    expected_tone: "温和启发"
+  educator:
+    teaching_style: "Systematic"
+    target_level: "intermediate"
+    pacing: "moderate"
+    assessment_style: "reflection"

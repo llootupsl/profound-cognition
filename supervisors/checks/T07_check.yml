@@ -1,0 +1,48 @@
+﻿# 作者：阿洋
+node: T07
+desc: "Gate-α 研究底座门控"
+critical_path: true
+checks:
+  - id: GA-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "九层研究底座覆盖度评估是否完成"
+    validate: "output.nine_layer_coverage 含 L1-L9 各层覆盖状态且至少 7 层标记为 covered"
+  - id: GA-C02
+    type: consistency
+    severity: CRITICAL
+    desc: "层间一致性分析是否完成且无矛盾"
+    validate: "output.inter_layer_consistency 含层间矛盾列表，且 contradiction_count == 0"
+  - id: GA-C03
+    type: completeness
+    severity: CRITICAL
+    desc: "Phase 1 节点状态枚举是否完成"
+    validate: "output.node_status_enumeration 含 T01~T06 全部节点的执行状态（COMPLETED/SKIPPED/FAILED）"
+  - id: GA-C04
+    type: quality
+    severity: CRITICAL
+    desc: "SKIPPED 节点视为 COMPLETED（SKIPPED==COMPLETED 规则）"
+    validate: "所有 status=='SKIPPED' 的节点视为 COMPLETED，不触发 WARNING"
+  - id: GA-C05
+    type: completeness
+    severity: HIGH
+    desc: "九层至少覆盖 7 层"
+    validate: "output.nine_layer_coverage 中 covered_count >= 7"
+  - id: GA-C06
+    type: consistency
+    severity: HIGH
+    desc: "无层间矛盾"
+    validate: "output.inter_layer_consistency.contradiction_count == 0"
+  - id: GA-C07
+    type: quality
+    severity: MEDIUM
+    desc: "FAIL 退回路径是否正确"
+    validate: "decision=='FAIL'时 return_target ∈ {T01, T02, T03, T04, T05, T06}，且退回层数 <= 2"
+  - id: GA-C08
+    type: quality
+    severity: MEDIUM
+    desc: "PASS/FAIL/WARN 决策是否明确"
+    validate: "output.decision ∈ {PASS, FAIL, WARN}"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

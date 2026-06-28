@@ -1,0 +1,48 @@
+﻿# 作者：阿洋
+node: T14
+desc: "Gate-β 认知流水线门控"
+critical_path: true
+checks:
+  - id: GB-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "推理链完整性检查是否完成"
+    validate: "output.reasoning_chain_completeness 含全部推理路径的完整性状态"
+  - id: GB-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "魔鬼代言人反馈吸收检查是否完成"
+    validate: "output.devils_advocate_feedback 含反馈列表及吸收状态"
+  - id: GB-C03
+    type: completeness
+    severity: CRITICAL
+    desc: "Phase 2 节点状态枚举是否完成"
+    validate: "output.node_status_enumeration 含 T08~T13 全部节点的执行状态（COMPLETED/SKIPPED/FAILED）"
+  - id: GB-C04
+    type: quality
+    severity: CRITICAL
+    desc: "SKIPPED 节点视为 COMPLETED（SKIPPED==COMPLETED 规则）"
+    validate: "所有 status=='SKIPPED' 的节点视为 COMPLETED，不触发 WARNING"
+  - id: GB-C05
+    type: quality
+    severity: CRITICAL
+    desc: "7 条推理路径均完整"
+    validate: "output.reasoning_chain_completeness 中 complete_path_count >= 7"
+  - id: GB-C06
+    type: quality
+    severity: CRITICAL
+    desc: "至少 1 个魔鬼代言人反馈被吸收"
+    validate: "output.devils_advocate_feedback 中 absorbed_count >= 1"
+  - id: GB-C07
+    type: quality
+    severity: HIGH
+    desc: "FAIL 退回路径是否正确"
+    validate: "decision=='FAIL'时 return_target == 'T08'（退回至 T08 重新认知解构）"
+  - id: GB-C08
+    type: quality
+    severity: MEDIUM
+    desc: "PASS/FAIL/WARN 决策是否明确"
+    validate: "output.decision ∈ {PASS, FAIL, WARN}"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

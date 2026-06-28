@@ -1,0 +1,64 @@
+﻿# 作者：阿洋
+task_id: "T_env_probe"
+task_file: "tasks/T_env_probe.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在（node_id, phase, timestamp, platform, model_capability, tool_availability, degradation_profile）"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "model_capability.tier 是否为合法枚举值（仅接受 strong | mid | weak 三者之一）"
+    severity: CRITICAL
+  - id: D02
+    description: "model_capability.detection_method 是否标注了实际使用的检测方法（env_marker | model_name_inference | test_call）"
+    severity: CRITICAL
+  - id: D03
+    description: "model_capability.evidence 是否给出了具体的判定依据（非空、非模糊表述）"
+    severity: CRITICAL
+  - id: D04
+    description: "六个工具（typst / pandoc / python-docx / weasyprint / fonts / network）是否全部检测完毕且 status 为 available 或 unavailable"
+    severity: CRITICAL
+  - id: D05
+    description: "available 的工具是否记录了版本号？unavailable 的工具是否记录了错误原因？"
+    severity: HIGH
+  - id: D06
+    description: "degradation_profile 是否与 model_capability.tier 一致（如 strong → exhaust/high/full_multimodal）"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "NRSF header 写入位置是否正确（NRSF.header.env_probe）"
+    severity: CRITICAL
+  - id: I02
+    description: "model_capability.tier 为 weak 时是否未推荐 full_multimodal 渲染策略"
+    severity: CRITICAL
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "是否未在无充分依据的情况下将模型层级判定为 strong"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

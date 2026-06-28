@@ -1,0 +1,176 @@
+# 作者：阿洋
+task_id: "T13"
+task_file: "T13_cog_synthesize.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+  - id: S03
+    description: "depth_satisfaction 对象是否存在于输出中（含 score, unsolved_tensions, trigger_second_pass, scoring_rationale）"
+    severity: CRITICAL
+  - id: S04
+    description: "emergent_insights 对象是否存在于输出中（含 Q1_beyond_visible, Q2_deeper_mechanism, Q3_meta_pattern）"
+    severity: CRITICAL
+  - id: S05
+    description: "depth_signal 对象是否存在于输出中（含 triggered, triggered_signals 数组）"
+    severity: CRITICAL
+  - id: S06
+    description: "depth_signal.triggered_signals 中每条是否含 phase / source / description / severity / recommended_focus 五个必需字段"
+    severity: CRITICAL
+  - id: S07
+    description: "depth_signal.triggered_signals 中每条 phase 是否为 manual 或 passthrough（二选一）"
+    severity: CRITICAL
+  - id: S08
+    description: "synthesis_meta 对象是否存在于输出中（含 depth_signal_triggered, triggered_signal_types, deep_recursive_focus, signal_priority, signal_root_analysis_complete, requires_deep_recursion 六个必需字段）"
+    severity: CRITICAL
+  - id: S09
+    description: "synthesis_meta.depth_signal_triggered 是否与 depth_signal.triggered 一致"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "CL1-CL6跃迁记录完整？每层含跃迁前+跃迁类型+跃迁后+驱动力？收敛清单7项逐项结果？核心结论≥3个且各有置信度？"
+    severity: CRITICAL
+  - id: D03
+    description: "emergent_insights 非空检查：Q1_beyond_visible, Q2_deeper_mechanism, Q3_meta_pattern 是否均非空且非占位符（如'无'、'N/A'、空字符串）"
+    severity: CRITICAL
+  - id: D04
+    description: "depth_satisfaction 完整性检查：score 是否在 0.0-1.0 范围内？unsolved_tensions 若有条目则每项含 tension/severity/related_paths？trigger_second_pass 是否为 boolean？scoring_rationale 是否非空且 ≥ 50 字符？"
+    severity: CRITICAL
+  - id: D05
+    description: "depth_signal 完整性检查：triggered 是否为 boolean？triggered_signals 数组中每条是否含 phase（manual|passthrough）/ source / description / severity（critical|significant）/ recommended_focus？若 triggered == true，triggered_signals 不可为空数组"
+    severity: CRITICAL
+  - id: D06_R5_01
+    description: "【R5-01】applied_models 字段是否存在且非空（至少 1 个模型被应用）"
+    severity: CRITICAL
+  - id: D07_R5_01
+    description: "【R5-01】applied_models 中每个条目是否包含 model_id / application_scope / contribution 三个字段"
+    severity: CRITICAL
+  - id: D08_R5_01
+    description: "【R5-01】applied_models 中标注 [EXTRA] 的模型是否有充分理由（≥20字）"
+    severity: MAJOR
+  - id: D09_R5_01
+    description: "【R5-01】recommended_thinking_models 中未被应用的模型是否标注 [SKIPPED] 并说明理由"
+    severity: MAJOR
+  - id: D10_R5_01
+    description: "【R5-01】applied_models 中 model_id 是否在路由表（knowledge/thinking-models/routing-table.md）的 30 个模型清单内"
+    severity: CRITICAL
+    check_method: "cross_ref_verify"
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+  - id: C06
+    constitution_ref: "P2"
+    description: "emergent_insights.Q1-Q3 是否非空且含实质性内容（非占位符）"
+    severity: CRITICAL
+  - id: C07
+    constitution_ref: "P2"
+    description: "depth_satisfaction 四项是否全部存在且 score 在 [0.0, 1.0] 区间内"
+    severity: CRITICAL
+  - id: C08
+    constitution_ref: "P2"
+    description: "depth_signal.triggered 必须为 boolean，triggered_signals 必须为数组，若 triggered==true 则数组非空且每条含 recommended_focus"
+    severity: CRITICAL
+  - id: C09
+    constitution_ref: "P2"
+    description: "synthesis_meta 六字段（depth_signal_triggered, triggered_signal_types, deep_recursive_focus, signal_priority, signal_root_analysis_complete, requires_deep_recursion）必须全部存在，depth_signal_triggered 与 depth_signal.triggered 必须一致，requires_deep_recursion==true 时 deep_recursive_focus 必须非空"
+    severity: CRITICAL
+  - id: C10_R3_03
+    constitution_ref: "P2"
+    description: "【R3-03 收敛判据】synthesis_meta.convergence_criteria_status 是否存在且完整（含 current_round / minimum_rounds / quality_condition / information_gain_condition / convergence_achieved / supervisor_verdict）？"
+    severity: CRITICAL
+  - id: C11_R3_03
+    constitution_ref: "P3"
+    description: "【R3-03 收敛判据-质量条件】quality_condition.quality_satisfied 是否同时满足 depth_satisfaction_score >= 0.85 AND supervisor_depth_score >= 0.85？supervisor_depth_score 是否由 Supervisor 独立评定（基于 C1-C7 通过率，非 T13 自评）？若 T13 自评 score >= 0.85 但 supervisor_depth_score < 0.85，判定为「自评过高」，FAIL"
+    severity: CRITICAL
+    check_method: "supervisor_independent_assessment"
+  - id: C12_R3_03
+    constitution_ref: "P3"
+    description: "【R3-03 收敛判据-信息增益条件】information_gain_condition.ig_satisfied 是否基于连续 2 轮 ΔInfo < ε（0.05）？delta_info_current 与 delta_info_previous 是否均 < 0.05？若仅 1 轮 < ε，ig_satisfied 必须为 false"
+    severity: CRITICAL
+    check_method: "delta_info_verify"
+  - id: C13_R3_03
+    constitution_ref: "P2"
+    description: "【R3-03 收敛判据-下限规则】current_round 是否 >= minimum_rounds（3）？若 < 3 且 convergence_achieved == true，FAIL（未达最低下限不得终止）"
+    severity: CRITICAL
+  - id: C14_R3_03
+    constitution_ref: "P3"
+    description: "【R3-03 收敛判据-双条件一致性】convergence_achieved == true 时，quality_satisfied 与 ig_satisfied 是否同时为 true？若 convergence_achieved == true 但任一条件为 false，FAIL（双条件必须同时满足）"
+    severity: CRITICAL
+  - id: C15_R3_03
+    constitution_ref: "P4"
+    description: "【R3-03 Supervisor 独立扫描】Supervisor 是否独立扫描了 C1-C7 收敛检验结果、depth_signal.triggered_signals、emergent_insights Q1-Q3、core_conclusions？supervisor_verdict 是否为 CONTINUE 或 TERMINATE 之一？若 supervisor_verdict == TERMINATE 但收敛判据未满足，FAIL"
+    severity: CRITICAL
+    check_method: "supervisor_scan_log_verify"
+  - id: C16_A6_10
+    constitution_ref: "P2"
+    description: "【A6.10-F12 / P1-16 修复，Wave 5】convergence_criteria_status 四要素深度完整性：quality_condition（含 quality_satisfied + depth_satisfaction_score + supervisor_depth_score 三子字段，均非空）/ information_gain_condition（含 ig_satisfied + delta_info_current + delta_info_previous 三子字段，均非空）/ rounds（含 current_round + minimum_rounds 两子字段，current_round >= minimum_rounds）/ verdict（supervisor_verdict 为 CONTINUE|TERMINATE 之一，且与收敛条件一致性：convergence_achieved==true 时 verdict 应为 TERMINATE，反之应为 CONTINUE）四要素是否均完整且子字段非空？"
+    severity: CRITICAL
+    check_method: "nested_field_completeness_scan"
+    required_field: "convergence_criteria_status"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"
+
+lightrag_checks:
+  - id: LR01
+    description: "LightRAG 检索相关性分数：retrieval_results[*].score 均值是否 ≥ 0.7（< 0.7 触发索引重建或回退到简单向量搜索）"
+    severity: MAJOR
+    check_method: "numeric_threshold"
+    required_field: "retrieval_scores_mean"
+    threshold: 0.7
+    on_fail: "trigger_reindex_or_vector_search"
+  - id: LR02
+    description: "LightRAG 检索覆盖率：retrieval_results 数组长度 / top_k 是否 == 1.0（< 1.0 表示索引不完整）"
+    severity: MINOR
+    check_method: "numeric_threshold"
+    required_field: "retrieval_coverage"
+    threshold: 1.0
+  - id: LR03
+    description: "LightRAG 查询模式合法性：query_mode 是否为 local|hybrid|global|naive 之一"
+    severity: MAJOR
+    check_method: "enum_value_check"
+    required_field: "query_mode"
+    allowed_values: ["local", "hybrid", "global", "naive"]
+  - id: LR04
+    description: "LightRAG 检索延迟：retrieval_latency_ms 是否 ≤ 5000（> 5000ms 触发 hybrid→naive 回退）"
+    severity: MINOR
+    check_method: "numeric_threshold"
+    required_field: "retrieval_latency_ms"
+    threshold: 5000
+    on_fail: "switch_to_naive"

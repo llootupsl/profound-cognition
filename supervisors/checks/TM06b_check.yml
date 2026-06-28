@@ -1,0 +1,48 @@
+# 作者：阿洋
+node: TM06b_lean4_verify
+desc: "Lean4 形式化验证检查"
+critical_path: true
+checks:
+  - id: TM06b-C01
+    type: existence
+    severity: CRITICAL
+    desc: "lean4_verification_report 是否存在"
+    validate: "output.lean4_verification_report 存在且非空"
+  - id: TM06b-C02
+    type: quality
+    severity: CRITICAL
+    desc: "proved_rate 是否 ≥ 0.8（80%）"
+    validate: "output.lean4_verification_report.proved_rate >= 0.8"
+  - id: TM06b-C03
+    type: completeness
+    severity: CRITICAL
+    desc: "提取的可形式化论断总数 ≥ 5"
+    validate: "output.lean4_verification_report.total_claims >= 5"
+  - id: TM06b-C04
+    type: completeness
+    severity: HIGH
+    desc: "论断类型覆盖三类（mathematical/logical/causal）"
+    validate: "output.lean4_verification_report.details 中 claim_type 含 mathematical, logical, causal 三类"
+  - id: TM06b-C05
+    type: quality
+    severity: HIGH
+    desc: "每个论断含 lean4_statement 和 verification_status"
+    validate: "details 每项含 claim_id, claim_type, original_statement, lean4_statement, verification_status"
+  - id: TM06b-C06
+    type: quality
+    severity: MEDIUM
+    desc: "verification_status 值合法（proved/disproved/timeout/skipped）"
+    validate: "每个 details 项的 verification_status ∈ {proved, disproved, timeout, skipped}"
+  - id: TM06b-C07
+    type: consistency
+    severity: HIGH
+    desc: "proved + disproved + timeout + skipped == total_claims"
+    validate: "output.lean4_verification_report.proved + disproved + timeout + skipped == total_claims"
+  - id: TM06b-C08
+    type: quality
+    severity: LOW
+    desc: "execution_params 含 lean4_compiler_called 字段"
+    validate: "output.execution_params.lean4_compiler_called 存在"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值（min_claims_extracted >= 5, claim_types_covered 含三类, lean4_compiler_called = true）"

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<!-- 作者：阿洋 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="">
+<title>{{TITLE}}</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<style>
+@page { size: A4; margin: 2.5cm; @bottom-center { content: counter(page); } }
+@page :first { @top-center { content: none; } }
+
+@font-face {
+  font-family: 'Source Serif 4';
+  src: url('fonts/SourceSerif4-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  src: url('fonts/SourceSerif4-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  src: url('fonts/SourceSerif4-Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('fonts/JetBrainsMono-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Source Han Serif SC';
+  src: url('fonts/SourceHanSerifSC-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Source Han Serif SC';
+  src: url('fonts/SourceHanSerifSC-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root {
+  --color-primary-500: #1a1a2e;
+  --color-secondary-500: #16213e;
+  --color-accent: #e94560;
+  --color-text-primary: #333;
+  --color-text-secondary: #757575;
+  --color-background: #fff;
+  --color-surface: #FAFAFA;
+  --color-border: #E0E0E0;
+  --font-heading: 'Georgia', serif;
+  --font-body: 'Segoe UI', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background: #f5f5f5;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--color-background);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cover {
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+  color: #fff;
+  padding: 80px 60px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(233, 69, 96, 0.15) 0%, transparent 60%);
+}
+
+.cover h1 {
+  font-family: var(--font-heading);
+  font-size: 2.4em;
+  font-weight: 700;
+  margin-bottom: 16px;
+  position: relative;
+  letter-spacing: 0.02em;
+}
+
+.cover .subtitle {
+  font-size: 1.1em;
+  font-weight: 300;
+  opacity: 0.85;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.cover .meta {
+  font-size: 0.9em;
+  opacity: 0.7;
+  position: relative;
+  margin-top: 32px;
+}
+
+.cover .meta span {
+  margin: 0 12px;
+}
+
+.cover .accent-line {
+  width: 60px;
+  height: 3px;
+  background: var(---color-color);
+  margin: 20px auto;
+  position: relative;
+  border-radius: 2px;
+}
+
+.toc {
+  padding: 32px 60px;
+  background: #fafbfc;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.toc h2 {
+  font-family: var(--font-heading);
+  font-size: 1.2em;
+  color: var(--color-primary-500);
+  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+}
+
+.toc ol {
+  list-style: none;
+  counter-reset: toc-counter;
+}
+
+.toc ol li {
+  counter-increment: toc-counter;
+  padding: 6px 0;
+  font-size: 0.95em;
+  color: var(--color-secondary-500);
+}
+
+.toc ol li::before {
+  content: counter(toc-counter) ". ";
+  color: var(tr-color-color);
+  font-weight: 600;
+}
+
+main {
+  padding: 40px 60px 60px;
+}
+
+section {
+  margin-bottom: 48px;
+}
+
+section h2 {
+  font-family: var(--font-heading);
+  font-size: 1.6em;
+  color: var(--color-primary-500);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(tr-color-color);
+  letter-spacing: 0.03em;
+}
+
+section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25em;
+  color: var(--color-secondary-500);
+  margin: 24px 0 12px;
+}
+
+section h4 {
+  font-family: var(--font-heading);
+  font-size: 1.1em;
+  color: var(--color-text-primary);
+  margin: 20px 0 8px;
+}
+
+section p {
+  margin-bottom: 14px;
+  text-align: justify;
+}
+
+section ul, section ol {
+  margin: 12px 0 18px 24px;
+}
+
+section li {
+  margin-bottom: 6px;
+}
+
+section blockquote {
+  margin: 20px 0;
+  padding: 16px 24px;
+  border-left: 4px solid var(tr-color-color);
+  background: #fdf2f4;
+  font-style: italic;
+  color: #555;
+  border-radius: 0 6px 6px 0;
+}
+
+section code {
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+section pre {
+  margin: 16px 0 24px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+section pre code {
+  background: none;
+  padding: 0;
+}
+
+figure {
+  margin: 28px 0;
+  text-align: center;
+}
+
+figure img {
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+figure figcaption {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #888;
+  font-style: italic;
+}
+
+figure .mermaid {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: #fafbfc;
+  border-radius: 8px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+table thead {
+  background: var(--color-primary-500);
+  color: #fff;
+}
+
+table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+
+table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+table tbody tr:hover {
+  background: #f8f9ff;
+}
+
+.references {
+  padding: 40px 60px;
+  background: #fafbfc;
+  border-top: 1px solid #e8e8e8;
+}
+
+.references h2 {
+  font-family: var(--font-heading);
+  font-size: 1.2em;
+  color: var(--color-primary-500);
+  margin-bottom: 16px;
+}
+
+.references ol {
+  padding-left: 24px;
+}
+
+.references li {
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  color: #555;
+  word-break: break-all;
+}
+
+.references li a {
+  color: var(rr-color-color);
+  text-decoration: none;
+}
+
+.references li a:hover {
+  text-decoration: underline;
+}
+
+footer.colophon {
+  padding: 24px 60px;
+  text-align: center;
+  font-size: 0.85em;
+  color: #999;
+  background: var(--color-primary-500);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+footer.colophon a {
+  color: var(rr-color-color);
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .cover {
+    padding: 48px 24px 36px;
+  }
+  .cover h1 {
+    font-size: 1.6em;
+  }
+  .toc {
+    padding: 24px 24px;
+  }
+  main {
+    padding: 24px 24px 36px;
+  }
+  section h2 {
+    font-size: 1.3em;
+  }
+  .references {
+    padding: 24px 24px;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+    font-size: 12pt;
+    color: #000;
+  }
+  .container {
+    max-width: 100%;
+    box-shadow: none;
+  }
+  .cover {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 40px 20px;
+    page-break-after: always;
+  }
+  .cover::before {
+    display: none;
+  }
+  .cover h1 {
+    color: #000;
+  }
+  .cover .accent-line {
+    background: #000;
+  }
+  .toc {
+    page-break-after: always;
+  }
+  main {
+    padding: 20px 0;
+  }
+  section {
+    page-break-inside: avoid;
+  }
+  section h2 {
+    border-bottom-color: #000;
+    color: #000;
+  }
+  figure img {
+    box-shadow: none;
+  }
+  .references {
+    page-break-before: always;
+  }
+  table thead {
+    background: #eee;
+    color: #000;
+  }
+  a {
+    color: #000;
+  }
+}
+
+.mermaid {
+  max-width: 100%;
+}
+
+@page content {
+  @top-left {
+    content: string(chapter-title);
+    font-size: 8pt;
+    color: #9e9e9e;
+  }
+  @top-right {
+    content: string(doc-title);
+    font-size: 8pt;
+    color: #9e9e9e;
+  }
+  @bottom-left {
+    content: "";
+    font-size: 8pt;
+    color: #9e9e9e;
+  }
+  @bottom-right {
+    content: counter(page);
+    font-size: 9pt;
+    color: #9e9e9e;
+  }
+}
+
+.toc {
+  page: toc;
+  page-break-after: always;
+}
+
+.toc h2 {
+  string-set: doc-title content();
+}
+
+.toc-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px dotted var(--color-border, #e0e0e0);
+}
+
+.toc-entry a::after {
+  content: target-counter(attr(href), page);
+  float: right;
+}
+
+section h2 {
+  string-set: chapter-title content();
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="cover">
+    <h1>{{TITLE}}</h1>
+    <div class="accent-line"></div>
+    <p class="subtitle">{{SUBTITLE}}</p>
+    <div class="meta">
+      <span>{{AUTHOR}}</span>
+      <span>{{DATE}}</span>
+      <span>{{VERSION}}</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <h2>目录</h2>
+    {{TOC}}
+  </nav>
+
+  <main>
+    {{CONTENT}}
+  </main>
+
+  <footer class="references">
+    <h2>参考文献</h2>
+    {{REFERENCES}}
+  </footer>
+
+  <footer class="colophon">
+    <p>{{COLOPHON}}</p>
+  </footer>
+
+</div>
+
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+</script>
+</body>
+</html>

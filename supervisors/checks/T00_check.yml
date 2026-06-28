@@ -1,0 +1,61 @@
+﻿# 作者：阿洋
+task_id: "T00"
+task_file: "tasks/T00_outline.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "大纲主干是否明确？子方向≥3且≤5个？每个子方向有论据需求+推荐引擎+证据等级？"
+    severity: CRITICAL
+  - id: D03
+    description: "full_frame_dimension_selection 是否存在且完整？（activated_dimensions 非空，coverage_ratio 已计算，dimension_details 数量与 activated_dimensions 一致）"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+  - id: I03_A6_10
+    description: "【A6.10-F1 / P1-11 修复，Wave 5】mother_hypotheses 字段是否存在且完整？每个 hypothesis 是否含 statement / rationale / supporting_evidence / falsifiability_condition 四要素（缺一不可）？mother_hypotheses 列表长度 >= 1？"
+    severity: CRITICAL
+    check_method: "field_completeness_scan"
+    required_field: "mother_hypotheses"
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

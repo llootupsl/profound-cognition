@@ -1,0 +1,78 @@
+﻿# 作者：阿洋
+node: TM07_ontology_export
+desc: "本体导出检查"
+critical_path: false
+checks:
+  - id: TM07-C01
+    type: completeness
+    severity: CRITICAL
+    desc: "本体是否含实体/关系/属性三级结构"
+    validate: "output.ontology 含 entities, relations, attributes 三字段"
+  - id: TM07-C02
+    type: completeness
+    severity: CRITICAL
+    desc: "实体数量是否 ≥ 20个"
+    validate: "output.ontology.entities ≥ 20"
+  - id: TM07-C03
+    type: completeness
+    severity: HIGH
+    desc: "关系类型是否 ≥ 5种（如causes/influences/part_of/depends_on/contradicts）"
+    validate: "output.ontology.relations 中关系类型种类 ≥ 5"
+  - id: TM07-C04
+    type: consistency
+    severity: HIGH
+    desc: "本体实体是否与T24维度分析一致"
+    validate: "entities 中 ≥ 10个可追溯到T24/dim_*的对应概念"
+  - id: TM07-C05
+    type: quality
+    severity: HIGH
+    desc: "导出格式是否为标准本体格式（OWL/RDF/JSON-LD）"
+    validate: "output.export_format ∈ {OWL, RDF, JSON-LD, Turtle}"
+  - id: TM07-C06
+    type: completeness
+    severity: MEDIUM
+    desc: "每实体是否含定义和来源"
+    validate: "≥ 80%的 entities 含 definition 和 source 字段"
+  - id: TM07-C07
+    type: quality
+    severity: MEDIUM
+    desc: "本体是否含层级结构（subclass/is-a关系）"
+    validate: "ontology 含 hierarchy 或 subclass 关系"
+  - id: TM07-C08
+    type: quality
+    severity: LOW
+    desc: "本体是否可序列化验证（无循环依赖/孤立实体）"
+    validate: "ontology 无孤立实体（无relation连接的entity ≤ 2个）"
+  - id: TM07-C09
+    type: completeness
+    severity: CRITICAL
+    desc: "主格式 OWL/RDF 是否由 OWLAPY 生成且可被 Protégé/Pellet/HermiT 导入"
+    validate: "output.export_formats 含 OWL/RDF，且 owl_ontology.available == true"
+  - id: TM07-C10
+    type: completeness
+    severity: HIGH
+    desc: "辅格式 1 Neo4j Cypher 导入脚本是否生成"
+    validate: "output.export_formats 含 Cypher，且 neo4j_export.available == true 或 cypher_script_path 非空"
+  - id: TM07-C11
+    type: completeness
+    severity: HIGH
+    desc: "辅格式 2 JSON-LD 是否从 OWL 转换生成（rdflib）"
+    validate: "output.export_formats 含 JSON-LD"
+  - id: TM07-C12
+    type: completeness
+    severity: MEDIUM
+    desc: "人类可读格式 Markdown 表格是否生成（实体列表 + 关系列表）"
+    validate: "output.export_formats 含 Markdown"
+  - id: TM07-C13
+    type: quality
+    severity: HIGH
+    desc: "四格式验证是否全部通过（OWLAPY 一致性/Cypher 语法/JSON-LD Playground/人工检查）"
+    validate: "owl_ontology.consistency_check == true 且 cypher 语法检查通过 且 json-ld 验证通过"
+  - id: TM07-C14
+    type: consistency
+    severity: HIGH
+    desc: "OWL 为主格式统一策略是否落实（辅格式均从 OWL 转换，非独立生成）"
+    validate: "neo4j_export 和 json-ld 均标注 converted_from_owl == true"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

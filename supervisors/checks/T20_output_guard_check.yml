@@ -1,0 +1,35 @@
+﻿# 作者：阿洋
+# T20_output_guard 输出守卫检查
+task_id: T20_output_guard
+task_name: output_guard
+checks:
+  S01:
+    description: "输出字数是否达标"
+    pass_condition: "研究报告 ≥ 100000 字 或 公众号文章 ≥ 3000 字 或 课程材料 ≥ 50000 字"
+    fail_condition: "输出字数低于下限"
+  S02:
+    description: "核心结论是否完整"
+    pass_condition: "core_conclusions 非空且每条含 conclusion + confidence + evidence_refs"
+    fail_condition: "core_conclusions 为空或字段不完整"
+  S03:
+    description: "格式是否正确"
+    pass_condition: "输出格式符合 target_format 规范"
+    fail_condition: "输出格式不符合规范"
+  W01:
+    description: "Moka 墨卡卡片生成检查（仅 wechat_article）"
+    pass_condition: "若 Moka 适配器可用，已生成墨卡卡片数组并嵌入流中；若不可用，已穷尽尝试所有替代路径"
+    fail_condition: "Moka 可用但未生成卡片，或重试链断裂"
+    activation: "output_type == 'wechat_article'"
+  W02:
+    description: "内置公众号排版系统 样式应用检查（仅 wechat_article）"
+    pass_condition: "若 Moka 不可用且 内置公众号排版系统 可用，已应用 14 种样式映射；HTML 标签在微信白名单内"
+    fail_condition: "使用了微信不支持的标签（iframe/script/style/form/input/button）或外部 CSS"
+    activation: "output_type == 'wechat_article'"
+  W03:
+    description: "能力卡片嵌入检查（仅 wechat_article）"
+    pass_condition: "已从 63 张能力卡片中精选 3-5 张嵌入文末，每张含标题+摘要"
+    fail_condition: "能力卡片数量 < 3 或 > 5，或格式不符合标题+摘要规范"
+    activation: "output_type == 'wechat_article'"
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"

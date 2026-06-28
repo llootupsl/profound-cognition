@@ -1,0 +1,102 @@
+﻿# 作者：阿洋
+# 执行顺序一致性检查：T22→T19→T28→T17（链路本身无环，此为执行指引）
+task_id: "T17"
+task_file: "tasks/T17_quality_factcheck.md"
+
+structural_checks:
+  - id: S01
+    description: "output_schema 中所有 required_fields 是否全部存在"
+    severity: CRITICAL
+  - id: S02
+    description: "输出是否是结构化JSON格式（非自然段落）"
+    severity: CRITICAL
+  - id: S03
+    description: "php_feedback 三个必需字段是否全部存在：correction_required、corrected_assertions、correction_rationale"
+    severity: CRITICAL
+
+depth_checks:
+  - id: D01
+    description: "禁止模糊词扫描：全文搜索(很多|大量|显然|众所周知|长期以来|毫无疑问|毋庸置疑)"
+    severity: CRITICAL
+    check_method: "regex_scan"
+  - id: D02
+    description: "CoVe三阶段是否完整：分解→独立验证→比对？独立验证是否未使用前序上下文？≥20%断言无法验证时是否标注待穷尽重试？"
+    severity: CRITICAL
+  - id: D03
+    description: "PHP回环正确性：is_best_answer_hint==true 的断言是否执行了3轮独立验证？verification_rounds字段是否与断言类型一致？"
+    severity: CRITICAL
+
+integrity_checks:
+  - id: I01
+    description: "所有数字/事实是否有来源标注（L0-L3等级）"
+    severity: CRITICAL
+  - id: I02
+    description: "数据之间是否无矛盾"
+    severity: MINOR
+  - id: I03
+    description: "php_feedback 一致性：correction_required==true 时 corrected_assertions 是否非空？correction_required==false 时 corrected_assertions 是否为空？"
+    severity: CRITICAL
+  - id: I04
+    description: "correction_required==true 时 correction_rationale 是否非空且有实质内容（非占位文本）？"
+    severity: MAJOR
+
+constitution_checks:
+  - id: C01
+    constitution_ref: "P1"
+    description: "禁止模糊词数量是否 < 3"
+    severity: CRITICAL
+  - id: C02
+    constitution_ref: "P2"
+    description: "必填字段是否无缺失"
+    severity: CRITICAL
+  - id: C03
+    constitution_ref: "P3"
+    description: "数据是否有来源标注或与常识不冲突"
+    severity: CRITICAL
+  - id: C04
+    constitution_ref: "P4"
+    description: "重试历史是否持续改进（每次重试产出质量是否优于前次）"
+    severity: CRITICAL
+  - id: C05
+    constitution_ref: "P5"
+    description: "是否未对已修正项重复判定FAIL"
+    severity: CRITICAL
+execution_params_check:
+  required: true
+  description: "检查 execution_params 字段是否存在且达到最低值"
+
+factscore_safe_checks:
+  - id: FS01
+    description: "FActScore 原子事实拆解：atomic_facts 数组是否已拆解（非空，每个原子事实可独立验证）"
+    severity: CRITICAL
+    check_method: "field_exists_and_non_empty"
+    required_field: "atomic_facts"
+  - id: FS02
+    description: "FActScore 阈值：factscore_value 是否 ≥ 0.8（< 0.8 触发 T17 RETRYING）"
+    severity: CRITICAL
+    check_method: "numeric_threshold"
+    required_field: "factscore_value"
+    threshold: 0.8
+    on_fail: "trigger_retry"
+  - id: FS03
+    description: "SAFE 搜索日志：SAFE 验证日志是否按 §safe_log:{timestamp} 格式写入 NRSF"
+    severity: MAJOR
+    check_method: "nrsf_log_format_scan"
+    required_pattern: "§safe_log:"
+  - id: FS04
+    description: "SAFE 三态判定：每个原子事实的 verdict 是否为 supported|refuted|not_enough_info 之一"
+    severity: CRITICAL
+    check_method: "enum_value_check"
+    allowed_values: ["supported", "refuted", "not_enough_info"]
+  - id: FS05
+    description: "证据等级自动化验证：每条 evidence_url 是否输出 auto_verified_level（L0|L1|L2|L3）"
+    severity: MAJOR
+    check_method: "field_exists_check"
+    required_field: "auto_verified_level"
+  - id: FS06_A6_10
+    description: "【A6.10-F13 / P1-17 修复，Wave 5】atomic_fact_count 是否存在且在 [1, 500] 范围内？atomic_fact_count 是否等于 atomic_facts 数组实际长度（防计数失真）？若 atomic_fact_count == 0 视为未执行事实拆解 FAIL；若 > 500 视为拆解过细需重新拆分？"
+    severity: CRITICAL
+    check_method: "numeric_range_check"
+    required_field: "atomic_fact_count"
+    min_value: 1
+    max_value: 500
