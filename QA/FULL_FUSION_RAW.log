@@ -1,0 +1,434 @@
+{
+  "suite": "tests/full_fusion/run_all (Full Fusion WP1-9 + FI)",
+  "total": 61,
+  "passed": 61,
+  "ff_ok": true,
+  "fault_injection": [
+    {
+      "fi": "WP1/6content_dedup",
+      "predicate": "novelty._content_is_new",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp6_04",
+      "observed": "RED",
+      "proven": true
+    },
+    {
+      "fi": "WP6_latest_repeat",
+      "predicate": "stop_challenger._latest_event_is_repeat",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp6_06",
+      "observed": "RED",
+      "proven": true
+    },
+    {
+      "fi": "WP7_core_fact",
+      "predicate": "checkpoint_state._confirmed_core_fact",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp7_02",
+      "observed": "RED",
+      "proven": true
+    },
+    {
+      "fi": "WP8_additive_guard",
+      "predicate": "capability_foundry._is_additive_operation",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp8_04",
+      "observed": "RED",
+      "proven": true
+    },
+    {
+      "fi": "WP9_refs_resolvable",
+      "predicate": "comprehension_runtime._references_resolvable",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp9_01",
+      "observed": "RED",
+      "proven": true
+    },
+    {
+      "fi": "WP9_research_gate",
+      "predicate": "editorial_runtime.research_allows_publication",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp9_06",
+      "observed": "RED",
+      "proven": true
+    },
+    {
+      "fi": "WP3_samesource",
+      "predicate": "search_ledger.SourceIndependenceGraph.mark_seen",
+      "deleted_under_fi": true,
+      "expected_negative": "ff_wp3_06",
+      "observed": "RED",
+      "proven": true
+    }
+  ],
+  "fi_proven": 7,
+  "fi_total": 7,
+  "cases": [
+    {
+      "name": "ff_wp1_01_eventlog_appends_in_order",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-01"
+    },
+    {
+      "name": "ff_wp1_02_is_novel_content_dedup",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-02"
+    },
+    {
+      "name": "ff_wp2_03_activation_monotonic_add",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-03"
+    },
+    {
+      "name": "ff_wp2_04_verify_monotonic_all_no_issues",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-04"
+    },
+    {
+      "name": "ff_wp3_05_no_provider_fail_closed",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-05"
+    },
+    {
+      "name": "ff_wp3_06_same_source_not_independent",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-06"
+    },
+    {
+      "name": "ff_wp3_07_host_search_sources_recorded",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-07"
+    },
+    {
+      "name": "ff_wp3_08_new_obligation_reopens_search",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-08"
+    },
+    {
+      "name": "ff_wp4_09_real_producers_p0s123_t0913",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-09"
+    },
+    {
+      "name": "ff_wp4_10_runtime_truth_node_sets",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-10"
+    },
+    {
+      "name": "ff_wp5_01_machine_artifacts_derive_metrics",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-11"
+    },
+    {
+      "name": "ff_wp5_01_self_report_refused",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-12"
+    },
+    {
+      "name": "ff_wp5_02_unanchored_origin_excluded",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-13"
+    },
+    {
+      "name": "ff_wp5_03_intensity_formula",
+      "status": "PASS",
+      "detail": "0.800",
+      "ff_id": "FF-14"
+    },
+    {
+      "name": "ff_wp5_03_weak_pair_rejected",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-15"
+    },
+    {
+      "name": "ff_wp5_04_open_is_unresolved",
+      "status": "PASS",
+      "detail": "0.00",
+      "ff_id": "FF-16"
+    },
+    {
+      "name": "ff_wp5_04_unresolved_counts_as_solved",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-17"
+    },
+    {
+      "name": "ff_wp5_05_missing_term_fails_closed",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-18"
+    },
+    {
+      "name": "ff_wp5_05_stance_derived_from_hits",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-19"
+    },
+    {
+      "name": "ff_wp5_06_steelman_no_fabrication",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-20"
+    },
+    {
+      "name": "ff_wp5_07_frame_balanced_pass",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-21"
+    },
+    {
+      "name": "ff_wp5_07_frame_single_fail",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-22"
+    },
+    {
+      "name": "ff_wp5_08_url_not_grounding_origin",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-23"
+    },
+    {
+      "name": "ff_wp5_08_all_grounded_pass",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-24"
+    },
+    {
+      "name": "ff_wp5_09_void_not_promotable",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-25"
+    },
+    {
+      "name": "ff_wp5_10_independent_challenge_pass",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-26"
+    },
+    {
+      "name": "ff_wp5_10_copied_challenge_is_rubber_stamp",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-27"
+    },
+    {
+      "name": "ff_wp5_10_close_call_no_challenge_rescind",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-28"
+    },
+    {
+      "name": "ff_wp5_aggregator_honest_unavailable",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-29"
+    },
+    {
+      "name": "ff_wp6_01_empty_log_not_converged",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-30"
+    },
+    {
+      "name": "ff_wp6_02_single_not_converged",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-31"
+    },
+    {
+      "name": "ff_wp6_03_trailing_repeats_converged",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-32"
+    },
+    {
+      "name": "ff_wp6_04_last_novel_not_converged",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-33"
+    },
+    {
+      "name": "ff_wp6_05_content_dedup_is_load_bearing",
+      "status": "PASS",
+      "detail": "proves _content_is_new is load-bearing (deleting it flips not-converged=True -> converged)",
+      "ff_id": "FF-34"
+    },
+    {
+      "name": "ff_wp6_06_challenger_rejects_latest_novel",
+      "status": "PASS",
+      "detail": "challenger must reject freeze when latest is novel",
+      "ff_id": "FF-35"
+    },
+    {
+      "name": "ff_wp6_06b_challenger_predicate_is_load_bearing",
+      "status": "PASS",
+      "detail": "proves _latest_event_is_repeat is load-bearing (deleting it wrongly agrees=True)",
+      "ff_id": "FF-36"
+    },
+    {
+      "name": "ff_wp6_07_challenger_does_not_fabricate_agree",
+      "status": "PASS",
+      "detail": "challenger must not agree when evaluator decision is False",
+      "ff_id": "FF-37"
+    },
+    {
+      "name": "ff_wp6_08_frozen_evaluator_wires_signal",
+      "status": "PASS",
+      "detail": "nice stop evaluator must wire real novelty signal (satisfied=True)",
+      "ff_id": "FF-38"
+    },
+    {
+      "name": "ff_wp7_01_no_checkpoint_rejected",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-39"
+    },
+    {
+      "name": "ff_wp7_02_zero_confirmation_rejected",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-40"
+    },
+    {
+      "name": "ff_wp7_03_min_one_confirmation_authorized",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-41"
+    },
+    {
+      "name": "ff_wp7_04_reranch_run_date",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-42"
+    },
+    {
+      "name": "ff_wp7_05_predicate_is_load_bearing",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-43"
+    },
+    {
+      "name": "ff_wp7_06_append_only_store",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-44"
+    },
+    {
+      "name": "ff_wp7_07_checkpoint_resume_events",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-45"
+    },
+    {
+      "name": "ff_wp8_01_register_additive_idempotent",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-46"
+    },
+    {
+      "name": "ff_wp8_02_evolve_from_gap_adds",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-47"
+    },
+    {
+      "name": "ff_wp8_03_gap_event_recorded",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-48"
+    },
+    {
+      "name": "ff_wp8_04_demote_forbidden",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-49"
+    },
+    {
+      "name": "ff_wp8_05_remove_forbidden",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-50"
+    },
+    {
+      "name": "ff_wp8_06_additive_only_vs_baseline",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-51"
+    },
+    {
+      "name": "ff_wp8_07_additive_guard_is_load_bearing",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-52"
+    },
+    {
+      "name": "ff_wp9_01_ghost_reference_blocked",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-53"
+    },
+    {
+      "name": "ff_wp9_02_unfilled_placeholder_blocked",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-54"
+    },
+    {
+      "name": "ff_wp9_03_self_contained_allowed",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-55"
+    },
+    {
+      "name": "ff_wp9_04_refs_resolvable_is_load_bearing",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-56"
+    },
+    {
+      "name": "ff_wp9_05_write_while_research_ok",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-57"
+    },
+    {
+      "name": "ff_wp9_06_freeze_blocked_before_research",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-58"
+    },
+    {
+      "name": "ff_wp9_07_freeze_after_research",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-59"
+    },
+    {
+      "name": "ff_wp9_08_editorial_gap_event",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-60"
+    },
+    {
+      "name": "ff_wp9_09_research_gate_is_load_bearing",
+      "status": "PASS",
+      "detail": "",
+      "ff_id": "FF-61"
+    }
+  ]
+}

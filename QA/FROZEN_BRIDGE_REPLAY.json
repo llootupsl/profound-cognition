@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "cross_process_verification_consumer": {
+    "stale_response": "REJECTED",
+    "new_response": "ACCEPTED",
+    "different_request_hash": true,
+    "different_run": true
+  },
+  "testing": "CONTROLLED_QA_NOT_EXTERNAL_PROVIDER_ATTESTATION"
+}

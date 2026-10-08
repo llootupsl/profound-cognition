@@ -1,0 +1,80 @@
+# =============================================================================
+# Profound Cognition v9 — Authority Registry (K12 单一状态权威)
+# 每个领域恰好一个 Authority。禁止多个互不等价字段同时充当放行条件的"双 SSOT"。
+# 机读校验：runtime/semantic_compiler.py --strict
+# =============================================================================
+schema: "kernel/authority_registry.yaml@1"
+doc: "每种 truth-source / 状态 / 版本 的唯一裁决者。用户可读物，机器可校验。"
+
+authorities:
+  - domain: "DAG 节点全集"
+    authority: "kernel/node_registry.yaml"
+    role: "唯一 DAG 拓扑真相源；节点 id / 依赖 / phase / 入口 / 终点由其定义"
+    derived_from: "references/dag-topology.md (生成时)"
+    duplicates_forbidden: ["references/dag-topology.md", "SKILL.md", "references/execution-contract.md", "references/activation-matrix.md"]
+
+  - domain: "宪法规则 (K1-K16)"
+    authority: "kernel/constitution.yaml"
+    role: "最高级规则与冲突裁决；旧文件冲突一律以宪法为准"
+
+  - domain: "版本 / Epoch 口径"
+    authority: "kernel/version_epoch.yaml"
+    role: "Skill/Schema/DAG/Protocol/State 的唯一 epoch；发布身份由此导出"
+    drift_resolved: ["57/58/64/65 多代版本号", "旧 phase 口径", "schema 版本号贫血"]
+
+  - domain: "生命周期状态机 (Asset/Claim/Evidence)"
+    authority: "kernel/lifecycle.yaml + runtime/state_machine.py"
+    role: "所有状态迁移的唯一裁决者；文档不得私自发明新状态"
+
+  - domain: "方法论能力与适用性契约"
+    authority: "kernel/method_registry.yaml + runtime/gate_engine.py"
+    role: "方法是否 applicable / NOT_APPLICABLE 由方法契约裁决"
+
+  - domain: "节点输出状态 / 编排控制流"
+    authority: "runtime/orchestrator.py (NodeRunStatus)"
+    role: "节点执行状态（PENDING/READY/RUNNING/SUCCEEDED/FAILED/SKIPPED/BLOCKED）的唯一裁决者"
+    status_vocab: [PENDING, READY, RUNNING, SUCCEEDED, FAILED, SKIPPED, BLOCKED]
+
+  - domain: "Gate 裁决 (Pass/Fail 放行)"
+    authority: "runtime/gate_engine.py (GateVerdict)"
+    role: "各 Gate（alpha0/alpha/beta/gamma/final/delta 及 claim-entailment）唯一放行裁决者"
+    input: "gate 需强制检验的通过证据；无证据即 FAIL，不得以缺对象当 PASS"
+
+  - domain: "验证裁决 (Claim/Asset/VerificationRecord)"
+    authority: "runtime/verification_engine.py (Verdict)"
+    role: "对象是否 VERIFIED 及其失效的唯一裁决者（K8 revision 自动失效）"
+    status_vocab: [VERIFIED, REFUTED, NOT_VERIFIED, UNKNOWN]
+
+  - domain: "最终出版知识对象"
+    authority: "runtime/snapshot_manager.py (FinalVerifiedSnapshot)"
+    role: "唯一可出版对象；renderer/pdf/docx/回收/记忆只消费此 snapshot (K9/K10)"
+
+  - domain: "持久化副作用可回滚性"
+    authority: "runtime/transaction_manager.py (EpistemicTx)"
+    role: "provisional -> verify -> commit/rollback；长期副作用禁止 pre-verify 提交 (K11)"
+
+  - domain: "能力声明真实性"
+    authority: "capability 注册 (SPEC_ONLY | RUNTIME)"
+    role: "无可执行代码的能力必须标 SPEC_ONLY (K14)"
+
+  - domain: "验收结果分类 (批次入口)"
+    authority: "audit/batch_A/run_batch_acceptance.py (acceptance_status)"
+    role: "批次交付 7 类验收分类的唯一裁决者（不得把非 PASS 合并为绿色）"
+    status_vocab: [PASS, FAIL, SKIP, NOT_EXECUTED, NOT_CONFIGURED, NEEDS_INPUT, BLOCKED_BY_ENVIRONMENT]
+    rule: "非 PASS 不得合并为绿色 (K13)"
+
+  - domain: "脚本执行矩阵 (C0)"
+    authority: "audit/c0_regression/run_all.py (RunStatus)"
+    role: "C0 基线脚本 5 类执行状态分类（不能只看退出码0）"
+    status_vocab: [PASS, FAIL, SKIP, NEEDS_INPUT, CRASH]
+    rule: "SKIP exit0 不得被当 PASS"
+
+# 禁止并存的两个并行 Delivery Authority（批次 doc §3.9 / C2 拆除项）
+forbidden_parallel_authority:
+  delivery: "单一 Delivery Authority 专属 gate_engine；T_gate_delta 不再独立放行 Renderer"
+
+semantics_lock:
+  - "GO/NO_GO 只由 gate_engine 裁决"
+  - "GREEN/YELLOW/RED 只由 gate_engine 裁决"
+  - "PASS/FAIL 只由给定验证器裁决，禁止缓存继承旧 PASS (K8)"
+  - "SKIP/N/A 只在显式适用性判定下出现，且绝不等于 PASS"

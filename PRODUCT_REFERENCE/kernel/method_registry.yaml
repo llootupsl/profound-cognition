@@ -1,0 +1,143 @@
+# =============================================================================
+# Profound Cognition v9 — Method Registry / 方法能力与适用性契约 (K3)
+# 任何问题进入高规格研究系统，但不是任何问题都必须跑全部方法。
+# 方法先通过适用性判定：NOT_APPLICABLE 是科学结论，不是偷懒。
+# 机读校验：semantic_compiler + C5 Method Applicability Gate。
+# =============================================================================
+
+schema: "kernel/method_registry.yaml@1"
+doc: "方法能力注册与 applicability contract。保持数量与语义收敛，不做方法错觉堆叠。"
+
+method_applicability:
+  global_policy:
+    - "未通过适用性判定的方法不得运行；运行即须留证据"
+    - "NOT_APPLICABLE 必须是显式判定结果，计入方法矩阵，不得伪装成全跑"
+    - "方法对标 Config 缺依赖时输出 BLOCKED_BY_ENVIRONMENT/NOT_CONFIGURED，绝不伪造结果 (K13)"
+
+methods:
+  - id: lean4_formal_verify
+    name: "Lean4 形式化验证"
+    class: "formal"
+    applicability:
+      contract: "仅当命题可转化为形式化证明目标、且具备可控的公理环境时适用"
+      when_inapplicable: "对于开放经验命题/需外部数据支撑的论断，判定 NOT_APPLICABLE"
+    applicable_design_types: [technical_verification]   # §12：method ID ontology 唯一的适用性白名单
+    authority_note: "C5 缩权：不得用形式化标签替代经验证据评审"
+    capability: SPEC_ONLY   # 无可执行 Lean4 toolchain，如实标注
+
+  - id: system_dynamics
+    name: "系统动力学仿真与反馈回路建模"
+    class: "simulation"
+    applicability:
+      contract: "存在可参数化的存量-流量/反馈回路结构且有关键因果假设待检验时适用"
+    applicable_design_types: [causal, predictive]   # §12
+    capability: SPEC_ONLY   # v9 (K14)：runtime/ 无确定性数值积分实现模块，如实降级，不做空称 RUNTIME
+
+  - id: causal_inference
+    name: "因果推断 / 反事实"
+    class: "causal"
+    capability: SPEC_ONLY   # v9 (K14)：runtime/ 无因果推断实现模块，如实降级
+    applicability:
+      contract: "有干预-结果结构或反事实问题需要显式模型时适用"
+    applicable_design_types: [causal]   # §12
+    caution: "相关≠因果；无识别假设时仅输出关联性陈述"
+
+  - id: abm_agent_based
+    name: "基于主体建模"
+    class: "simulation"
+    applicability:
+      contract: "系统由异质主体局部交互涌现全局行为时才适用"
+    applicable_design_types: [causal, predictive, comparative]   # §12
+    capability: SPEC_ONLY
+
+  - id: storm_perspective
+    name: "STORM 多视角探索"
+    class: "exploration"
+    # RC7 §51 truthful upgrade（旧 v9/K14 的 SPEC_ONLY 判定已被 RC7 运行真值取代）：
+    # RC7 已有真实 semantic runtime —— P0-S1 视角派生 / P0-S2 子视角扩展 / P0-S3 候选宇宙
+    # （runtime/obligation_state_research.py）在运行时真实交付本方法，并把
+    # `method:storm_perspective` 义务以 closure_basis.artifact_refs 真实闭合。
+    # §51 三要件（逐条物证，缺一不可）：
+    #   artifact          = P0-S1.perspectives（PerspectiveArtifact[]，含独立上下文/假设）
+    #   mainline consumer = P0-S3 候选宇宙 -> mainline candidates；
+    #                       义务闭合物证进入 ResearchUniverse 结算（冻结条件之一）
+    #   integration test  = tests/rc6_mainline_authority/run_all.py（P0-S1 视角断言 + 变异负例）
+    #                        tests/full_fusion/test_wp14_core_foundation.py
+    # 状态语义：SEMANTIC_REASONING_RUNTIME（**不是** COMPUTATIONAL_RUNTIME：无独立数值
+    # STORM 后端，仍是语义推理式视角生成）。
+    capability: RUNTIME
+    runtime: obligation_state_research.py
+    applicability:
+      contract: "需要反视角广度/证据差异矩阵的多视角研究"
+    applicable_design_types: [descriptive, causal, predictive, diagnostic, normative, decision, literature_synthesis, technical_verification, comparative]   # §12：探索/广度方法对 9 类通用
+    required_by: [P0-S1, P0-S2]
+
+  - id: nrsf_narrative
+    name: "NRSF 叙事综合 (全息 3 部分)"
+    class: "synthesis"
+    capability: RUNTIME
+    runtime: nrsf_resolver.py   # v9 (K14)：由 runtime/nrsf_resolver.py 实现
+    applicability:
+      contract: "需跨维度结构化综合时适用"
+    applicable_design_types: [descriptive, normative, decision, literature_synthesis, comparative]   # §12
+
+  - id: logistic_regression
+    name: "Logistic 回归"
+    class: "statistical"
+    semantic_debt: "LOGISTIC_ONLY_FOR_BINARY_CLASSIFICATION; 不得把逻辑斯蒂曲线误当'不确定性模糊度'"
+    capability: RUNTIME
+    runtime: quant_cleanup.py   # v9 (K14)：QuantCleanup.logistic 实现
+    applicable_design_types: [predictive, diagnostic]   # §12
+
+  - id: sigmoid
+    name: "Sigmoid 映射"
+    class: "statistical"
+    semantic_debt: "仅作单调压缩/概率化映射；不承载认知不确定性语义"
+    capability: RUNTIME
+    runtime: quant_cleanup.py   # v9 (K14)：QuantCleanup.sigmoid 实现
+    applicable_design_types: [predictive]   # §12
+
+  - id: mapie_prediction_interval
+    name: "MAPIE 预测区间"
+    class: "uncertainty"
+    semantic_debt: "预测区间 = 校准的不确定性估计，非经验可靠性声明"
+    dependency: "mapie"
+    capability: NOT_CONFIGURED   # mapie 未安装；如实标注
+    applicable_design_types: [predictive]   # §12
+
+  - id: information_gain
+    name: "Info Gain"
+    class: "information"
+    semantic_debt: "度量分裂/信息增益，不替代语义价值判断"
+    capability: RUNTIME
+    runtime: quant_cleanup.py   # v9 (K14)：QuantCleanup.information_gain 实现
+    applicable_design_types: [diagnostic, predictive, decision]   # §12
+
+  - id: counter_evidence_triangulation
+    name: "反证三角验证"
+    class: "adversarial"
+    # RC7 §51 truthful upgrade（旧 v9/K14 的 SPEC_ONLY 判定已被 RC7 运行真值取代）：
+    # RC7 已有真实 semantic runtime —— runtime/counterevidence.py 的
+    # CounterEvidenceAssessment（13 字段可审计：检索/语料回执、已审来源、outcome 封闭取值域）
+    # 由 canonical ResearchExecutor 真实产出 ce_artifact，并进入 claim_entailment 校验。
+    # §51 三要件（逐条物证，缺一不可）：
+    #   artifact          = CounterEvidenceAssessment / canonical ce_artifact
+    #                       （corpus_receipt + reviewed_sources + assessments + claims_assessed）
+    #   mainline consumer = runtime/phase1_spine.py 消费 core.counterevidence_assessments()；
+    #                       methodological consumer = claim_entailment（下方 required_for）
+    #   integration test  = tests/product_phase1_closure/run_all.py（CEA-REAL / CEA-FAKE /
+    #                       CEA-RECEIPT / CEA-SCHEMA 正负例）、tests/product_phase1/run_all.py
+    # 状态语义：SEMANTIC_REASONING_RUNTIME（不是计算后端）。
+    capability: RUNTIME
+    runtime: counterevidence.py
+    applicability:
+      contract: "任何重要 claim 应尝试构造反证与独立来源互证"
+    applicable_design_types: [literature_synthesis, diagnostic, causal, technical_verification, decision]   # §12
+    required_for: [claim_entailment]
+
+# 适用性决策模型：research_design → method
+design_to_method_contract:
+  - "descriptive / diagnostic / technical_verification 等不以 Lean4 或 ABM 为必需"
+  - "predictive 类才评估 MAPIE/回归等预测能力"
+  - "causal 类才评估因果推断方法与识别假设"
+  - "任何 class 的必需方法集由 C5 Research Design Compiler 派生"

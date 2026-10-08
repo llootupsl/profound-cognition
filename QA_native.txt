@@ -1,0 +1,22 @@
+PASS 1 frozen package identity
+PASS 2 prepare real product without mutation
+PASS 3 block EVIDENCE_DIRECTORY_MUST_BE_EMPTY
+PASS 4 block HANDOFF_SHA_MISMATCH
+PASS 5 block No such file or directory
+PASS 6 block FRESH_PROJECT_AUTHORIZATION_REQUIRED
+PASS 7 no request yet
+PASS 8 native host sees exact frozen search request
+PASS 9 block ACTUAL_SEARCH_BYTES_AND_SOURCE_IDENTITY_REQUIRED
+PASS 10 block HOST_TOOL_TRACE_MISSING_OR_NOT_BOUND_TO_BYTES
+PASS 11 search response and honest provenance status
+PASS 12 frozen bridge consumes submitted search response
+PASS 13 block NO_PENDING_REQUEST
+PASS 14 model tool byte transport; no semantic claim
+PASS 15 block VERIFIER_CONTEXT_NOT_ISOLATED_FROM_PRODUCER
+PASS 16 independent-context negative verdict retained
+PASS 17 all requests consumed
+PASS 18 three trace records, no fabricated credential
+PASS 19 all native evidence outside product
+ALL PASS 19
+PASS 20 block PENDING_PATH_ESCAPES_BRIDGE_ROOT
+ALL PASS INCLUDING PATH-BOUNDARY 20

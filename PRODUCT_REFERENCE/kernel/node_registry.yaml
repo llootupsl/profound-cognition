@@ -1,0 +1,1376 @@
+schema: kernel/node_registry.yaml@1
+doc: DAG 唯一机器真相源（从 references/dag-topology.md §1 生成，65 节点）。
+generated_by: audit/batch_A/_tools/gen_node_registry.py
+source: references/dag-topology.md
+source_sha256: 28a5c4fd718b786076290242f5fa8d7096601360db59e04647991eab71352e82
+total_nodes: 65
+phase_count: 6
+phases:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+entry_nodes:
+- P0-S0
+terminal_nodes:
+- T00b
+- T01d
+- T07b
+- T20d_cross_media_review
+- T21
+gate_nodes:
+- Gate-α0
+- T07
+- T14
+- T16
+- T28
+- T_gate_delta
+drift_resolved:
+- node_id: T20a
+  key: phase
+  source_value: 5
+  canonical_value: 4
+  reason: dag-topology.md 注释将其归入 Phase 4 渲染交付层，且同层 T20b/T20c/T20_output_guard/T20d/T21
+    均 phase=4；YAML 标 5 系‘旧 phase 口径’漂移
+nodes:
+- node_id: P0-S0
+  name: 根视角派生
+  phase: 0
+  dependencies: []
+  route: always
+  gate: ''
+  executor: SubAgent
+  downstream:
+  - &id015
+    node_id: P0-S1
+    name: STORM 式对话（提问者↔作者+RAG检索）
+    phase: 0
+    dependencies:
+    - P0-S0
+    route: always
+    gate: ''
+    executor: SubAgent
+    downstream:
+    - &id016
+      node_id: P0-S2
+      name: 子视角动态生成（MCTS式递归）
+      phase: 0
+      dependencies:
+      - P0-S1
+      route: always
+      gate: ''
+      executor: SubAgent
+      downstream:
+      - &id017
+        node_id: P0-S3
+        name: 4层废稿生成（L1对话→L2笔记→L3论点矩阵→L4草稿）
+        phase: 0
+        dependencies:
+        - P0-S2
+        route: always
+        gate: ''
+        executor: SubAgent
+        downstream:
+        - &id018
+          node_id: P0-S4
+          name: 探索饱和判定
+          phase: 0
+          dependencies:
+          - P0-S3
+          route: always
+          gate: ''
+          executor: SubAgent
+          downstream:
+          - &id019
+            node_id: Gate-α0
+            name: Gate-α0 探索池完整性
+            phase: 0
+            dependencies:
+            - P0-S4
+            route: always
+            gate: alpha0
+            executor: Orchestrator
+            downstream:
+            - &id020
+              node_id: P1-C
+              name: 收敛节点（4层过滤漏斗）
+              phase: 0
+              dependencies:
+              - Gate-α0
+              route: always
+              gate: ''
+              executor: SubAgent
+              downstream:
+              - &id013
+                node_id: T00
+                name: 研究大纲+母假设路由
+                phase: 1
+                dependencies:
+                - T01b
+                - T00a
+                - P1-C
+                route: always
+                gate: ''
+                executor: SubAgent
+                downstream:
+                - &id025
+                  node_id: T00b
+                  name: 输入情绪基调提取
+                  phase: 1
+                  dependencies:
+                  - T00
+                  route: always
+                  gate: ''
+                  executor: SubAgent
+                  downstream: []
+                  is_gate: false
+                  has_stop_condition: false
+                  suggested_tok: 500
+                  task: tasks/T00b_intake_emotion.md
+                  supervisor: supervisors/checks/T00b_check.yml
+                  role: 提取输入情绪基调并向下传递
+                  output_schema: node_output
+                  activation: always
+                - &id027
+                  node_id: T02
+                  name: L1+L2研究底座
+                  phase: 1
+                  dependencies:
+                  - T00
+                  route: always
+                  gate: ''
+                  executor: SubAgent
+                  downstream:
+                  - &id028
+                    node_id: T03
+                    name: L3结构变量
+                    phase: 1
+                    dependencies:
+                    - T02
+                    route: always
+                    gate: ''
+                    executor: SubAgent
+                    downstream:
+                    - &id029
+                      node_id: T03b
+                      name: 横纵交叉矩阵分析
+                      phase: 1
+                      dependencies:
+                      - T03
+                      route: always
+                      gate: ''
+                      executor: SubAgent
+                      downstream:
+                      - &id012
+                        node_id: T04
+                        name: L4+L5比较叙事
+                        phase: 1
+                        dependencies:
+                        - T02
+                        - T03b
+                        route: always
+                        gate: ''
+                        executor: SubAgent
+                        downstream:
+                        - &id030
+                          node_id: T05
+                          name: L6+L7证据利益
+                          phase: 1
+                          dependencies:
+                          - T04
+                          route: always
+                          gate: ''
+                          executor: SubAgent
+                          downstream:
+                          - &id031
+                            node_id: T06
+                            name: L8+L9反事实边界
+                            phase: 1
+                            dependencies:
+                            - T05
+                            route: always
+                            gate: ''
+                            executor: SubAgent
+                            downstream:
+                            - &id032
+                              node_id: T07
+                              name: Gate-α 研究底座门控
+                              phase: 1
+                              dependencies:
+                              - T06
+                              route: always
+                              gate: alpha
+                              executor: Orchestrator
+                              downstream:
+                              - &id033
+                                node_id: T07b
+                                name: 纵横交汇分析
+                                phase: 1
+                                dependencies:
+                                - T07
+                                route: always
+                                gate: ''
+                                executor: SubAgent
+                                downstream: []
+                                is_gate: false
+                                has_stop_condition: false
+                                suggested_tok: 800
+                                task: tasks/T07b_cross_axis.md
+                                supervisor: supervisors/checks/T07b_check.yml
+                                role: 对纵横L层结果做交汇分析
+                                output_schema: node_output
+                                activation: always
+                              - &id034
+                                node_id: T08
+                                name: 认知解构
+                                phase: 2
+                                dependencies:
+                                - T07
+                                route: always
+                                gate: ''
+                                executor: SubAgent
+                                downstream:
+                                - &id035
+                                  node_id: T09
+                                  name: 多路径推理(7条+Multi-Path Exploration with Branch
+                                    Pruning)
+                                  phase: 2
+                                  dependencies:
+                                  - T08
+                                  route: always
+                                  gate: ''
+                                  executor: SubAgent
+                                  downstream:
+                                  - &id036
+                                    node_id: T10
+                                    name: 魔鬼代言人-逻辑攻击
+                                    phase: 2
+                                    dependencies:
+                                    - T09
+                                    route: always
+                                    gate: ''
+                                    executor: SubAgent
+                                    downstream:
+                                    - &id011
+                                      node_id: T12b
+                                      name: 三路对抗交叉融合
+                                      phase: 2
+                                      dependencies:
+                                      - T10
+                                      - T11
+                                      - T12
+                                      route: always
+                                      gate: ''
+                                      executor: SubAgent
+                                      downstream:
+                                      - &id039
+                                        node_id: T13
+                                        name: 认知综合+深度信号扫描+3轮递归+direct_passthrough
+                                        phase: 2
+                                        dependencies:
+                                        - T12b
+                                        route: always
+                                        gate: ''
+                                        executor: SubAgent
+                                        downstream:
+                                        - &id040
+                                          node_id: I01
+                                          name: 迭代深化补研循环
+                                          phase: 2
+                                          dependencies:
+                                          - T13
+                                          route: always
+                                          gate: ''
+                                          executor: SubAgent
+                                          downstream:
+                                          - &id009
+                                            node_id: T14
+                                            name: Gate-β 认知流水线门控
+                                            phase: 2
+                                            dependencies:
+                                            - I01
+                                            - T13
+                                            route: always
+                                            gate: beta
+                                            executor: Orchestrator
+                                            downstream:
+                                            - &id041
+                                              node_id: T15
+                                              name: 领域引擎分析
+                                              phase: 3
+                                              dependencies:
+                                              - T14
+                                              route: always
+                                              gate: ''
+                                              executor: SubAgent
+                                              downstream:
+                                              - &id042
+                                                node_id: T15b
+                                                name: 跨域共振矩阵
+                                                phase: 3
+                                                dependencies:
+                                                - T15
+                                                route: always
+                                                gate: ''
+                                                executor: SubAgent
+                                                downstream:
+                                                - &id008
+                                                  node_id: T16
+                                                  name: Gate-γ 领域分析门控
+                                                  phase: 3
+                                                  dependencies:
+                                                  - T15b
+                                                  - T15
+                                                  route: always
+                                                  gate: gamma
+                                                  executor: Orchestrator
+                                                  downstream:
+                                                  - &id043
+                                                    node_id: T17
+                                                    name: CoVe级联事实核查
+                                                    phase: 3
+                                                    dependencies:
+                                                    - T16
+                                                    - T13b
+                                                    route: always
+                                                    gate: ''
+                                                    executor: SubAgent
+                                                    downstream:
+                                                    - &id006
+                                                      node_id: T19
+                                                      name: 交付守卫
+                                                      phase: 3
+                                                      dependencies:
+                                                      - T17
+                                                      - T18
+                                                      route: always
+                                                      gate: ''
+                                                      executor: SubAgent
+                                                      downstream:
+                                                      - &id045
+                                                        node_id: T19b
+                                                        name: 处方门控
+                                                        phase: 3
+                                                        dependencies:
+                                                        - T19
+                                                        route: always
+                                                        gate: ''
+                                                        executor: SubAgent
+                                                        downstream:
+                                                        - &id002
+                                                          node_id: T20a
+                                                          name: 深度研究报告渲染
+                                                          phase: 4
+                                                          dependencies:
+                                                          - T01b
+                                                          - T19b
+                                                          - T19
+                                                          - T22
+                                                          - T23
+                                                          - T24
+                                                          - T25
+                                                          - T26
+                                                          - T27
+                                                          - T28
+                                                          - T_gate_delta
+                                                          - T_philosophical_core
+                                                          - T_meta_dim_9_10
+                                                          - T_meta_dim_11_12
+                                                          - T_meta_dim_13_14
+                                                          - TM01
+                                                          - TM02
+                                                          - TM03
+                                                          - TM04
+                                                          - TM05
+                                                          - TM06
+                                                          - TM07
+                                                          route: always
+                                                          gate: ''
+                                                          executor: SubAgent
+                                                          downstream:
+                                                          - &id001
+                                                            node_id: T20_output_guard
+                                                            name: 输出卫士
+                                                            phase: 4
+                                                            dependencies:
+                                                            - T20a
+                                                            - T20b
+                                                            - T20c
+                                                            route: always
+                                                            gate: ''
+                                                            executor: SubAgent
+                                                            downstream:
+                                                            - &id046
+                                                              node_id: T20d_cross_media_review
+                                                              name: 跨媒介审查
+                                                              phase: 4
+                                                              dependencies:
+                                                              - T20_output_guard
+                                                              route: always
+                                                              gate: ''
+                                                              executor: SubAgent
+                                                              downstream: []
+                                                              is_gate: false
+                                                              has_stop_condition: false
+                                                              suggested_tok: 800
+                                                              task: tasks/T20d_cross_media_review.md
+                                                              supervisor: supervisors/checks/T20d_check.yml
+                                                              role: 对跨媒介输出做终审
+                                                              output_schema: node_output
+                                                              activation: always
+                                                            - &id047
+                                                              node_id: T21
+                                                              name: 知识回收
+                                                              phase: 4
+                                                              dependencies:
+                                                              - T20d_cross_media_review
+                                                              route: always
+                                                              gate: ''
+                                                              executor: SubAgent
+                                                              downstream: []
+                                                              is_gate: false
+                                                              has_stop_condition: false
+                                                              suggested_tok: 800
+                                                              task: tasks/T21_knowledge_recycle.md
+                                                              supervisor: supervisors/checks/T21_check.yml
+                                                              role: 回收并沉淀知识资产
+                                                              output_schema: node_output
+                                                              activation: always
+                                                            is_gate: false
+                                                            has_stop_condition: false
+                                                            suggested_tok: 200
+                                                            task: tasks/T20_output_guard.md
+                                                            supervisor: supervisors/checks/T20_output_guard_check.yml
+                                                            role: 对渲染输出做完整性/一致性守护
+                                                            output_schema: node_output
+                                                            activation: always
+                                                          is_gate: false
+                                                          has_stop_condition: false
+                                                          suggested_tok: null
+                                                          task: tasks/T20a_research_render.md
+                                                          supervisor: supervisors/checks/T20a_research_render_check.yml
+                                                          role: 渲染：深度研究报告，产出final_snapshot
+                                                          output_schema: final_snapshot
+                                                          activation: always
+                                                        - &id003
+                                                          node_id: T20b
+                                                          name: 公众号文章渲染
+                                                          phase: 4
+                                                          dependencies:
+                                                          - T01b
+                                                          - T19b
+                                                          - T19
+                                                          route: always
+                                                          gate: ''
+                                                          executor: SubAgent
+                                                          downstream:
+                                                          - *id001
+                                                          is_gate: false
+                                                          has_stop_condition: false
+                                                          suggested_tok: 8000
+                                                          task: tasks/T20b_wechat_render.md
+                                                          supervisor: supervisors/checks/T20b_wechat_render_check.yml
+                                                          role: 渲染：公众号文章，产出final_snapshot
+                                                          output_schema: final_snapshot
+                                                          activation: always
+                                                        is_gate: false
+                                                        has_stop_condition: false
+                                                        suggested_tok: 200
+                                                        task: tasks/T19b_prescription_gate.md
+                                                        supervisor: supervisors/checks/T19b_prescription_gate_check.yml
+                                                        role: 门控：处方门控放行 authority，校验交付处方
+                                                        output_schema: node_output
+                                                        activation: always
+                                                      - *id002
+                                                      - *id003
+                                                      - &id014
+                                                        node_id: T20c
+                                                        name: 课程材料渲染
+                                                        phase: 4
+                                                        dependencies:
+                                                        - T01b
+                                                        - T19
+                                                        route: always
+                                                        gate: ''
+                                                        executor: SubAgent
+                                                        downstream:
+                                                        - *id001
+                                                        is_gate: false
+                                                        has_stop_condition: false
+                                                        suggested_tok: 12800
+                                                        task: tasks/T20c_course_render.md
+                                                        supervisor: supervisors/checks/T20c_check.yml
+                                                        role: 渲染：课程材料，产出final_snapshot
+                                                        output_schema: final_snapshot
+                                                        activation: always
+                                                      - &id007
+                                                        node_id: T22
+                                                        name: NRSF叙事综合 (全息框架3部分)
+                                                        phase: 5
+                                                        dependencies:
+                                                        - T13
+                                                        - T13b
+                                                        - T14
+                                                        - T15
+                                                        - T15b
+                                                        - T16
+                                                        - T19
+                                                        route: always
+                                                        gate: ''
+                                                        executor: SubAgent
+                                                        downstream:
+                                                        - *id002
+                                                        - &id048
+                                                          node_id: T23
+                                                          name: 全息框架第一部分-问题认知与定义 (4维度)
+                                                          phase: 5
+                                                          dependencies:
+                                                          - T22
+                                                          route: always
+                                                          gate: ''
+                                                          executor: SubAgent
+                                                          downstream:
+                                                          - *id002
+                                                          - &id049
+                                                            node_id: T24
+                                                            name: 全息框架第二部分-全维全域分析
+                                                              (8维度)
+                                                            phase: 5
+                                                            dependencies:
+                                                            - T23
+                                                            route: always
+                                                            gate: ''
+                                                            executor: SubAgent
+                                                            downstream:
+                                                            - *id002
+                                                            - &id050
+                                                              node_id: T25
+                                                              name: 全息框架第三部分-极限决策推理
+                                                                (2维度)
+                                                              phase: 5
+                                                              dependencies:
+                                                              - T24
+                                                              route: always
+                                                              gate: ''
+                                                              executor: SubAgent
+                                                              downstream:
+                                                              - *id002
+                                                              - &id051
+                                                                node_id: T26
+                                                                name: 跨维度洞察抽取 (14维交叉)
+                                                                phase: 5
+                                                                dependencies:
+                                                                - T25
+                                                                route: always
+                                                                gate: ''
+                                                                executor: SubAgent
+                                                                downstream:
+                                                                - *id002
+                                                                - &id052
+                                                                  node_id: T27
+                                                                  name: 14维度关系可视化
+                                                                    (3种图表)
+                                                                  phase: 5
+                                                                  dependencies:
+                                                                  - T26
+                                                                  route: always
+                                                                  gate: ''
+                                                                  executor: SubAgent
+                                                                  downstream:
+                                                                  - *id002
+                                                                  - &id053
+                                                                    node_id: T28
+                                                                    name: Gate-ε 最终质量门控
+                                                                    phase: 5
+                                                                    dependencies:
+                                                                    - T27
+                                                                    route: always
+                                                                    gate: final
+                                                                    executor: Orchestrator
+                                                                    downstream:
+                                                                    - *id002
+                                                                    - &id054
+                                                                      node_id: T_philosophical_core
+                                                                      name: 哲学三元组审查（本体论/认识论/价值论）
+                                                                      phase: 5
+                                                                      dependencies:
+                                                                      - T28
+                                                                      route: always
+                                                                      gate: ''
+                                                                      executor: SubAgent
+                                                                      downstream:
+                                                                      - *id002
+                                                                      - &id004
+                                                                        node_id: T_gate_delta
+                                                                        name: Gate-δ
+                                                                          科学层门控
+                                                                        phase: 5
+                                                                        dependencies:
+                                                                        - TM07
+                                                                        - TM06b
+                                                                        - T_philosophical_core
+                                                                        - T_meta_dim_9_10
+                                                                        - T_meta_dim_11_12
+                                                                        - T_meta_dim_13_14
+                                                                        route: always
+                                                                        gate: delta
+                                                                        executor: Orchestrator
+                                                                        downstream:
+                                                                        - *id002
+                                                                        is_gate: true
+                                                                        has_stop_condition: false
+                                                                        suggested_tok: 400
+                                                                        task: tasks/T_gate_delta.md
+                                                                        supervisor: supervisors/checks/T_gate_delta_check.yml
+                                                                        role: 门控：Gate-δ
+                                                                          放行 authority，科学层门控
+                                                                        output_schema: node_output
+                                                                        activation: always
+                                                                      is_gate: false
+                                                                      has_stop_condition: false
+                                                                      suggested_tok: 3000
+                                                                      task: tasks/T_philosophical_core.md
+                                                                      supervisor: supervisors/checks/T_philosophical_core_check.yml
+                                                                      role: 从本体论/认识论/价值论做哲学三元组审查
+                                                                      output_schema: node_output
+                                                                      activation: always
+                                                                    - &id055
+                                                                      node_id: T_meta_dim_9_10
+                                                                      name: 元维度9-10：无知之学+认知神经心理学
+                                                                      phase: 5
+                                                                      dependencies:
+                                                                      - T28
+                                                                      route: always
+                                                                      gate: ''
+                                                                      executor: SubAgent
+                                                                      downstream:
+                                                                      - *id002
+                                                                      - *id004
+                                                                      is_gate: false
+                                                                      has_stop_condition: false
+                                                                      suggested_tok: 3000
+                                                                      task: tasks/T_meta_dim_9_10.md
+                                                                      supervisor: supervisors/checks/T_meta_dim_9_10_check.yml
+                                                                      role: 元维度9-10：无知之学+认知神经心理学分析
+                                                                      output_schema: node_output
+                                                                      activation: always
+                                                                    - &id056
+                                                                      node_id: T_meta_dim_11_12
+                                                                      name: 元维度11-12：二阶方法论+深度时间思维
+                                                                      phase: 5
+                                                                      dependencies:
+                                                                      - T28
+                                                                      route: always
+                                                                      gate: ''
+                                                                      executor: SubAgent
+                                                                      downstream:
+                                                                      - *id002
+                                                                      - *id004
+                                                                      is_gate: false
+                                                                      has_stop_condition: false
+                                                                      suggested_tok: 3000
+                                                                      task: tasks/T_meta_dim_11_12.md
+                                                                      supervisor: supervisors/checks/T_meta_dim_11_12_check.yml
+                                                                      role: 元维度11-12：二阶方法论+深度时间思维分析
+                                                                      output_schema: node_output
+                                                                      activation: always
+                                                                    - &id057
+                                                                      node_id: T_meta_dim_13_14
+                                                                      name: 元维度13-14：悲剧性智慧+知识生命体化
+                                                                      phase: 5
+                                                                      dependencies:
+                                                                      - T28
+                                                                      route: always
+                                                                      gate: ''
+                                                                      executor: SubAgent
+                                                                      downstream:
+                                                                      - *id002
+                                                                      - *id004
+                                                                      is_gate: false
+                                                                      has_stop_condition: false
+                                                                      suggested_tok: 3000
+                                                                      task: tasks/T_meta_dim_13_14.md
+                                                                      supervisor: supervisors/checks/T_meta_dim_13_14_check.yml
+                                                                      role: 元维度13-14：悲剧性智慧+知识生命体化分析
+                                                                      output_schema: node_output
+                                                                      activation: always
+                                                                    - &id058
+                                                                      node_id: TM01
+                                                                      name: 系统动力学仿真与反馈回路建模
+                                                                      phase: 5
+                                                                      dependencies:
+                                                                      - T28
+                                                                      route: always
+                                                                      gate: ''
+                                                                      executor: SubAgent
+                                                                      downstream:
+                                                                      - *id002
+                                                                      - &id059
+                                                                        node_id: TM02
+                                                                        name: 因果验证与反事实推断
+                                                                        phase: 5
+                                                                        dependencies:
+                                                                        - TM01
+                                                                        route: always
+                                                                        gate: ''
+                                                                        executor: SubAgent
+                                                                        downstream:
+                                                                        - *id002
+                                                                        - &id060
+                                                                          node_id: TM03
+                                                                          name: 多智能体对抗性综合
+                                                                          phase: 5
+                                                                          dependencies:
+                                                                          - TM02
+                                                                          route: always
+                                                                          gate: ''
+                                                                          executor: SubAgent
+                                                                          downstream:
+                                                                          - *id002
+                                                                          - &id005
+                                                                            node_id: TM06
+                                                                            name: 14
+                                                                              维 +
+                                                                              元维度扩展验证
+                                                                            phase: 5
+                                                                            dependencies:
+                                                                            - TM03
+                                                                            - TM04
+                                                                            - TM05
+                                                                            route: always
+                                                                            gate: ''
+                                                                            executor: SubAgent
+                                                                            downstream:
+                                                                            - *id002
+                                                                            - &id063
+                                                                              node_id: TM06b
+                                                                              name: Lean4
+                                                                                形式化验证
+                                                                              phase: 5
+                                                                              dependencies:
+                                                                              - TM06
+                                                                              route: always
+                                                                              gate: ''
+                                                                              executor: SubAgent
+                                                                              downstream:
+                                                                              - *id004
+                                                                              is_gate: false
+                                                                              has_stop_condition: false
+                                                                              suggested_tok: 3000
+                                                                              task: tasks/TM06b_lean4_verify.md
+                                                                              supervisor: supervisors/checks/TM06b_check.yml
+                                                                              role: 用Lean4进行形式化验证
+                                                                              output_schema: node_output
+                                                                              activation: always
+                                                                            - &id064
+                                                                              node_id: TM07
+                                                                              name: 知识图谱本体导出
+                                                                              phase: 5
+                                                                              dependencies:
+                                                                              - TM06
+                                                                              route: always
+                                                                              gate: ''
+                                                                              executor: SubAgent
+                                                                              downstream:
+                                                                              - *id002
+                                                                              - *id004
+                                                                              is_gate: false
+                                                                              has_stop_condition: false
+                                                                              suggested_tok: 4000
+                                                                              task: tasks/TM07_ontology_export.md
+                                                                              supervisor: supervisors/checks/TM07_ontology_export_check.yml
+                                                                              role: 导出知识图谱本体
+                                                                              output_schema: node_output
+                                                                              activation: always
+                                                                            is_gate: false
+                                                                            has_stop_condition: false
+                                                                            suggested_tok: 4000
+                                                                            task: tasks/TM06_meta_layer_verify.md
+                                                                            supervisor: supervisors/checks/TM06_meta_layer_verify_check.yml
+                                                                            role: 对14维+元维度做扩展验证
+                                                                            output_schema: node_output
+                                                                            activation: always
+                                                                          is_gate: false
+                                                                          has_stop_condition: false
+                                                                          suggested_tok: 3000
+                                                                          task: tasks/TM03_adversarial_synthesis.md
+                                                                          supervisor: supervisors/checks/TM03_adversarial_synthesis_check.yml
+                                                                          role: 多智能体对抗性综合
+                                                                          output_schema: node_output
+                                                                          activation: always
+                                                                        - &id061
+                                                                          node_id: TM04
+                                                                          name: 情景规划与不确定性景观
+                                                                          phase: 5
+                                                                          dependencies:
+                                                                          - TM02
+                                                                          route: always
+                                                                          gate: ''
+                                                                          executor: SubAgent
+                                                                          downstream:
+                                                                          - *id002
+                                                                          - *id005
+                                                                          is_gate: false
+                                                                          has_stop_condition: false
+                                                                          suggested_tok: 3000
+                                                                          task: tasks/TM04_scenario_landscape.md
+                                                                          supervisor: supervisors/checks/TM04_scenario_landscape_check.yml
+                                                                          role: 情景规划与不确定性景观刻画
+                                                                          output_schema: node_output
+                                                                          activation: always
+                                                                        - &id062
+                                                                          node_id: TM05
+                                                                          name: 元认知反思与认知边界
+                                                                          phase: 5
+                                                                          dependencies:
+                                                                          - TM02
+                                                                          route: always
+                                                                          gate: ''
+                                                                          executor: SubAgent
+                                                                          downstream:
+                                                                          - *id002
+                                                                          - *id005
+                                                                          is_gate: false
+                                                                          has_stop_condition: false
+                                                                          suggested_tok: 3000
+                                                                          task: tasks/TM05_meta_reflection.md
+                                                                          supervisor: supervisors/checks/TM05_meta_reflection_check.yml
+                                                                          role: 元认知反思与认知边界审视
+                                                                          output_schema: node_output
+                                                                          activation: always
+                                                                        is_gate: false
+                                                                        has_stop_condition: false
+                                                                        suggested_tok: 3000
+                                                                        task: tasks/TM02_causal_verification.md
+                                                                        supervisor: supervisors/checks/TM02_causal_verification_check.yml
+                                                                        role: 因果验证与反事实推断
+                                                                        output_schema: node_output
+                                                                        activation: always
+                                                                      is_gate: false
+                                                                      has_stop_condition: false
+                                                                      suggested_tok: 4000
+                                                                      task: tasks/TM01_system_dynamics.md
+                                                                      supervisor: supervisors/checks/TM01_system_dynamics_check.yml
+                                                                      role: 系统动力学仿真与反馈回路建模
+                                                                      output_schema: node_output
+                                                                      activation: always
+                                                                    is_gate: true
+                                                                    has_stop_condition: false
+                                                                    suggested_tok: 800
+                                                                    task: tasks/T28_gate_final.md
+                                                                    supervisor: supervisors/checks/T28_gate_final_check.yml
+                                                                    role: 门控：Gate-ε
+                                                                      放行 authority，最终质量门控
+                                                                    output_schema: node_output
+                                                                    activation: always
+                                                                  is_gate: false
+                                                                  has_stop_condition: false
+                                                                  suggested_tok: 1500
+                                                                  task: tasks/T27_meta_visual_map.md
+                                                                  supervisor: supervisors/checks/T27_meta_visual_map_check.yml
+                                                                  role: 将14维关系可视化为3种图表
+                                                                  output_schema: node_output
+                                                                  activation: always
+                                                                is_gate: false
+                                                                has_stop_condition: false
+                                                                suggested_tok: 2000
+                                                                task: tasks/T26_meta_insight_cross.md
+                                                                supervisor: supervisors/checks/T26_meta_insight_cross_check.yml
+                                                                role: 抽取14维交叉洞察
+                                                                output_schema: node_output
+                                                                activation: always
+                                                              is_gate: false
+                                                              has_stop_condition: false
+                                                              suggested_tok: 3000
+                                                              task: tasks/T25_meta_dim_part3.md
+                                                              supervisor: supervisors/checks/T25_meta_dim_part3_check.yml
+                                                              role: 全息框架第三部分：极限决策推理
+                                                              output_schema: node_output
+                                                              activation: always
+                                                            is_gate: false
+                                                            has_stop_condition: false
+                                                            suggested_tok: 8000
+                                                            task: tasks/T24_meta_dim_part2.md
+                                                            supervisor: supervisors/checks/T24_meta_dim_part2_check.yml
+                                                            role: 全息框架第二部分：全维全域分析
+                                                            output_schema: node_output
+                                                            activation: always
+                                                          is_gate: false
+                                                          has_stop_condition: false
+                                                          suggested_tok: 3000
+                                                          task: tasks/T23_meta_dim_part1.md
+                                                          supervisor: supervisors/checks/T23_meta_dim_part1_check.yml
+                                                          role: 全息框架第一部分：问题认知与定义
+                                                          output_schema: node_output
+                                                          activation: always
+                                                        is_gate: false
+                                                        has_stop_condition: false
+                                                        suggested_tok: 4000
+                                                        task: tasks/T22_nrsf_synthesize.md
+                                                        supervisor: supervisors/checks/T22_nrsf_synthesize_check.yml
+                                                        role: NRSF叙事综合，构建全息框架骨架
+                                                        output_schema: node_output
+                                                        activation: always
+                                                      is_gate: false
+                                                      has_stop_condition: false
+                                                      suggested_tok: 600
+                                                      task: tasks/T19_quality_delivery.md
+                                                      supervisor: supervisors/checks/T19_check.yml
+                                                      role: 交付守卫，产出安全合规claim
+                                                      output_schema: claim
+                                                      activation: always
+                                                    is_gate: false
+                                                    has_stop_condition: false
+                                                    suggested_tok: 1500
+                                                    task: tasks/T17_quality_factcheck.md
+                                                    supervisor: supervisors/checks/T17_check.yml
+                                                    role: 执行CoVe级联事实核查
+                                                    output_schema: node_output
+                                                    activation: always
+                                                  - &id044
+                                                    node_id: T18
+                                                    name: 偏见检测+风格检查
+                                                    phase: 3
+                                                    dependencies:
+                                                    - T16
+                                                    route: always
+                                                    gate: ''
+                                                    executor: SubAgent
+                                                    downstream:
+                                                    - *id006
+                                                    is_gate: false
+                                                    has_stop_condition: false
+                                                    suggested_tok: 1500
+                                                    task: tasks/T18_quality_bias.md
+                                                    supervisor: supervisors/checks/T18_check.yml
+                                                    role: 检测偏见并检查内容风格
+                                                    output_schema: node_output
+                                                    activation: always
+                                                  - *id007
+                                                  is_gate: true
+                                                  has_stop_condition: false
+                                                  suggested_tok: 400
+                                                  task: tasks/T16_gate_gamma.md
+                                                  supervisor: supervisors/checks/T16_check.yml
+                                                  role: 门控：Gate-γ 放行 authority，校验领域分析
+                                                  output_schema: node_output
+                                                  activation: always
+                                                - &id010
+                                                  node_id: T13b
+                                                  name: 二次综合修正
+                                                  phase: 3
+                                                  dependencies:
+                                                  - T13
+                                                  - T15b
+                                                  route: always
+                                                  gate: ''
+                                                  executor: SubAgent
+                                                  downstream:
+                                                  - *id007
+                                                  is_gate: false
+                                                  has_stop_condition: false
+                                                  suggested_tok: 1500
+                                                  task: tasks/T13b_synthesis_revision.md
+                                                  supervisor: supervisors/checks/T13b_check.yml
+                                                  role: 对综合结果做二次综合修正
+                                                  output_schema: node_output
+                                                  activation: always
+                                                - *id007
+                                                is_gate: false
+                                                has_stop_condition: false
+                                                suggested_tok: 500
+                                                task: tasks/T15b_cross_domain_matrix.md
+                                                supervisor: supervisors/checks/T15b_check.yml
+                                                role: 构建跨域共振矩阵
+                                                output_schema: node_output
+                                                activation: always
+                                              - *id008
+                                              - *id007
+                                              is_gate: false
+                                              has_stop_condition: false
+                                              suggested_tok: 2500
+                                              task: tasks/T15_domain_analysis.md
+                                              supervisor: supervisors/checks/T15_check.yml
+                                              role: 驱动领域引擎进行分析
+                                              output_schema: node_output
+                                              activation: always
+                                            - *id007
+                                            is_gate: true
+                                            has_stop_condition: false
+                                            suggested_tok: 400
+                                            task: tasks/T14_gate_beta.md
+                                            supervisor: supervisors/checks/T14_check.yml
+                                            role: 门控：Gate-β 放行 authority，校验认知流水线
+                                            output_schema: node_output
+                                            activation: always
+                                          is_gate: false
+                                          has_stop_condition: true
+                                          suggested_tok: 4000
+                                          task: tasks/I01_iterative_deepening.md
+                                          supervisor: supervisors/checks/I01_check.yml
+                                          role: 迭代深化补研以补足研究缺口
+                                          output_schema: node_output
+                                          activation: always
+                                        - *id009
+                                        - *id010
+                                        - *id007
+                                        is_gate: false
+                                        has_stop_condition: false
+                                        suggested_tok: 4500
+                                        task: tasks/T13_cog_synthesize.md
+                                        supervisor: supervisors/checks/T13_check.yml
+                                        role: 认知综合+深度信号扫描+递归，产出综合claim
+                                        output_schema: claim
+                                        activation: always
+                                      is_gate: false
+                                      has_stop_condition: false
+                                      suggested_tok: 1200
+                                      task: tasks/T12b_cross_adversarial_synthesis.md
+                                      supervisor: supervisors/checks/T12b_check.yml
+                                      role: 对三路对抗结果做交叉融合
+                                      output_schema: node_output
+                                      activation: always
+                                    is_gate: false
+                                    has_stop_condition: false
+                                    suggested_tok: 1500
+                                    task: tasks/T10_adversarial_logic.md
+                                    supervisor: supervisors/checks/T10_check.yml
+                                    role: 以魔鬼代言人身份做逻辑攻击，产出反方claim
+                                    output_schema: claim
+                                    activation: always
+                                  - &id037
+                                    node_id: T11
+                                    name: 魔鬼代言人-证据攻击
+                                    phase: 2
+                                    dependencies:
+                                    - T09
+                                    route: always
+                                    gate: ''
+                                    executor: SubAgent
+                                    downstream:
+                                    - *id011
+                                    is_gate: false
+                                    has_stop_condition: false
+                                    suggested_tok: 1500
+                                    task: tasks/T11_adversarial_evidence.md
+                                    supervisor: supervisors/checks/T11_check.yml
+                                    role: 以魔鬼代言人身份做证据攻击，产出证据性挑战
+                                    output_schema: evidence
+                                    activation: always
+                                  - &id038
+                                    node_id: T12
+                                    name: 魔鬼代言人-范围攻击
+                                    phase: 2
+                                    dependencies:
+                                    - T09
+                                    route: always
+                                    gate: ''
+                                    executor: SubAgent
+                                    downstream:
+                                    - *id011
+                                    is_gate: false
+                                    has_stop_condition: false
+                                    suggested_tok: 1500
+                                    task: tasks/T12_adversarial_scope.md
+                                    supervisor: supervisors/checks/T12_check.yml
+                                    role: 以魔鬼代言人身份做范围攻击，挑战适用边界
+                                    output_schema: node_output
+                                    activation: always
+                                  is_gate: false
+                                  has_stop_condition: false
+                                  suggested_tok: 6000
+                                  task: tasks/T09_cog_reason.md
+                                  supervisor: supervisors/checks/T09_check.yml
+                                  role: 并行多路径推理并做分支剪枝，产出推理claim
+                                  output_schema: claim
+                                  activation: always
+                                is_gate: false
+                                has_stop_condition: false
+                                suggested_tok: 900
+                                task: tasks/T08_cog_deconstruct.md
+                                supervisor: supervisors/checks/T08_check.yml
+                                role: 对问题做认知解构
+                                output_schema: node_output
+                                activation: always
+                              is_gate: true
+                              has_stop_condition: false
+                              suggested_tok: 400
+                              task: tasks/T07_gate_alpha.md
+                              supervisor: supervisors/checks/T07_check.yml
+                              role: 门控：Gate-α 放行 authority，校验研究底座质量
+                              output_schema: node_output
+                              activation: always
+                            is_gate: false
+                            has_stop_condition: false
+                            suggested_tok: 2500
+                            task: tasks/T06_L8_L9_counterfactual.md
+                            supervisor: supervisors/checks/T06_check.yml
+                            role: 界定L8+L9反事实与因果边界
+                            output_schema: node_output
+                            activation: always
+                          is_gate: false
+                          has_stop_condition: false
+                          suggested_tok: 1100
+                          task: tasks/T05_L6_L7_evidence.md
+                          supervisor: supervisors/checks/T05_check.yml
+                          role: 梳理L6+L7证据利益链
+                          output_schema: evidence
+                          activation: always
+                        is_gate: false
+                        has_stop_condition: false
+                        suggested_tok: 1200
+                        task: tasks/T04_L4_L5_compare.md
+                        supervisor: supervisors/checks/T04_check.yml
+                        role: 构建L4+L5比较叙事
+                        output_schema: node_output
+                        activation: always
+                      is_gate: false
+                      has_stop_condition: false
+                      suggested_tok: 1000
+                      task: tasks/T03b_cross_axis_matrix.md
+                      supervisor: supervisors/checks/T03b_check.yml
+                      role: 进行横纵交叉矩阵分析
+                      output_schema: node_output
+                      activation: always
+                    is_gate: false
+                    has_stop_condition: false
+                    suggested_tok: 2500
+                    task: tasks/T03_L3_structural.md
+                    supervisor: supervisors/checks/T03_check.yml
+                    role: 提取L3结构变量
+                    output_schema: node_output
+                    activation: always
+                  - *id012
+                  is_gate: false
+                  has_stop_condition: false
+                  suggested_tok: 1200
+                  task: tasks/T02_L1_L2_research.md
+                  supervisor: supervisors/checks/T02_check.yml
+                  role: 构建L1+L2研究底座事实库
+                  output_schema: node_output
+                  activation: always
+                is_gate: false
+                has_stop_condition: false
+                suggested_tok: 1500
+                task: tasks/T00_outline.md
+                supervisor: supervisors/checks/T00_check.yml
+                role: 制定研究大纲与母假设并进行路由
+                output_schema: node_output
+                activation: always
+              is_gate: false
+              has_stop_condition: false
+              suggested_tok: 4000
+              task: tasks/P1-C_convergence.md
+              supervisor: supervisors/checks/P1-C_convergence_check.yml
+              role: 将4层废稿经过滤漏斗收敛为候选材料池
+              output_schema: node_output
+              activation: always
+            is_gate: true
+            has_stop_condition: false
+            suggested_tok: 400
+            task: tasks/Gate-alpha0.md
+            supervisor: supervisors/checks/Gate_alpha0_check.yml
+            role: 门控：Gate-α0 放行 authority，校验探索池完整性
+            output_schema: node_output
+            activation: always
+          is_gate: false
+          has_stop_condition: false
+          suggested_tok: 1000
+          task: tasks/P0-S4_exploration_saturation.md
+          supervisor: supervisors/checks/P0-S4_check.yml
+          role: 判定探索池是否饱和以停止生成
+          output_schema: node_output
+          activation: always
+        is_gate: false
+        has_stop_condition: false
+        suggested_tok: 8000
+        task: tasks/P0-S3_four_layer_draft.md
+        supervisor: supervisors/checks/P0-S3_check.yml
+        role: 生成L1对话→L2笔记→L3论点矩阵→L4草稿的多层废稿
+        output_schema: node_output
+        activation: always
+      is_gate: false
+      has_stop_condition: true
+      suggested_tok: 3000
+      task: tasks/P0-S2_sub_perspective_generation.md
+      supervisor: supervisors/checks/P0-S2_check.yml
+      role: 以MCTS式递归动态生成多子视角
+      output_schema: node_output
+      activation: always
+    is_gate: false
+    has_stop_condition: false
+    suggested_tok: 5000
+    task: tasks/P0-S1_storm_dialogue.md
+    supervisor: supervisors/checks/P0-S1_check.yml
+    role: 以提问者↔作者对话+RAG检索生成研究素材
+    output_schema: node_output
+    activation: always
+  - &id021
+    node_id: T_env_probe
+    name: 运行环境与模型能力探测
+    phase: 1
+    dependencies:
+    - P0-S0
+    route: always
+    gate: ''
+    executor: SubAgent
+    downstream:
+    - &id022
+      node_id: T00a
+      name: 时间锚定
+      phase: 1
+      dependencies:
+      - T_env_probe
+      route: always
+      gate: ''
+      executor: SubAgent
+      downstream:
+      - *id013
+      is_gate: false
+      has_stop_condition: false
+      suggested_tok: 300
+      task: tasks/T00a_time_anchor.md
+      supervisor: supervisors/checks/T00a_check.yml
+      role: 锚定当前时间上下文供后续引用
+      output_schema: node_output
+      activation: always
+    - &id023
+      node_id: T01
+      name: 输入分流
+      phase: 1
+      dependencies:
+      - T_env_probe
+      route: always
+      gate: ''
+      executor: SubAgent
+      downstream:
+      - &id024
+        node_id: T01b
+        name: 写作声音校准
+        phase: 1
+        dependencies:
+        - T01
+        route: always
+        gate: ''
+        executor: SubAgent
+        downstream:
+        - &id026
+          node_id: T01d
+          name: 人设故事解析
+          phase: 1
+          dependencies:
+          - T01b
+          route: always
+          gate: ''
+          executor: SubAgent
+          downstream: []
+          is_gate: false
+          has_stop_condition: false
+          suggested_tok: 800
+          task: tasks/T01d_persona_story_parse.md
+          supervisor: supervisors/checks/T01d_check.yml
+          role: 解析人设故事与背景设定
+          output_schema: node_output
+          activation: always
+        - *id013
+        - *id002
+        - *id003
+        - *id014
+        is_gate: false
+        has_stop_condition: false
+        suggested_tok: 200
+        task: tasks/T01b_voice_calibration.md
+        supervisor: supervisors/checks/T01b_check.yml
+        role: 校准写作声音与风格基线
+        output_schema: node_output
+        activation: always
+      is_gate: false
+      has_stop_condition: false
+      suggested_tok: 600
+      task: tasks/T01_input_triage.md
+      supervisor: supervisors/checks/T01_check.yml
+      role: 对用户输入进行分流与类型判定
+      output_schema: node_output
+      activation: always
+    is_gate: false
+    has_stop_condition: false
+    suggested_tok: 400
+    task: tasks/T_env_probe.md
+    supervisor: supervisors/checks/T_env_probe_check.yml
+    role: 探测运行环境与模型能力以校准后续参数
+    output_schema: node_output
+    activation: always
+  is_gate: false
+  has_stop_condition: false
+  suggested_tok: 2000
+  task: tasks/P0-S0_root_perspective_derivation.md
+  supervisor: supervisors/checks/P0-S0_check.yml
+  role: 根视角的派生与确立，为全流程提供引领性母视角
+  output_schema: node_output
+  activation: always
+- *id015
+- *id016
+- *id017
+- *id018
+- *id019
+- *id020
+- *id021
+- *id022
+- *id023
+- *id024
+- *id025
+- *id026
+- *id013
+- *id027
+- *id028
+- *id029
+- *id012
+- *id030
+- *id031
+- *id032
+- *id033
+- *id034
+- *id035
+- *id036
+- *id037
+- *id038
+- *id011
+- *id039
+- *id040
+- *id009
+- *id041
+- *id042
+- *id008
+- *id010
+- *id043
+- *id044
+- *id006
+- *id045
+- *id002
+- *id003
+- *id014
+- *id001
+- *id046
+- *id047
+- *id007
+- *id048
+- *id049
+- *id050
+- *id051
+- *id052
+- *id053
+- *id054
+- *id055
+- *id056
+- *id057
+- *id058
+- *id059
+- *id060
+- *id061
+- *id062
+- *id005
+- *id063
+- *id064
+- *id004

@@ -1,0 +1,29 @@
+{
+  "result": "PASS",
+  "three_channels": [
+    {
+      "kind": "model",
+      "fresh_run_id": true,
+      "distinct_request_digest": true,
+      "distinct_path": true,
+      "stale_response_rejected_by_digest": true
+    },
+    {
+      "kind": "search",
+      "fresh_run_id": true,
+      "distinct_request_digest": true,
+      "distinct_path": true,
+      "stale_response_rejected_by_digest": true
+    },
+    {
+      "kind": "verification",
+      "fresh_run_id": true,
+      "distinct_request_digest": true,
+      "distinct_path": true,
+      "stale_response_rejected_by_digest": true
+    }
+  ],
+  "request_mutation": "REJECTED",
+  "same_run_positive": "PASS",
+  "provider_attestation": "NOT_PROVEN"
+}

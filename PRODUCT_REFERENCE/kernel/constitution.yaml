@@ -1,0 +1,128 @@
+# =============================================================================
+# Profound Cognition v9 — Constitution (K1-K16)
+# 本文件是系统的最高级规则。任何旧版 Task / Protocol / Supervisor / 示例 / 脚本
+# 与本文件冲突时，不得"折中并存"；必须进入迁移表并消除冲突。
+# 机读校验：runtime/semantic_compiler.py --strict （constitution_epoch 参与 hash）
+# =============================================================================
+
+schema: "kernel/constitution.yaml@1"
+doc: "Profound Cognition v9 宪法级原则。高于任一历史文件，冲突即消除。"
+
+version:
+  constitution_epoch: "c1.0.0"
+  upstream_doc: "gpt 决策/v9_handoff/deepseek_v9_handoff_00_DeepSeek_V4_Flash_实施总控计划.md"
+
+# --- 最高级规则（不可牺牲，批次授权 doc §3 全条款并入） ---
+supreme:
+  # 优先级示例：K16 发行证明 > K15 SSOT 编译 > 平均深度。冲突裁决走本文冲突规则。
+  ordering: [K16, K15, K9, K10, K8, K12, K13, K14, K4, K5, K6, K7, K2, K3, K11, K1]
+  unalterable_without_migration: true
+
+principles:
+  - id: K1
+    title: "v8.2.1 是母体，v5 是 donor"
+    text: "v8 保留研究能力；v5 仅作发行工程 donor。禁止目录覆盖合并，禁止双 SSOT 并存。"
+    requires: [node_registry, version_epoch]
+  - id: K2
+    title: "ONE QUALITY LANE：固定研究质量，Delivery 不得反向改变 Research"
+    text: "所有问题进入同一最高研究质量制度；最终表达篇幅/DeliveryProfile 只能在 FinalVerifiedSnapshot 之后决定，不得进入 ResearchPlan、Research Universe、方法适用性、Search、Stop 或 Freeze 决策。"
+  - id: K3
+    title: "Mandatory Exhaustive Capability Assessment"
+    text: "所有已注册 node/method/domain/thinking-model/external capability 必须进入 Mandatory Capability Universe 并取得机器可审计终态；适用者真实执行；STRUCTURALLY_NOT_APPLICABLE 仅限确无合法语义对象且必须经挑战；Runtime 不可用产生 Capability Gap，绝不能伪装成 N/A 或 PASS。"
+    binds: [method_registry, gate_engine]
+  - id: K4
+    title: "Research Pressure Floor：防偷懒必须由真实研究物证承担"
+    text: "28:1 的哲学升级为真实 Search、独立候选、竞争解释、反证、冲突、修订、Unknown、对抗与淘汰物证；固定字符数/轮数不能授予完成，少生成候选也不能成为低成本闭合路径。"
+    binds: [gate_engine, search_proof]
+  - id: K5
+    title: "所有 Agent 输出默认只是 Candidate Research Asset"
+    text: "任何 Agent/模块产出无直接 Final 资格，必须进入统一候选体系经选择/验证/冻结。"
+    binds: [asset_pool]
+  - id: K6
+    title: "全局 Selection Boundary"
+    text: "Phase 0 草稿池扩展到全系统；后置节点新洞察必须重新进入 Candidate Pool，禁止直通 Final Renderer。"
+    binds: [asset_pool]
+  - id: K7
+    title: "Claim 是研究系统的中心原子"
+    text: "每个重要 Claim 必须具有稳定 ID/版本/scope/证据/反证/方法/状态/hash/验证记录/血缘。"
+    binds: [claim_schema, evidence_schema]
+  - id: K8
+    title: "Revision 必须自动使旧验证失效"
+    text: "C17:v4 推翻 C17:v3 时，v3 的 PASS 不得继承给 v4；v4 必须重新验证。"
+    binds: [verification_engine, snapshot_manager]
+  - id: K9
+    title: "Final Verified Snapshot 是唯一可出版知识对象"
+    text: "Final 文档/PDF/DOCX/图表/知识回收/长期记忆只能消费此 Snapshot 或其可验证派生物。"
+    binds: [snapshot_manager, renderer]
+  - id: K10
+    title: "Publisher / Renderer 没有认知权"
+    text: "Renderer 只能排版/映射/生成/导出；不能新增事实、重新解释数据、补造数字、自行升级结论。"
+    binds: [renderer_policy]
+  - id: K11
+    title: "Publication Freeze 先于长期 Commit"
+    text: "长期持久化只有在 FinalVerifiedSnapshot、Final Review 与 Publication Freeze/QA 均合法通过后才可 Commit；preview/rendered bytes 不等于已发布，Publication veto 必须阻断 Memory/Knowledge/Engine 的永久提交。"
+    binds: [transaction_manager, persistence_manager]
+  - id: K12
+    title: "任何状态只有一个 Authority"
+    text: "GO/NO_GO、GREEN/YELLOW/RED、PASS/FAIL、SKIP/N/A 不得由多个互不等价字段同时放行；界定单一状态机与状态权威。"
+    binds: [authority_registry, state_machine]
+  - id: K13
+    title: "Unknown 不等于 None，不执行不等于 PASS"
+    text: "缺数据/缺 API/缺 Runtime/缺真实文件时只能输出 UNKNOWN / NOT_EXECUTED / BLOCKED；禁止把'没检测到'当作'客观不存在'；禁止 SKIP exit 0 被当 PASS。"
+    binds: [verification_status, acceptance_status]
+  - id: K14
+    title: "任何'已实现'都必须有 Runtime 或可执行检查"
+    text: "Markdown 协议/伪代码/示例不构成实现；保留能力标签就要有可执行代码/依赖/可重复测试，否则标 SPEC_ONLY。"
+    binds: [capability_registry]
+  - id: K15
+    title: "单一真相源必须可编译，而不是靠人肉同步"
+    text: "DAG/节点ID/状态/Gate/版本/Schema/Capability/Method 由机读 Canonical Registry 驱动；升级工作须经 semantic_compiler 校验。"
+    binds: [semantic_compiler, node_registry]
+  - id: K16
+    title: "发行版必须证明自己且冻结字节必须可持久取回"
+    text: "每个历史 P0/P1 必须有 Regression；每个 PASS 必须绑定实际对象/输入 hash/检查器版本/命令/退出码/证据文件。AUTHORITATIVE/FROZEN/RELEASE artifact 还必须同时具备 actual bytes、verified hash、fresh-receiver validation、persistent copy 与 retrieval verification；没有物证或不可取回就没有认证。"
+    binds: [regression, acceptance]
+
+# --- Full Fusion 最终拍板不变量（机器可验证；后续中间方案不得覆盖） ---
+full_fusion_invariants:
+  - id: FF1_ONE_QUALITY_LANE
+    rule: "整个 Research Plane 只有一个最高质量通道；无 low/fast/cheap/shallow/reduced research。"
+  - id: FF2_MANDATORY_EXHAUSTIVE_BACKBONE
+    rule: "所有已知合法研究能力必须进入 Mandatory Capability Universe；NOT_SELECTED/NOT_ACTIVATED/PRUNED 不得成为完成态。"
+  - id: FF3_ADDITIVE_ONLY_DYNAMIC_EXPANSION
+    rule: "Dynamic 只可 ADD/EXPAND/REOPEN/BRANCH/RETRY/REORDER/RESCHEDULE；不得以优化名义 PRUNE/DROP/REDUCE_SCOPE。"
+  - id: FF4_RESOURCE_NON_AUTHORITY
+    rule: "token/time/cost/model-price/context-pressure/call-count 只可作为 telemetry 或 interruption 原因，不得关闭研究义务、降低验证、授权 Freeze/Publish。"
+  - id: FF5_FRESH_SEARCH_PER_NEW_EPISTEMIC_OBLIGATION
+    rule: "新的外部可核查事实/因果/数值/政策/现状/推荐/综合/冲突/边界/反证义务必须重新评估并在需要时执行 fresh retrieval；不得以‘前面搜过’替代。"
+  - id: FF6_CANDIDATE_FIRST_COMMIT_FIREWALL
+    rule: "所有 Agent/模块新认知先进入 Candidate/Draft；竞争、选择、grounding、verification、promotion 前不得进入 Final/Memory/Engine/Publication authority。"
+  - id: FF7_CAPABILITY_TRUTH_AND_GAP
+    rule: "asset/spec/adapter-ready/runtime/executed 必须分层；applicable-but-runtime-unavailable 进入 Capability Gap；readiness/artifact-exists 不得冒充 execution。"
+  - id: FF8_RESEARCH_DELIVERY_PLANE_SEPARATION
+    rule: "ResearchPlan 不拥有 DeliveryProfile/output length；Presentation 只能在 FinalVerifiedSnapshot 后作用于 Editorial/Renderer/Publication。"
+  - id: FF9_PRESSURE_FLOOR_AND_STOP_CHALLENGER
+    rule: "Epistemic Freeze 同时要求 Research Pressure Floor、closure、AntiShortcut 与 Stop Challenger；Reviewer 自签或低候选量不得授予停止。"
+  - id: FF10_LONG_RUNNING_RESUMABLE_STATE
+    rule: "长研究必须支持 checkpoint/recovery/semantic continuity；interruption 只能标 INTERRUPTED/RESUMABLE，不得冒充 epistemic completion。"
+  - id: FF11_PUBLICATION_FREEZE_BEFORE_COMMIT
+    rule: "FinalVerifiedSnapshot 后必须先通过 Editorial/Publication QA/Freeze，再允许长期 Commit；出版否决必须阻断永久副作用。"
+  - id: FF12_DEEP_PROCESS_CLEAN_SURFACE
+    rule: "内部可极深且复杂，最终用户面必须是干净、自然、可理解、可出版的知识产品；Renderer 不得泄漏内部 machinery 或创造事实。"
+  - id: FF13_ARTIFACT_DURABILITY
+    rule: "任何 authoritative/frozen/release artifact 必须具备 actual bytes + verified SHA + fresh-receiver validation + persistent copy + retrieval verification。"
+
+# --- 冲突裁决规则 ---
+conflict_rules:
+  - id: CFC-1
+    when: "历史文件规则与宪法冲突"
+    action: "以宪法为准，历史规则进入 migration_matrix.csv 并标记 SUPERSEDED"
+  - id: CFC-2
+    when: "两个最高级规则须择一且任一都会破坏数据"
+    action: "升级为 HARD_BLOCKER，走节点纪律，禁止静默任选纯一边带偏"
+  - id: CFC-3
+    when: "多版本号口径不一致（57/58/64/65 等）"
+    action: "以 node_registry.yaml 的 total_nodes 为唯一裁决，其余记入 drift 清单并消除"
+  - id: CFC-4
+    when: "SKIP exit0 与 PASS 疑似合并"
+    action: "按 K13 区分语义；非 PASS 一律不得合并为绿色"
